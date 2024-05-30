@@ -1,0 +1,43 @@
+{
+  "Comercio": {
+    "Medio de captación": "",
+    "Fecha": "",
+    "Tipo": [
+      "Bodega",
+      "Local",
+      "Lote",
+      "Oficina"
+    ],
+    "Encargo": [
+      "Arriendo",
+      "Arriendo/Venta",
+      "Venta"
+    ],
+    "Datos": {
+      "Canon": 0,
+      "Está incluido": 0
+    },
+    "Interno": {
+      "Canon": 0,
+      "Otras especificaciones": [
+        "opc1",
+        "opc1"
+      ]
+    }
+  },
+  "Vivienda": {
+    "Medio de captación": "",
+    "Fecha": "",
+    "Tipo": [
+      "Bodega",
+      "Local",
+      "Lote",
+      "Oficina"
+    ],
+    "Encargo": [
+      "Arriendo",
+      "Arriendo/Venta",
+      "Venta"
+    ]
+  }
+}
