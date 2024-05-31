@@ -45,8 +45,8 @@ const LoginV2 = () => {
       setIsSmallScreen(false);
     }
   };
-  // Vars
 
+  // Vars
 
   // Hooks
   const router = useRouter()
