@@ -46,12 +46,9 @@ const LoginV2 = () => {
     }
   };
 
-  // Vars
-
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
-
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
