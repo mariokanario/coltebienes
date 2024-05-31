@@ -5,6 +5,7 @@ import type { ChangeEvent } from 'react'
 // MUI Imports
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
+import { MenuItem } from '@mui/material'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -17,7 +18,6 @@ import CustomInputVertical from '@core/components/custom-inputs/Vertical'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
-import { MenuItem } from '@mui/material'
 
 type Props = {
   activeStep: number

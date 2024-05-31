@@ -4,7 +4,7 @@
 import { useEffect, useRef } from 'react'
 
 // Next Imports
-// import Img from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 
 // Third-party Imports
@@ -13,16 +13,12 @@ import styled from '@emotion/styled'
 // Type Imports
 import type { VerticalNavContextProps } from '@menu/contexts/verticalNavContext'
 
-// Component Imports
-import VuexyLogo from '@core/svg/Logo'
 
-// Config Imports
-import themeConfig from '@configs/themeConfig'
 
 // Hook Imports
 import useVerticalNav from '@menu/hooks/useVerticalNav'
 import { useSettings } from '@core/hooks/useSettings'
-import Image from 'next/image'
+
 
 type LogoTextProps = {
   isHovered?: VerticalNavContextProps['isHovered']

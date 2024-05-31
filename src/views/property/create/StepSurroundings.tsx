@@ -3,14 +3,8 @@ import { useState } from 'react'
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
-import FormControlLabel from '@mui/material/FormControlLabel'
 
 
 // Component Imports
@@ -18,8 +12,7 @@ import CustomTextField from '@core/components/mui/TextField'
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 import DirectionalIcon from '@components/DirectionalIcon'
 
-// Styled Component Imports
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
+
 
 type Props = {
   activeStep: number
@@ -30,7 +23,7 @@ type Props = {
 
 const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   // States
-  const [date, setDate] = useState<Date | null | undefined>(null)
+
   const [surroundings, setSurroundings] = useState<string[]>([])
 
 

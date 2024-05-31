@@ -1,13 +1,13 @@
+import { useState } from 'react'
+
 // MUI Imports
 import Grid from '@mui/material/Grid'
-import InputAdornment from '@mui/material/InputAdornment'
 import FormControl from '@mui/material/FormControl'
 import MenuItem from '@mui/material/MenuItem'
 import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import RadioGroup from '@mui/material/RadioGroup'
-import Checkbox from '@mui/material/Checkbox'
 import Chip from '@mui/material/Chip'
 import Button from '@mui/material/Button'
 
@@ -16,7 +16,6 @@ import CustomTextField from '@core/components/mui/TextField'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
-import { useState } from 'react'
 
 type Props = {
   activeStep: number

@@ -4,8 +4,7 @@
 import { useEffect, useState, useMemo } from 'react'
 
 // Next Imports
-import Link from 'next/link'
-import { useParams } from 'next/navigation'
+
 
 // MUI Imports
 import Card from '@mui/material/Card'

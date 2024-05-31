@@ -19,7 +19,7 @@ import CustomAutocomplete from '@core/components/mui/Autocomplete'
 import CustomTextField from '@core/components/mui/TextField'
 import DirectionalIcon from '@components/DirectionalIcon'
 
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
+// import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
 
 type Props = {
   activeStep: number

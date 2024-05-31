@@ -1,6 +1,5 @@
 // React Imports
 import { useState } from 'react'
-import type { ChangeEvent } from 'react'
 
 // MUI IMports
 import Grid from '@mui/material/Grid'
