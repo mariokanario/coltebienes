@@ -1,3 +1,6 @@
+
+import Provider from '@/components/context/Provider';
+
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
@@ -22,7 +25,11 @@ const RootLayout = ({ children }: ChildrenType) => {
 
   return (
     <html id='__next' lang='en' dir={direction}>
-      <body className='flex is-full min-bs-full flex-auto flex-col'>{children}</body>
+      <body className='flex is-full min-bs-full flex-auto flex-col'>
+        <Provider>
+          {children}
+        </Provider>
+      </body>
     </html>
   )
 }

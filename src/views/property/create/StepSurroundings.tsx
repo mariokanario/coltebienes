@@ -1,5 +1,7 @@
 // React Imports
 import { useState } from 'react'
+import { useProvider } from '@/components/context/Provider';
+
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -11,8 +13,11 @@ import Chip from '@mui/material/Chip'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 import DirectionalIcon from '@components/DirectionalIcon'
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
 
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
+const comercioDataString = comercioData as Record<string, any>
 
 type Props = {
   activeStep: number
@@ -22,10 +27,10 @@ type Props = {
 }
 
 const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
-  // States
 
+  const { globalType } = useProvider();
   const [surroundings, setSurroundings] = useState<string[]>([])
-
+  const [date, setDate] = useState<Date | null | undefined>(null)
 
   return (
     <Grid container spacing={6}>
@@ -36,7 +41,9 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           value={surroundings}
           onChange={(event, value) => setSurroundings(value as string[])}
           id='select-kitchen-details'
-          options={['Bombas de gasolina', 'Colegios-universidades']}
+          options={
+            comercioDataString[globalType].Alrededores["Otras especificaciones"].map((tipo: string) => (tipo))
+          }
           defaultValue={surroundings}
           getOptionLabel={option => option || ''}
           renderInput={params => <CustomTextField {...params} label='Otras especificaciones' />}
@@ -63,6 +70,23 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps }: Props) 
           rows={4}
           multiline
           label='Otras características y observaciones'
+        />
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Captador' placeholder='Nombre' />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <CustomTextField fullWidth label='Medio de captación' placeholder='Celular' />
+      </Grid>
+
+      <Grid item xs={12} md={6}>
+        <AppReactDatepicker
+          selected={date}
+          placeholderText='YYYY-MM-DD'
+          dateFormat={'yyyy-MM-dd'}
+          onChange={(date: Date) => setDate(date)}
+          customInput={<CustomTextField fullWidth label='Fecha' />}
         />
       </Grid>
 

@@ -1,43 +1,337 @@
 {
-  "Comercio": {
-    "Medio de captación": "",
-    "Fecha": "",
-    "Tipo": [
-      "Bodega",
-      "Local",
-      "Lote",
-      "Oficina"
-    ],
-    "Encargo": [
-      "Arriendo",
-      "Arriendo/Venta",
-      "Venta"
-    ],
+  "comercio": {
     "Datos": {
+      "Ciudad": "",
+      "Barrio": "",
+      "Dirección": "",
+      "Nombre de la copropiedad": "",
+      "Tipo de inmueble": [
+        "Bodega",
+        "Local",
+        "Lote",
+        "Oficina",
+        "Edificio "
+      ],
+      "Encargo": [
+        "Arriendo",
+        "Arriendo/Venta",
+        "Venta"
+      ],
       "Canon": 0,
-      "Está incluido": 0
+      "Valor venta": 0,
+      "Valor administración": 0,
+      "¿Está incluida?": "",
+      "Área construida": 0,
+      "Área privada": 0,
+      "Año de construcción": "",
+      "Número de baños": 0,
+      "Número de parqueaderos": 0
     },
     "Interno": {
-      "Canon": 0,
+      "Acabados cubierta": [
+        "Teja eternit",
+        "Teja plástica",
+        "Teja térmica",
+        "Tipo coliseo"
+      ],
+      "Altura en metros del inmueble": "",
+      "Fondo en metros": "",
+      "Frente en metros": "",
+      "Cocina": [
+        "Cocineta",
+        "Gas natural"
+      ],
+      "Estado del inmueble": [
+        "Bueno",
+        "En construcción",
+        "Excelente estado",
+        "Nuevo",
+        "En plano",
+        "Remodelado",
+        "Usado"
+      ],
+      "Energía": [
+        "Monofásica",
+        "Trifásica"
+      ],
       "Otras especificaciones": [
-        "opc1",
-        "opc1"
+        "Cableado de red",
+        "Cableado estructurado",
+        "Área del mezanine"
+      ],
+      "Pisos": [
+        "Adoquín",
+        "Baldosa",
+        "Cerámica",
+        "Concreto",
+        "Concreto reforzado",
+        "Laminado",
+        "Madera",
+        "Mármol",
+        "Porcelanato",
+        "Retal mármol"
+      ],
+      "Tipo de bodega": [
+        "Liviana",
+        "Pesada"
+      ],
+      "Balcón": "",
+      "Terraza": "",
+      "Aire acondicionado": "",
+      "Aire central": "",
+      "Vigilancia": [
+        "Circuito cerrado",
+        "Puerta de seguridad"
       ]
+    },
+    "Externo": {
+      "Parque industrial": "",
+      "Bahía de parqueo": "",
+      "Baños comunales": "",
+      "Baños públicos": "",
+      "Muelle a nivel": "",
+      "Muelle deprimido": "",
+      "Capacidad de carga de t/m² del piso": "",
+      "Puente grúa": "",
+      "Cuarto útil": "",
+      "Acceso digital en edificio": "",
+      "Fachada": [
+        "Antejardín",
+        "Cemento",
+        "Ladrillo a la vista",
+        "Reja"
+      ],
+      "Energía": [
+        "KVA",
+        "Subestación"
+      ],
+      "Cantidad": 0,
+      "Cantidad de niveles": 0,
+      "En el piso número": 0,
+      "Otras especificaciones": [
+        "Acceso pavimentado",
+        "Alarma de incendio",
+        "Área rural",
+        "Área urbana",
+        "Ascensor",
+        "En centro comercial",
+        "En edificio",
+        "Zona comercial",
+        "Zona residencial",
+        "Escalera de emergencia",
+        "Esquinero",
+        "Fuera de centro comercial",
+        "Malacate",
+        "Puerta camión",
+        "Puerta peatonal",
+        "Puerta persiana",
+        "Puerta vidriera",
+        "Shut de basura"
+      ],
+      "Parqueadero": [
+        "Comunal",
+        "Cubierto",
+        "Descubierto",
+        "Sencillo"
+      ],
+      "Unidad": [
+        "Abierta",
+        "Cerrada"
+      ],
+      "Vigilancia": [
+        "Portería vigilancia",
+        "Vigilancia 24x7"
+      ],
+      "Zonas comunes": [
+        "Auditorio",
+        "Cafetería comunal",
+        "Salón conferencias",
+        "Terraza comunal"
+      ]
+    },
+    "Alrededores": {
+      "Otras especificaciones": [
+        "Bombas de gasolina",
+        "Colegios-universidades",
+        "Hospitales",
+        "Iglesias",
+        "Sector comercial",
+        "Supermercados",
+        "Al aeropuerto",
+        "Centro comercial",
+        "Cerca de zona urbana",
+        "Cómodas vías de acceso",
+        "Parques",
+        "Restaurantes",
+        "Sobre vía principal",
+        "Sobre vía secundaria",
+        "Transporte público"
+      ],
+      "Mencione lugares de referencia": "",
+      "Otras características y observaciones": "",
+      "Captador": "",
+      "Medio de captación": "",
+      "Fecha": ""
     }
   },
-  "Vivienda": {
-    "Medio de captación": "",
-    "Fecha": "",
-    "Tipo": [
-      "Bodega",
-      "Local",
-      "Lote",
-      "Oficina"
-    ],
-    "Encargo": [
-      "Arriendo",
-      "Arriendo/Venta",
-      "Venta"
-    ]
+  "vivienda": {
+    "Datos": {
+      "Ciudad": "",
+      "Barrio": "",
+      "Dirección": "",
+      "Nombre de la copropiedad": "",
+      "Tipo de inmueble": [
+        "Apartaestudio",
+        "Apartamento",
+        "Casa",
+        "Finca"
+      ],
+      "Destinacion": [
+        "Comercio",
+        "Mixto",
+        "Vivienda"
+      ],
+      "Encargo": [
+        "Arriendo",
+        "Arriendo/Venta",
+        "Venta"
+      ],
+      "Canon": 0,
+      "Valor venta": 0,
+      "Valor administración": 0,
+      "¿Está incluida?": "",
+      "Área construida": 0,
+      "Área privada": 0,
+      "Año de construcción": "",
+      "Número de habitaciones": 0,
+      "Número de baños": 0,
+      "Número de parqueaderos": 0
+    },
+    "Interno": {
+      "Acabados cubierta": [
+        "Cielo raso madera",
+        "Teja de barro"
+      ],
+      "Bañera": "",
+      "Jacuzzi": "",
+      "Chimenea": "",
+      "Clóset": "",
+      "Clóset de lino": "",
+      "Vestier": "",
+      "Cocina": [
+        "Barra americana",
+        "Calentador a gas",
+        "Cocina abierta",
+        "Cocina cerrada",
+        "Comedor auxiliar",
+        "Despensa",
+        "Gas natural",
+        "Integral",
+        "Mixta",
+        "Semintegral"
+      ],
+      "Comedor": "",
+      "Sala comedor": "",
+      "Estado del inmueble": [
+        "Bueno",
+        "Excelente estado",
+        "Nuevo",
+        "Remodelado",
+        "Usado"
+      ],
+      "Penthouse": "",
+      "Patio": "",
+      "Zona de ropas": "",
+      "Pisos": [
+        "Baldosa",
+        "Cerámica",
+        "Laminado",
+        "Madera",
+        "Mármol",
+        "Porcelanato",
+        "Retal mármol"
+      ],
+      "Hall": "",
+      "Sala": "",
+      "Balcón": "",
+      "Deck": "",
+      "Terraza": "",
+      "Dúplex": "",
+      "Loft": "",
+      "Puerta de seguridad": ""
+    },
+    "Externo": {
+      "Cuarto útil": "",
+      "Ladrillo a la vista": "",
+      "Cantidad de niveles": "",
+      "En el piso número": 0,
+      "Otras especificaciones": [
+        "Área rural",
+        "Área urbana",
+        "Ascensor",
+        "Ascensor privado",
+        "Conjunto cerrado",
+        "En edificio",
+        "Zona comercial",
+        "Zona residencial",
+        "Shut de basura"
+      ],
+      "Parqueadero": [
+        "Cubierto",
+        "Descubierto",
+        "Doble lineal",
+        "Lineal",
+        "Paralelo",
+        "Visitantes"
+      ],
+      "Unidad": [
+        "Abierta",
+        "Cerrada"
+      ],
+      "Vigilancia": [
+        "Portería vigilancia",
+        "Vigilancia 24x7"
+      ],
+      "Zonas comunes": [
+        "Cancha de baloncesto",
+        "Cancha de fútbol",
+        "Cancha de tenis",
+        "Cancha múltiple",
+        "Gimnasio",
+        "Parque infantil",
+        "Piscina",
+        "Salón comunal",
+        "Sauna",
+        "Sendero ecológico",
+        "Squash",
+        "Turco",
+        "Zona de BBQ",
+        "Zonas verdes"
+      ]
+    },
+    "Alrededores": {
+      "Otras especificaciones": [
+        "Bombas de gasolina",
+        "Colegios-universidades",
+        "Hospitales",
+        "Iglesias",
+        "Sector comercial",
+        "Supermercados",
+        "Aeropuerto",
+        "Centro comercial",
+        "Cerca de zona urbana",
+        "Cómodas vías de acceso",
+        "Parques cercanos",
+        "Restaurantes",
+        "Sobre vía principal",
+        "Sobre vía secundaria",
+        "Transporte público"
+      ],
+      "Mencione lugares de referencia": "",
+      "Otras características y observaciones": "",
+      "Captador": "",
+      "Medio de captación": "",
+      "Fecha": ""
+    }
   }
 }

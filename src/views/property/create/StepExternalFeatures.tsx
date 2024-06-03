@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useProvider } from '@/components/context/Provider';
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
@@ -16,6 +17,9 @@ import CustomTextField from '@core/components/mui/TextField'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
+const comercioDataString = comercioData as Record<string, any>
+
 
 type Props = {
   activeStep: number
@@ -26,6 +30,7 @@ type Props = {
 
 const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
 
+  const { globalType } = useProvider();
   const [front, setFront] = useState<string[]>([])
   const [specifications, setSpecifications] = useState<string[]>([])
   const [watch, setWatch] = useState<string[]>([])
@@ -37,146 +42,183 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
     <>
       <Grid container spacing={6}>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Parque industrial</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+        {
+          globalType == "comercio" ?
+            <>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Bahia de parqueo</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Parque industrial</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Baños comunales</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Bahia de parqueo</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Baños públicos</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Baños comunales</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Muelle a nivel</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Baños públicos</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Muelle deprimido</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Muelle a nivel</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Capacidad de carga de t/m² del piso</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Muelle deprimido</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Puente grúa</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Capacidad de carga de t/m² del piso</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Cuarto útil</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Puente grúa</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={6} md={4}>
-          <FormControl>
-            <FormLabel>Acceso digital en edificio</FormLabel>
-            <RadioGroup row className='gap-3' >
-              <FormControlLabel value='si' control={<Radio />} label='Si' />
-              <FormControlLabel value='no' control={<Radio />} label='No' />
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Cuarto útil</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
 
-      </Grid>
-      <Grid container spacing={6} className='mt-2'>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Acceso digital en edificio</FormLabel>
+                  <RadioGroup row className='gap-3' >
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <hr className="w-full h-px bg-gray-100" />
+              </Grid>
 
 
-        <Grid item xs={12} md={6}>
-          <CustomAutocomplete
-            fullWidth
-            multiple
-            value={front}
-            onChange={(event, value) => setFront(value as string[])}
-            id='select-kitchen-details'
-            options={['Antejardín', 'Cemento']}
-            defaultValue={front}
-            getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Fachada' />}
-            renderTags={(value: string[], getTagProps) =>
-              value.map((option: string, index: number) => (
-                <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
-              ))
-            }
-          />
-        </Grid>
+              <Grid item xs={12} md={6}>
+                <CustomAutocomplete
+                  fullWidth
+                  multiple
+                  value={front}
+                  onChange={(event, value) => setFront(value as string[])}
+                  id='select-kitchen-details'
+                  options={
+                    comercioDataString[globalType].Externo["Fachada"].map((tipo: string) => (tipo))
+                  }
+                  defaultValue={front}
+                  getOptionLabel={option => option || ''}
+                  renderInput={params => <CustomTextField {...params} label='Fachada' />}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string, index: number) => (
+                      <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
+                    ))
+                  }
+                />
+              </Grid>
 
-        <Grid item xs={10} md={4}>
-          <CustomTextField
-            select
-            fullWidth
-            label='Energía'
-            aria-describedby='energia'
-            defaultValue=''
-          >
-            <MenuItem value=''>Selecciones vía</MenuItem>
-            <MenuItem value='Calle'>KVA</MenuItem>
-            <MenuItem value='Carrera'>Subestación</MenuItem>
-          </CustomTextField>
-        </Grid>
+              <Grid item xs={10} md={4}>
+                <CustomTextField
+                  select
+                  fullWidth
+                  label='Energía'
+                  aria-describedby='energia'
+                  defaultValue=''
+                >
+                  <MenuItem value=''>Selecciones vía</MenuItem>
+                  {
+                    comercioDataString[globalType].Externo['Energía'].map((tipo: string) => (
+                      <MenuItem value={tipo}> {tipo} </MenuItem>
+                    ))
+                  }
+                </CustomTextField>
+              </Grid>
 
-        <Grid item xs={2} md={2}>
-          <CustomTextField type='number' fullWidth label='Cantidad' disabled />
-        </Grid>
+              <Grid item xs={2} md={2}>
+                <CustomTextField type='number' fullWidth label='Cantidad' disabled />
+              </Grid>
+
+            </>
+
+            :
+
+            <>
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Cuarto útil</FormLabel>
+                  <RadioGroup row className='gap-3'>
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6} md={4}>
+                <FormControl>
+                  <FormLabel>Ladrillo a la vista</FormLabel>
+                  <RadioGroup row className='gap-3'>
+                    <FormControlLabel value='si' control={<Radio />} label='Si' />
+                    <FormControlLabel value='no' control={<Radio />} label='No' />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+            </>
+        }
 
         <Grid item xs={12} md={6}>
           <CustomTextField type='number' fullWidth label='Cantidad de niveles' />
@@ -193,7 +235,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
             value={specifications}
             onChange={(event, value) => setSpecifications(value as string[])}
             id='select-kitchen-details'
-            options={['Acceso pavimentado', 'Alarma de incendio']}
+            options={
+              comercioDataString[globalType].Externo["Otras especificaciones"].map((tipo: string) => (tipo))
+            }
             defaultValue={specifications}
             getOptionLabel={option => option || ''}
             renderInput={params => <CustomTextField {...params} label='Otras especificaciones' />}
@@ -214,25 +258,34 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
             defaultValue=''
           >
             <MenuItem value=''>Seleccione parqueadero</MenuItem>
-            <MenuItem value='Calle'>Comunal</MenuItem>
-            <MenuItem value='Carrera'>Cubierto</MenuItem>
+            {
+              comercioDataString[globalType].Externo['Parqueadero'].map((tipo: string) => (
+                <MenuItem value={tipo}> {tipo} </MenuItem>
+              ))
+            }
           </CustomTextField>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <CustomTextField
-            select
-            fullWidth
-            label='Unidad'
-            aria-describedby='unidad'
-            defaultValue=''
-          >
-            <MenuItem value=''>Seleccione unidad</MenuItem>
-            <MenuItem value='Calle'>Abierta</MenuItem>
-            <MenuItem value='Carrera'>Cerrada</MenuItem>
-          </CustomTextField>
-        </Grid>
-
+        {
+          globalType == "comercio" ?
+            <Grid item xs={12} md={6}>
+              <CustomTextField
+                select
+                fullWidth
+                label='Unidad'
+                aria-describedby='unidad'
+                defaultValue=''
+              >
+                <MenuItem value=''>Seleccione unidad</MenuItem>
+                {
+                  comercioDataString[globalType].Externo['Unidad'].map((tipo: string) => (
+                    <MenuItem value={tipo}> {tipo} </MenuItem>
+                  ))
+                }
+              </CustomTextField>
+            </Grid>
+            : null
+        }
         <Grid item xs={12} md={6}>
           <CustomAutocomplete
             fullWidth
@@ -240,7 +293,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
             value={watch}
             onChange={(event, value) => setWatch(value as string[])}
             id='select-kitchen-details'
-            options={['Portería vigilancia', 'Vigilancia 24x7']}
+            options={
+              comercioDataString[globalType].Externo["Vigilancia"].map((tipo: string) => (tipo))
+            }
             defaultValue={watch}
             getOptionLabel={option => option || ''}
             renderInput={params => <CustomTextField {...params} label='Vigilancia' />}
@@ -259,7 +314,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps }: Pro
             value={commonZones}
             onChange={(event, value) => setCommonZones(value as string[])}
             id='select-kitchen-details'
-            options={['Auditorio', 'Cafetería comunal']}
+            options={
+              comercioDataString[globalType].Externo["Zonas comunes"].map((tipo: string) => (tipo))
+            }
             defaultValue={commonZones}
             getOptionLabel={option => option || ''}
             renderInput={params => <CustomTextField {...params} label='Zonas comunes' />}

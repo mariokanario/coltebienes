@@ -1,0 +1,291 @@
+{
+    "departamentos": [
+        {
+            "nombre": "Amazonas",
+            "ciudades": [
+                "Leticia",
+                "Puerto Nariño"
+            ]
+        },
+        {
+            "nombre": "Antioquia",
+            "ciudades": [
+                "Medellín",
+                "Envigado",
+                "Bello",
+                "Itagüí"
+            ]
+        },
+        {
+            "nombre": "Arauca",
+            "ciudades": [
+                "Arauca",
+                "Arauquita",
+                "Saravena"
+            ]
+        },
+        {
+            "nombre": "Atlántico",
+            "ciudades": [
+                "Barranquilla",
+                "Soledad",
+                "Malambo",
+                "Puerto Colombia"
+            ]
+        },
+        {
+            "nombre": "Bogotá D.C.",
+            "ciudades": [
+                "Bogotá"
+            ]
+        },
+        {
+            "nombre": "Bolívar",
+            "ciudades": [
+                "Cartagena",
+                "Barranco de Loba",
+                "Arjona",
+                "El Carmen de Bolívar"
+            ]
+        },
+        {
+            "nombre": "Boyacá",
+            "ciudades": [
+                "Tunja",
+                "Duitama",
+                "Sogamoso",
+                "Chiquinquirá"
+            ]
+        },
+        {
+            "nombre": "Caldas",
+            "ciudades": [
+                "Manizales",
+                "La Dorada",
+                "Chinchiná",
+                "Risaralda"
+            ]
+        },
+        {
+            "nombre": "Caquetá",
+            "ciudades": [
+                "Florencia",
+                "San Vicente del Caguán",
+                "El Doncello"
+            ]
+        },
+        {
+            "nombre": "Casanare",
+            "ciudades": [
+                "Yopal",
+                "Aguazul",
+                "Tauramena"
+            ]
+        },
+        {
+            "nombre": "Cauca",
+            "ciudades": [
+                "Popayán",
+                "Santander de Quilichao",
+                "Cajibío",
+                "Timbío"
+            ]
+        },
+        {
+            "nombre": "Cesar",
+            "ciudades": [
+                "Valledupar",
+                "Aguachica",
+                "La Paz",
+                "Pueblo Bello"
+            ]
+        },
+        {
+            "nombre": "Chocó",
+            "ciudades": [
+                "Quibdó",
+                "Cértegui",
+                "Condoto",
+                "Istmina"
+            ]
+        },
+        {
+            "nombre": "Córdoba",
+            "ciudades": [
+                "Montería",
+                "Sahagún",
+                "Cereté",
+                "Lorica"
+            ]
+        },
+        {
+            "nombre": "Cundinamarca",
+            "ciudades": [
+                "Bogotá",
+                "Soacha",
+                "Girardot",
+                "Zipaquirá"
+            ]
+        },
+        {
+            "nombre": "Guainía",
+            "ciudades": [
+                "Inírida",
+                "Barrancominas",
+                "Mapiripana",
+                "Cacahual"
+            ]
+        },
+        {
+            "nombre": "Guaviare",
+            "ciudades": [
+                "San José del Guaviare",
+                "Calamar",
+                "El Retorno",
+                "Miraflores"
+            ]
+        },
+        {
+            "nombre": "Huila",
+            "ciudades": [
+                "Neiva",
+                "Pitalito",
+                "Garzón",
+                "Campoalegre"
+            ]
+        },
+        {
+            "nombre": "La Guajira",
+            "ciudades": [
+                "Riohacha",
+                "Maicao",
+                "Uribia",
+                "Manaure"
+            ]
+        },
+        {
+            "nombre": "Magdalena",
+            "ciudades": [
+                "Santa Marta",
+                "Ciénaga",
+                "Fundación",
+                "El Banco"
+            ]
+        },
+        {
+            "nombre": "Meta",
+            "ciudades": [
+                "Villavicencio",
+                "Acacías",
+                "Granada",
+                "Puerto López"
+            ]
+        },
+        {
+            "nombre": "Nariño",
+            "ciudades": [
+                "Pasto",
+                "Tumaco",
+                "Ipiales",
+                "La Unión"
+            ]
+        },
+        {
+            "nombre": "Norte de Santander",
+            "ciudades": [
+                "Cúcuta",
+                "Ocaña",
+                "Pamplona",
+                "Tibú"
+            ]
+        },
+        {
+            "nombre": "Putumayo",
+            "ciudades": [
+                "Mocoa",
+                "Puerto Asís",
+                "Sibundoy",
+                "Colón"
+            ]
+        },
+        {
+            "nombre": "Quindío",
+            "ciudades": [
+                "Armenia",
+                "Calarcá",
+                "Montenegro",
+                "La Tebaida"
+            ]
+        },
+        {
+            "nombre": "Risaralda",
+            "ciudades": [
+                "Pereira",
+                "Dosquebradas",
+                "La Virginia",
+                "Santuario"
+            ]
+        },
+        {
+            "nombre": "San Andrés y Providencia",
+            "ciudades": [
+                "San Andrés",
+                "Providencia"
+            ]
+        },
+        {
+            "nombre": "Santander",
+            "ciudades": [
+                "Bucaramanga",
+                "Barrancabermeja",
+                "Floridablanca",
+                "Girón"
+            ]
+        },
+        {
+            "nombre": "Sucre",
+            "ciudades": [
+                "Sincelejo",
+                "Corozal",
+                "Tolú",
+                "San Onofre"
+            ]
+        },
+        {
+            "nombre": "Tolima",
+            "ciudades": [
+                "Ibagué",
+                "Espinal",
+                "Mariquita",
+                "Chaparral"
+            ]
+        },
+        {
+            "nombre": "Valle del Cauca",
+            "ciudades": [
+                "Cali",
+                "Buenaventura",
+                "Palmira",
+                "Tuluá"
+            ]
+        },
+        {
+            "nombre": "Vaupés",
+            "ciudades": [
+                "Mitú",
+                "Caruru",
+                "Taraira",
+                "Pacoa"
+            ]
+        },
+        {
+            "nombre": "Vichada",
+            "ciudades": [
+                "Puerto Carreño",
+                "Cumaribo",
+                "La Primavera",
+                "Santa Rosalía"
+            ]
+        }
+    ]
+}

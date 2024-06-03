@@ -1,11 +1,18 @@
 // React Imports
 import { useState } from 'react'
 import type { ChangeEvent } from 'react'
+import { useProvider } from '@/components/context/Provider'
+
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import { MenuItem } from '@mui/material'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 
 // Third-party Imports
 import classnames from 'classnames'
@@ -42,6 +49,10 @@ const data: CustomInputVerticalData[] = [
 ]
 
 const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+
+
+  const { setGlobalType } = useProvider();
+
   // Vars
   const initialSelectedOption: string = data.filter(item => item.isSelected)[
     data.filter(item => item.isSelected).length - 1
@@ -55,8 +66,12 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
   const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
       setSelectedOption(prop)
+      setGlobalType(prop)
+
     } else {
       setSelectedOption((prop.target as HTMLInputElement).value)
+      setGlobalType((prop.target as HTMLInputElement).value)
+
     }
   }
 
@@ -82,32 +97,24 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
         )
       })}
       <Grid item xs={12} md={6}>
-        <CustomTextField fullWidth label='Medio de captación' placeholder='Medio' />
+        <CustomTextField fullWidth label='Nombre del propietario' placeholder='Nombre' />
       </Grid>
       <Grid item xs={12} md={6}>
-        <AppReactDatepicker
-          selected={date}
-          placeholderText='YYYY-MM-DD'
-          dateFormat={'yyyy-MM-dd'}
-          onChange={(date: Date) => setDate(date)}
-          customInput={<CustomTextField fullWidth label='Fecha' />}
-        />
+        <CustomTextField fullWidth label='Celular del propietario' placeholder='Celular' />
       </Grid>
       <Grid item xs={12} md={6}>
-        <CustomTextField select fullWidth label='Tipo de inmueble' id='validation-property-select' defaultValue=''>
-          <MenuItem value='bodega'>Bodega</MenuItem>
-          <MenuItem value='local'>Local</MenuItem>
-          <MenuItem value='lote'>Lote</MenuItem>
-          <MenuItem value='oficina'>Oficina</MenuItem>
-        </CustomTextField>
+        <CustomTextField fullWidth label='Correo del propietario' placeholder='Correo' />
       </Grid>
       <Grid item xs={12} md={6}>
-        <CustomTextField select fullWidth label='Encargo' id='validation-property-charge' defaultValue=''>
-          <MenuItem value='arriendo'>Arriendo</MenuItem>
-          <MenuItem value='arriendo-venta'>Arriendo/Venta</MenuItem>
-          <MenuItem value='venta'>Venta</MenuItem>
-        </CustomTextField>
+        <FormControl>
+          <FormLabel>¿Autoriza publicar en portales?</FormLabel>
+          <RadioGroup row className='gap-2'>
+            <FormControlLabel value='si' control={<Radio />} label='Si' />
+            <FormControlLabel value='no' control={<Radio />} label='No' />
+          </RadioGroup>
+        </FormControl>
       </Grid>
+
 
       <Grid item xs={12}>
         <div className='flex items-center justify-between'>
