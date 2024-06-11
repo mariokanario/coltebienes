@@ -1,30 +1,25 @@
 // React Imports
-import { useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { useProvider } from '@/components/context/Provider'
-
 
 // MUI Imports
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
-import { MenuItem } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormLabel from '@mui/material/FormLabel'
+import FormHelperText from '@mui/material/FormHelperText'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 
-// Third-party Imports
-import classnames from 'classnames'
+import * as yup from "yup";
+import { useFormik } from "formik";
 
-// Type Imports
-import type { CustomInputVerticalData } from '@core/components/custom-inputs/types'
 
 // Component Imports
 import CustomInputVertical from '@core/components/custom-inputs/Vertical'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
 
 type Props = {
   activeStep: number
@@ -33,117 +28,173 @@ type Props = {
   steps: { title: string; subtitle: string }[]
 }
 
-// Vars
-const data: CustomInputVerticalData[] = [
-  {
-    title: 'Comercio',
-    value: 'comercio',
-    asset: 'tabler-building',
-    isSelected: true
-  },
-  {
-    title: 'Vivienda',
-    value: 'vivienda',
-    asset: 'tabler-home-2'
-  }
-]
+
+const Schema = yup
+  .object({
+    name: yup
+      .string()
+      .required("El nombre es obligatorio")
+      .min(5, "El nombre debe tener mínimo 5 letras"),
+    cellphone: yup
+      .string()
+      .required("El teléfono es obligatorio")
+      .min(5, "El teléfono debe de tener mínimo 5 letras")
+      .typeError("El teléfono es obligatorio"),
+    email: yup
+      .string()
+      .required("El correo es obligatorio")
+      .min(5, "El correo debe de tener mínimo 5 letras")
+      .email("Ingresa un correo válido"),
+    authorization: yup
+      .string()
+      .required("Seleccione una opción")
+  })
+  .required();
 
 const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
 
-
-  const { setGlobalType } = useProvider();
-
-  // Vars
-  const initialSelectedOption: string = data.filter(item => item.isSelected)[
-    data.filter(item => item.isSelected).length - 1
-  ].value
-
-  // States
-  const [selectedOption, setSelectedOption] = useState<string>(initialSelectedOption)
-  const [date, setDate] = useState<Date | null | undefined>(null)
-
+  const { globalType, setGlobalType } = useProvider();
 
   const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
     if (typeof prop === 'string') {
-      setSelectedOption(prop)
       setGlobalType(prop)
 
     } else {
-      setSelectedOption((prop.target as HTMLInputElement).value)
       setGlobalType((prop.target as HTMLInputElement).value)
 
     }
   }
 
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      cellphone: "",
+      email: "",
+      authorization: "",
+    },
+    validationSchema: Schema,
+    onSubmit: (data) => {
+      console.log(data);
+      handleNext();
+    },
+  });
+
+  const { name, cellphone, email, authorization } = formik.values;
+
+
   return (
-    <Grid container spacing={6}>
-      {data.map((item, index) => {
-        let asset
+    <form onSubmit={formik.handleSubmit}>
+      <Grid container spacing={6}>
 
-        if (item.asset && typeof item.asset === 'string') {
-          asset = <i className={classnames(item.asset, 'text-[28px]')} />
-        }
+        <CustomInputVertical
+          type='radio'
+          gridProps={{ sm: 6, xs: 12 }}
+          selected={globalType}
+          name='custom-radios-basic'
+          handleChange={handleOptionChange}
+          data={{
+            asset: <i className='tabler-building text-[28px]' />,
+            value: 'comercio',
+            title: 'Comercio'
+          }}
+        />
 
-        return (
-          <CustomInputVertical
-            type='radio'
-            key={index}
-            gridProps={{ sm: 6, xs: 12 }}
-            selected={selectedOption}
-            name='custom-radios-basic'
-            handleChange={handleOptionChange}
-            data={typeof item.asset === 'string' ? { ...item, asset } : item}
+        <CustomInputVertical
+          type='radio'
+          gridProps={{ sm: 6, xs: 12 }}
+          selected={globalType}
+          name='custom-radios-basic'
+          handleChange={handleOptionChange}
+          data={{
+            asset: <i className='tabler-home-2 text-[28px]' />,
+            value: 'vivienda',
+            title: 'Vivienda'
+          }}
+        />
+
+        <Grid item xs={12} md={6}>
+          <CustomTextField
+            fullWidth
+            label='Nombre del propietario'
+            placeholder='Nombre'
+            id="name"
+            value={name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.name && formik.errors.name ? formik.errors.name : ''}
+            error={formik.touched.name && Boolean(formik.errors.name)}
           />
-        )
-      })}
-      <Grid item xs={12} md={6}>
-        <CustomTextField fullWidth label='Nombre del propietario' placeholder='Nombre' />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <CustomTextField fullWidth label='Celular del propietario' placeholder='Celular' />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <CustomTextField fullWidth label='Correo del propietario' placeholder='Correo' />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <FormControl>
-          <FormLabel>¿Autoriza publicar en portales?</FormLabel>
-          <RadioGroup row className='gap-2'>
-            <FormControlLabel value='si' control={<Radio />} label='Si' />
-            <FormControlLabel value='no' control={<Radio />} label='No' />
-          </RadioGroup>
-        </FormControl>
-      </Grid>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CustomTextField
+            fullWidth
+            label='Celular del propietario'
+            placeholder='Celular'
+            id="cellphone"
+            value={cellphone}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.cellphone && formik.errors.cellphone ? formik.errors.cellphone : ''}
+            error={formik.touched.cellphone && Boolean(formik.errors.cellphone)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CustomTextField
+            fullWidth
+            label='Correo del propietario'
+            placeholder='Correo'
+            id="email"
+            value={email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.email && formik.errors.email ? formik.errors.email : ''}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <FormControl error={formik.touched.authorization && Boolean(formik.errors.authorization)}>
+            <FormLabel>¿Autoriza publicar en portales?</FormLabel>
+            <RadioGroup
+              row className='gap-2'
+              name="authorization"
+              value={formik.values.authorization}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            >
+              <FormControlLabel value='si' control={<Radio />} label='Si' />
+              <FormControlLabel value='no' control={<Radio />} label='No' />
+            </RadioGroup>
+            {formik.touched.authorization && formik.errors.authorization && (
+              <FormHelperText>{formik.errors.authorization}</FormHelperText>
+            )}
+          </FormControl>
+        </Grid>
 
 
-      <Grid item xs={12}>
-        <div className='flex items-center justify-between'>
-          <Button
-            variant='tonal'
-            color='secondary'
-            disabled={activeStep === 0}
-            onClick={handlePrev}
-            startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant='contained'
-            color={activeStep === steps.length - 1 ? 'success' : 'primary'}
-            onClick={handleNext}
-            endIcon={
-              activeStep === steps.length - 1 ? (
-                <i className='tabler-check' />
-              ) : (
-                <DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
-              )
-            }
-          >
-            {activeStep === steps.length - 1 ? 'Submit' : 'Siguiente'}
-          </Button>
-        </div>
+        <Grid item xs={12}>
+          <div className='flex items-center justify-between'>
+            <Button
+              variant='tonal'
+              color='secondary'
+              disabled={activeStep === 0}
+              onClick={handlePrev}
+              startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant='contained'
+              color={activeStep === steps.length - 1 ? 'success' : 'primary'}
+              type='submit'
+              endIcon={<DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
+              }
+            >
+              Siguiente
+            </Button>
+          </div>
+        </Grid>
       </Grid>
-    </Grid>
+    </form>
   )
 }
 
