@@ -12,7 +12,6 @@ import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
-import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import TablePagination from '@mui/material/TablePagination'
@@ -39,7 +38,7 @@ import type { RankingInfo } from '@tanstack/match-sorter-utils'
 
 // Type Imports
 import type { ThemeColor } from '@core/types'
-import type { UsersType } from '@/types/apps/userTypes'
+import type { PropertiesType } from '@/types/apps/propertyTypes'
 
 
 // Component Imports
@@ -50,11 +49,10 @@ import TablePaginationComponent from '@components/TablePaginationComponent'
 import CustomTextField from '@core/components/mui/TextField'
 import CustomAvatar from '@core/components/mui/Avatar'
 
-// Util Imports
-import { getInitials } from '@/utils/getInitials'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
+import Link from 'next/link'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -65,7 +63,7 @@ declare module '@tanstack/table-core' {
   }
 }
 
-type UsersTypeWithAction = UsersType & {
+type PropertiesTypeWithAction = PropertiesType & {
   action?: string
 }
 
@@ -77,8 +75,6 @@ type UserStatusType = {
   [key: string]: ThemeColor
 }
 
-// Styled Components
-const Icon = styled('i')({})
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item
@@ -132,15 +128,14 @@ const userRoleObj: UserRoleType = {
 }
 
 const userStatusObj: UserStatusType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+  publicado: 'success',
+  inactivo: 'warning'
 }
 
 // Column Definitions
-const columnHelper = createColumnHelper<UsersTypeWithAction>()
+const columnHelper = createColumnHelper<PropertiesTypeWithAction>()
 
-const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
+const PropertyListTable = ({ tableData }: { tableData?: PropertiesType[] }) => {
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
@@ -148,74 +143,65 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
   const [data, setData] = useState(...[tableData])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  // console.log(tableData);
 
 
-  const columns = useMemo<ColumnDef<UsersTypeWithAction, any>[]>(
+  const columns = useMemo<ColumnDef<PropertiesTypeWithAction, any>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
-      columnHelper.accessor('fullName', {
-        header: 'User',
+
+      columnHelper.accessor('code', {
+        header: 'Código',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+
             <div className='flex flex-col'>
               <Typography color='text.primary' className='font-medium'>
-                {row.original.fullName}
+                {row.original.code}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
+              <Typography variant='body2'>{row.original.quality}</Typography>
             </div>
           </div>
         )
       }),
-      columnHelper.accessor('role', {
-        header: 'Role',
+      columnHelper.accessor('type', {
+        header: 'Tipo',
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
-            <Icon
-              className={userRoleObj[row.original.role].icon}
-              sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)` }}
-            />
+            <div className={` ${row.original.type == 'casa' ? 'bg-blue-200' : 'bg-orange-200'}  rounded-full p-2 d-flex w-[40px] h-[40px]`}>
+              <i className={` ${row.original.type == 'casa' ? 'tabler-home-2' : 'tabler-building'}  text-[22px]`} />
+            </div>
             <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
+              {row.original.type}
             </Typography>
           </div>
         )
       }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
+      columnHelper.accessor('charge', {
+        header: 'Cargo',
         cell: ({ row }) => (
           <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
+            {row.original.charge}
           </Typography>
         )
       }),
-      columnHelper.accessor('billing', {
-        header: 'Billing',
-        cell: ({ row }) => <Typography>{row.original.billing}</Typography>
+      columnHelper.accessor('canyon', {
+        header: 'Canon',
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {row.original.canyon}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('salevalue', {
+        header: 'Precio venta',
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {row.original.salevalue}
+          </Typography>
+        )
       }),
       columnHelper.accessor('status', {
-        header: 'Status',
+        header: 'Estado',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <Chip
@@ -228,12 +214,38 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
           </div>
         )
       }),
+      columnHelper.accessor('neighborhood', {
+        header: 'Barrio',
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {row.original.neighborhood}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('addressbuild', {
+        header: 'Dirección',
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {row.original.addressbuild}
+          </Typography>
+        )
+      }),
+      columnHelper.accessor('adviser', {
+        header: 'Asesor',
+        cell: ({ row }) => (
+          <Typography className='capitalize' color='text.primary'>
+            {row.original.adviser}
+          </Typography>
+        )
+      }),
       columnHelper.accessor('action', {
-        header: 'Action',
-        cell: () => (
+        header: 'Acción',
+        cell: ({ row }) => (
           <div className='flex items-center'>
             <IconButton>
-              <i className='tabler-trash text-[22px] text-textSecondary' />
+              <Link href={`propertiesDetail/${row.original.id}`}>
+                <i className='tabler-eye-plus text-[22px] text-textSecondary' />
+              </Link>
             </IconButton>
             <IconButton>
               {/* <Link href={getLocalizedUrl('apps/user/view', locale as Locale)} className='flex'>
@@ -244,14 +256,19 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
               iconClassName='text-[22px] text-textSecondary'
               options={[
                 {
-                  text: 'Download',
-                  icon: 'tabler-download text-[22px]',
+                  text: 'Activar / Desactivar',
+                  icon: 'tabler-arrows-diff text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
                 },
                 {
-                  text: 'Edit',
-                  icon: 'tabler-edit text-[22px]',
+                  text: 'Pasar a propiedad',
+                  icon: 'tabler-home-move text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                },
+                {
+                  text: 'Eliminar',
+                  icon: 'tabler-trash text-[22px]',
+                  menuItemProps: { className: 'flex items-center gap-2  text-red-500' }
                 }
               ]}
             />
@@ -265,7 +282,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
   )
 
   const table = useReactTable({
-    data: data as UsersType[],
+    data: data as PropertiesType[],
     columns,
     filterFns: {
       fuzzy: fuzzyFilter
@@ -293,20 +310,12 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  const getAvatar = (params: Pick<UsersType, 'avatar' | 'fullName'>) => {
-    const { avatar, fullName } = params
 
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={34} />
-    } else {
-      return <CustomAvatar size={34}>{getInitials(fullName as string)}</CustomAvatar>
-    }
-  }
 
   return (
     <>
       <Card>
-        <CardHeader title='Filters' className='pbe-4' />
+        <CardHeader title='Filtros' className='pbe-4' />
         <TableFilters setData={setData} tableData={tableData} />
         <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
           <CustomTextField
@@ -319,30 +328,20 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
             <MenuItem value='25'>25</MenuItem>
             <MenuItem value='50'>50</MenuItem>
           </CustomTextField>
-          <div className='flex flex-col sm:flex-row is-full sm:is-auto items-start sm:items-center gap-4'>
-            <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search User'
-              className='is-full sm:is-auto'
-            />
-            <Button
-              color='secondary'
-              variant='tonal'
-              startIcon={<i className='tabler-upload' />}
-              className='is-full sm:is-auto'
-            >
-              Export
-            </Button>
-            <Button
-              variant='contained'
-              startIcon={<i className='tabler-plus' />}
-              onClick={() => setAddUserOpen(!addUserOpen)}
-              className='is-full sm:is-auto'
-            >
-              Add New User
-            </Button>
-          </div>
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onChange={value => setGlobalFilter(String(value))}
+            placeholder='Buscar por palabra clave'
+            className='is-full sm:is-auto lg:w-[500px]'
+          />
+          <Button
+            variant='contained'
+            startIcon={<i className='tabler-plus' />}
+            onClick={() => setAddUserOpen(!addUserOpen)}
+            className='is-full sm:is-auto'
+          >
+            Crear nueva captación
+          </Button>
         </div>
         <div className='overflow-x-auto'>
           <table className={tableStyles.table}>
@@ -377,7 +376,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
               <tbody>
                 <tr>
                   <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
-                    No data available
+                    No hay datos disponibles
                   </td>
                 </tr>
               </tbody>
@@ -414,4 +413,4 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
   )
 }
 
-export default UserListTable
+export default PropertyListTable

@@ -318,7 +318,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                       e.target.value != '' ? setAmountEnergyActive(true) : setAmountEnergyActive(false)
                     }}
                   >
-                    <MenuItem value=''>Selecciones vía</MenuItem>
+                    <MenuItem value=''>Seleccione vía</MenuItem>
                     {
                       comercioDataString[globalType].Externo['Energía'].map((tipo: string) => (
                         <MenuItem value={tipo}> {tipo} </MenuItem>

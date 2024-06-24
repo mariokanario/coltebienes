@@ -1,5 +1,5 @@
 // Component Imports
-import UserList from '@views/user/list'
+import PropertyList from '@views/property/list'
 
 const getData = async () => {
   // Vars
@@ -16,7 +16,10 @@ const PropertyListApp = async () => {
   // Vars
   const data = await getData()
 
-  return <UserList userData={data} />
+  // console.log(data);
+
+
+  return <PropertyList propertyData={data} />
 }
 
 export default PropertyListApp

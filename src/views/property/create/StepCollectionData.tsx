@@ -196,14 +196,10 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props
 
   useEffect(() => {
     const newCombinedString = Object.values(address).join(' ');
-    setCombinedString(newCombinedString);
-    // addresFunction()
+    formik.setValues({ ...formik.values, addressbuild: newCombinedString }, false);
+    // setCombinedString(newCombinedString);
+
   }, [address]);
-
-  const addresFunction = () => {
-    const adval = Object.values(address).some(item => item !== "")
-
-  }
 
 
   return (
@@ -292,7 +288,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props
               inputProps={{ readOnly: true }}
               // defaultValue={combinedString}
               id="addressbuild"
-              value={combinedString}
+              value={addressbuild}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               helperText={!(Object.values(address).some(item => item !== "")) ? formik.errors.addressbuild : ''}
@@ -310,7 +306,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props
               name='input1'
               onChange={handleAddress}
             >
-              <MenuItem value=''>Selecciones vía</MenuItem>
+              <MenuItem value=''>Seleccione vía</MenuItem>
               <MenuItem value='Calle'>Calle</MenuItem>
               <MenuItem value='Carrera'>Carrera</MenuItem>
               <MenuItem value='Circular'>Circular</MenuItem>
@@ -694,7 +690,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props
               placeholderText='YYYY-MM-DD'
               dateFormat={'yyyy-MM-dd'}
               id="yearconstruction"
-              value={formik.values.yearconstruction || ''}
+              value={new Date(formik.values.yearconstruction).toLocaleDateString() || ''}
               onChange={(date: Date | null) => {
                 formik.setFieldValue('yearconstruction', date ? date.toISOString() : null);
                 setDate(date);

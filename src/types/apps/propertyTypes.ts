@@ -3,16 +3,14 @@ import type { ThemeColor } from '@core/types'
 
 export type PropertiesType = {
   id: number
-  role: string
-  email: string
+  code: string
+  quality: string
+  type: string
+  charge: string
   status: string
-  avatar: string
-  company: string
-  country: string
-  contact: string
-  fullName: string
-  username: string
-  currentPlan: string
-  avatarColor?: ThemeColor
-  billing: string
+  canyon: string
+  salevalue: string
+  neighborhood: string
+  addressbuild: string
+  adviser: string
 }
