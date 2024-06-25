@@ -55,8 +55,11 @@ const LoginV2 = () => {
   useEffect(() => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
+
     return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+
+  });
+
 
 
   return (

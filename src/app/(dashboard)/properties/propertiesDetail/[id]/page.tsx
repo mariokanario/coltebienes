@@ -1,6 +1,7 @@
 'use client'
 
 import { useParams } from 'next/navigation';
+
 import PropertyDetail from '@/views/property/detail';
 
 const DetailPage = () => {
