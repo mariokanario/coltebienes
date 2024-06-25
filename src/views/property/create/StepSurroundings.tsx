@@ -1,28 +1,28 @@
 // React Imports
-import { useState } from 'react'
-import { useProvider } from '@/components/context/Provider';
+import { useState } from 'react';
 
-
-// MUI Imports
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-
+// Third-party Imports
 import * as yup from "yup";
 import { useFormik } from "formik";
 
-
-// Component Imports
-import CustomTextField from '@core/components/mui/TextField'
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
-import DirectionalIcon from '@components/DirectionalIcon'
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
-import FormHelperText from '@mui/material/FormHelperText'
+// MUI Imports
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 
+// Component Imports
+import { useProvider } from '@/components/context/Provider';
+import CustomTextField from '@core/components/mui/TextField';
+import CustomAutocomplete from '@core/components/mui/Autocomplete';
+import DirectionalIcon from '@components/DirectionalIcon';
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
 
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
-const comercioDataString = comercioData as Record<string, any>
+// JSON Imports
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+const comercioDataString = comercioData as Record<string, any>;
+
 
 type Props = {
   activeStep: number

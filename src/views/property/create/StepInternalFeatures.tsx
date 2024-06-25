@@ -1,31 +1,33 @@
 // React Imports
-import { useState } from 'react'
-import { useProvider } from '@/components/context/Provider';
-import * as yup from "yup";
-import { useFormik } from "formik";
+import { useState } from 'react';
+
+// Third-party Imports
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 // MUI Imports
-import Grid from '@mui/material/Grid'
-import FormControl from '@mui/material/FormControl'
-import MenuItem from '@mui/material/MenuItem'
-import FormLabel from '@mui/material/FormLabel'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Chip from '@mui/material/Chip'
-import InputAdornment from '@mui/material/InputAdornment'
-
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Chip from '@mui/material/Chip';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormHelperText from '@mui/material/FormHelperText';
 
 // Component Imports
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
-import CustomTextField from '@core/components/mui/TextField'
-import DirectionalIcon from '@components/DirectionalIcon'
-import FormHelperText from '@mui/material/FormHelperText'
+import { useProvider } from '@/components/context/Provider';
+import CustomAutocomplete from '@core/components/mui/Autocomplete';
+import CustomTextField from '@core/components/mui/TextField';
+import DirectionalIcon from '@components/DirectionalIcon';
 
+// JSON Imports
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+const comercioDataString = comercioData as Record<string, any>;
 
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
-const comercioDataString = comercioData as Record<string, any>
 
 type Props = {
   activeStep: number
@@ -138,7 +140,7 @@ const StepInternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <MenuItem value=''>Seleccione acabados cubierta</MenuItem>
             {
               comercioDataString[globalType].Interno['Acabados cubierta'].map((tipo: string) => (
-                <MenuItem value={tipo}> {tipo} </MenuItem>
+                <MenuItem key={tipo} value={tipo}> {tipo} </MenuItem>
               ))
             }
           </CustomTextField>
@@ -513,7 +515,7 @@ const StepInternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   <MenuItem value=''>Seleccione estado</MenuItem>
                   {
                     comercioDataString[globalType].Interno['Energía'].map((tipo: string) => (
-                      <MenuItem value={tipo}> {tipo} </MenuItem>
+                      <MenuItem key={tipo} value={tipo}> {tipo} </MenuItem>
                     ))
                   }
                 </CustomTextField>
@@ -560,7 +562,7 @@ const StepInternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   <MenuItem value=''>Seleccione tipo de bodega</MenuItem>
                   {
                     comercioDataString[globalType].Interno['Tipo de bodega'].map((tipo: string) => (
-                      <MenuItem value={tipo}> {tipo} </MenuItem>
+                      <MenuItem key={tipo} value={tipo}> {tipo} </MenuItem>
                     ))
                   }
                 </CustomTextField>
@@ -583,7 +585,7 @@ const StepInternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <MenuItem value=''>Seleccione tipo de pisos</MenuItem>
             {
               comercioDataString[globalType].Interno['Pisos'].map((tipo: string) => (
-                <MenuItem value={tipo}> {tipo} </MenuItem>
+                <MenuItem key={tipo} value={tipo}> {tipo} </MenuItem>
               ))
             }
           </CustomTextField>

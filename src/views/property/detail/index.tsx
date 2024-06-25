@@ -19,7 +19,7 @@ import 'swiper/css';
 import 'swiper/css/autoplay';
 
 
-const PropertyDetail = ({ propertyData }: { propertyData?: PropertiesType[] }) => {
+const PropertyDetail = () => {
     return (
         <Grid container spacing={6}>
 

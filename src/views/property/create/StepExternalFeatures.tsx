@@ -1,26 +1,32 @@
-import { useState } from 'react'
-import { useProvider } from '@/components/context/Provider';
-import * as yup from "yup";
-import { useFormik } from "formik";
+// React Imports
+import { useState } from 'react';
+
+// Third-party Imports
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 // MUI Imports
-import Grid from '@mui/material/Grid'
-import FormControl from '@mui/material/FormControl'
-import MenuItem from '@mui/material/MenuItem'
-import FormLabel from '@mui/material/FormLabel'
-import Radio from '@mui/material/Radio'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import RadioGroup from '@mui/material/RadioGroup'
-import Chip from '@mui/material/Chip'
-import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import MenuItem from '@mui/material/MenuItem';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import RadioGroup from '@mui/material/RadioGroup';
+import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 
 // Component Imports
-import CustomTextField from '@core/components/mui/TextField'
-import DirectionalIcon from '@components/DirectionalIcon'
-import CustomAutocomplete from '@core/components/mui/Autocomplete'
+import { useProvider } from '@/components/context/Provider';
+import CustomTextField from '@core/components/mui/TextField';
+import DirectionalIcon from '@components/DirectionalIcon';
+import CustomAutocomplete from '@core/components/mui/Autocomplete';
 
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
-const comercioDataString = comercioData as Record<string, any>
+// JSON Imports
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+
+const comercioDataString = comercioData as Record<string, any>;
+
 
 
 type Props = {
@@ -320,8 +326,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   >
                     <MenuItem value=''>Seleccione vía</MenuItem>
                     {
-                      comercioDataString[globalType].Externo['Energía'].map((tipo: string) => (
-                        <MenuItem value={tipo}> {tipo} </MenuItem>
+                      comercioDataString[globalType].Externo['Energía'].map((tipo: string, index: number) => (
+                        <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
                       ))
                     }
                   </CustomTextField>
@@ -455,8 +461,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             >
               <MenuItem value=''>Seleccione parqueadero</MenuItem>
               {
-                comercioDataString[globalType].Externo['Parqueadero'].map((tipo: string) => (
-                  <MenuItem value={tipo}> {tipo} </MenuItem>
+                comercioDataString[globalType].Externo['Parqueadero'].map((tipo: string, index: number) => (
+                  <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
                 ))
               }
             </CustomTextField>
@@ -478,8 +484,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                 >
                   <MenuItem value=''>Seleccione unidad</MenuItem>
                   {
-                    comercioDataString[globalType].Externo['Unidad'].map((tipo: string) => (
-                      <MenuItem value={tipo}> {tipo} </MenuItem>
+                    comercioDataString[globalType].Externo['Unidad'].map((tipo: string, index: number) => (
+                      <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
                     ))
                   }
                 </CustomTextField>

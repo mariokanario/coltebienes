@@ -115,7 +115,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
     input9: '',
     input10: ''
   });
-  const [combinedString, setCombinedString] = useState<string>('');
 
   const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   const coordinates = ['Este', 'Norte', 'Oeste', 'Sur']
@@ -197,8 +196,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
   useEffect(() => {
     const newCombinedString = Object.values(address).join(' ');
     formik.setValues({ ...formik.values, addressbuild: newCombinedString }, false);
-    // setCombinedString(newCombinedString);
-
   }, [address]);
 
 
@@ -286,7 +283,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               label='Dirección'
               placeholder='La dirección se completará una vez diligencie los campos de este formulario'
               inputProps={{ readOnly: true }}
-              // defaultValue={combinedString}
               id="addressbuild"
               value={addressbuild}
               onChange={formik.handleChange}
@@ -338,7 +334,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 alphabet.map((a: string) =>
-                  <MenuItem value={a}>{a}</MenuItem>
+                  <MenuItem key={a} value={a}>{a}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -358,7 +354,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 alphabet.map((a: string) =>
-                  <MenuItem value={a}>{a}</MenuItem>
+                  <MenuItem key={a} value={a}>{a}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -377,7 +373,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 coordinates.map((c: string) =>
-                  <MenuItem value={c}>{c}</MenuItem>
+                  <MenuItem key={c} value={c}>{c}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -407,7 +403,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 alphabet.map((a: string) =>
-                  <MenuItem value={a}>{a}</MenuItem>
+                  <MenuItem key={a} value={a}>{a}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -426,7 +422,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 alphabet.map((a: string) =>
-                  <MenuItem value={a}>{a}</MenuItem>
+                  <MenuItem key={a} value={a}>{a}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -445,7 +441,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <MenuItem value=''></MenuItem>
               {
                 coordinates.map((c: string) =>
-                  <MenuItem value={c}>{c}</MenuItem>
+                  <MenuItem key={c} value={c}>{c}</MenuItem>
                 )
               }
             </CustomTextField>
@@ -495,8 +491,8 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               helperText={formik.touched.propertytype && formik.errors.propertytype ? formik.errors.propertytype : ''}
               error={formik.touched.propertytype && Boolean(formik.errors.propertytype)}
             >
-              {comercioDataString[globalType].Datos['Tipo de inmueble'].map((tipo: string) => (
-                <MenuItem value={tipo}> {tipo} </MenuItem>
+              {comercioDataString[globalType].Datos['Tipo de inmueble'].map((tipo: string, index: number) => (
+                <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
               ))}
 
             </CustomTextField>
@@ -518,8 +514,8 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
                   helperText={formik.touched.destination && formik.errors.destination ? formik.errors.destination : ''}
                   error={formik.touched.destination && Boolean(formik.errors.destination)}
                 >
-                  {comercioDataString[globalType].Datos['Destinacion'].map((tipo: string) => (
-                    <MenuItem value={tipo}> {tipo} </MenuItem>
+                  {comercioDataString[globalType].Datos['Destinacion'].map((tipo: string, index: number) => (
+                    <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
                   ))}
                 </CustomTextField>
               </Grid>
@@ -541,8 +537,8 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               helperText={formik.touched.charge && formik.errors.charge ? formik.errors.charge : ''}
               error={formik.touched.charge && Boolean(formik.errors.charge)}
             >
-              {comercioDataString[globalType].Datos['Encargo'].map((tipo: string) => (
-                <MenuItem value={tipo}> {tipo} </MenuItem>
+              {comercioDataString[globalType].Datos['Encargo'].map((tipo: string, index: number) => (
+                <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
               ))}
             </CustomTextField>
           </Grid>

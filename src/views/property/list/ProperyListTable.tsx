@@ -1,27 +1,23 @@
 'use client'
 
 // React Imports
-import { useEffect, useState, useMemo } from 'react'
-import Link from 'next/link'
-
-
-// Next Imports
-
+import { useEffect, useState, useMemo } from 'react';
+import Link from 'next/link';
 
 // MUI Imports
-import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import Chip from '@mui/material/Chip'
-import IconButton from '@mui/material/IconButton'
-import TablePagination from '@mui/material/TablePagination'
-import type { TextFieldProps } from '@mui/material/TextField'
-import MenuItem from '@mui/material/MenuItem'
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import TablePagination from '@mui/material/TablePagination';
+import type { TextFieldProps } from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 
 // Third-party Imports
-import classnames from 'classnames'
-import { rankItem } from '@tanstack/match-sorter-utils'
+import classnames from 'classnames';
+import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   createColumnHelper,
   flexRender,
@@ -33,25 +29,24 @@ import {
   getFacetedMinMaxValues,
   getPaginationRowModel,
   getSortedRowModel
-} from '@tanstack/react-table'
-import type { ColumnDef, FilterFn } from '@tanstack/react-table'
-import type { RankingInfo } from '@tanstack/match-sorter-utils'
+} from '@tanstack/react-table';
+import type { ColumnDef, FilterFn } from '@tanstack/react-table';
+import type { RankingInfo } from '@tanstack/match-sorter-utils';
 
 // Type Imports
-import type { ThemeColor } from '@core/types'
-import type { PropertiesType } from '@/types/apps/propertyTypes'
-
+import type { ThemeColor } from '@core/types';
+import type { PropertiesType } from '@/types/apps/propertyTypes';
 
 // Component Imports
-import TableFilters from './TableFilters'
-import AddUserDrawer from './AddUserDrawer'
-import OptionMenu from '@core/components/option-menu'
-import TablePaginationComponent from '@components/TablePaginationComponent'
-import CustomTextField from '@core/components/mui/TextField'
-
+import TableFilters from './TableFilters';
+import AddUserDrawer from './AddUserDrawer';
+import OptionMenu from '@core/components/option-menu';
+import TablePaginationComponent from '@components/TablePaginationComponent';
+import CustomTextField from '@core/components/mui/TextField';
 
 // Style Imports
-import tableStyles from '@core/styles/table.module.css'
+import tableStyles from '@core/styles/table.module.css';
+
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -66,9 +61,6 @@ type PropertiesTypeWithAction = PropertiesType & {
   action?: string
 }
 
-type UserRoleType = {
-  [key: string]: { icon: string; color: string }
-}
 
 type UserStatusType = {
   [key: string]: ThemeColor
@@ -117,14 +109,6 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-// Vars
-const userRoleObj: UserRoleType = {
-  admin: { icon: 'tabler-crown', color: 'error' },
-  author: { icon: 'tabler-device-desktop', color: 'warning' },
-  editor: { icon: 'tabler-edit', color: 'info' },
-  maintainer: { icon: 'tabler-chart-pie', color: 'success' },
-  subscriber: { icon: 'tabler-user', color: 'primary' }
-}
 
 const userStatusObj: UserStatusType = {
   publicado: 'success',
