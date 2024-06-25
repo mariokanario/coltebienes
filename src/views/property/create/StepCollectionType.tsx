@@ -1,25 +1,26 @@
 // React Imports
-import type { ChangeEvent } from 'react'
-import { useProvider } from '@/components/context/Provider'
+import type { ChangeEvent } from 'react';
+
+// Third-party Imports
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 // MUI Imports
-import Grid from '@mui/material/Grid'
-import Button from '@mui/material/Button'
-import FormControl from '@mui/material/FormControl'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormLabel from '@mui/material/FormLabel'
-import FormHelperText from '@mui/material/FormHelperText'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-
-import * as yup from "yup";
-import { useFormik } from "formik";
-
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 
 // Component Imports
-import CustomInputVertical from '@core/components/custom-inputs/Vertical'
-import DirectionalIcon from '@components/DirectionalIcon'
-import CustomTextField from '@core/components/mui/TextField'
+import { useProvider } from '@/components/context/Provider';
+import CustomInputVertical from '@core/components/custom-inputs/Vertical';
+import DirectionalIcon from '@components/DirectionalIcon';
+import CustomTextField from '@core/components/mui/TextField';
+
 
 type Props = {
   activeStep: number
@@ -79,7 +80,7 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
     },
   });
 
-  const { name, cellphone, email, authorization } = formik.values;
+  const { name, cellphone, email } = formik.values;
 
 
   return (

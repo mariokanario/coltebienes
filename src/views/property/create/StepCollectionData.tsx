@@ -1,31 +1,34 @@
 // React Imports
-import { useEffect, useState, ChangeEvent } from 'react'
-import { useProvider } from '@/components/context/Provider';
+import { useEffect, useState, ChangeEvent } from 'react';
 
-// MUI IMports
-import Grid from '@mui/material/Grid'
-import MenuItem from '@mui/material/MenuItem'
-import Button from '@mui/material/Button'
-import InputAdornment from '@mui/material/InputAdornment'
-import FormControl from '@mui/material/FormControl'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormLabel from '@mui/material/FormLabel'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormHelperText from '@mui/material/FormHelperText'
+// Third-party Imports
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
-import * as yup from "yup";
-import { useFormik } from "formik";
-
+// MUI Imports
+import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormHelperText from '@mui/material/FormHelperText';
 
 // Component Imports
-import CustomTextField from '@core/components/mui/TextField'
-import DirectionalIcon from '@components/DirectionalIcon'
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
+import { useProvider } from '@/components/context/Provider';
+import CustomTextField from '@core/components/mui/TextField';
+import DirectionalIcon from '@components/DirectionalIcon';
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
 
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
-import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json'
-const comercioDataString = comercioData as Record<string, any>
+// JSON Imports
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json';
+
+const comercioDataString = comercioData as Record<string, any>;
+
 
 type Props = {
   activeStep: number
@@ -100,7 +103,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
   const [date, setDate] = useState<Date | null | undefined>(null)
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [cities, setCities] = useState<string[]>([]);
-  const [selectedCity, setSelectedCity] = useState<string>('');
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild;
 
   const [address, setAddress] = useState<InputValues>({
@@ -121,6 +123,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
 
   const handleAddress = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setAddress(prevState => ({
       ...prevState,
       [name]: value
@@ -186,17 +189,19 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
     const department: Department | undefined = colombiaData.departamentos.find(
       (dept: Department) => dept.nombre === selectedDepartment
     );
+
     if (department) {
       setCities(department.ciudades);
     } else {
       setCities([]);
     }
-  }, [selectedDepartment]);
+  }, [selectedDepartment, formik]);
 
   useEffect(() => {
     const newCombinedString = Object.values(address).join(' ');
+
     formik.setValues({ ...formik.values, addressbuild: newCombinedString }, false);
-  }, [address]);
+  }, [address, formik]);
 
 
   return (
@@ -239,7 +244,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               name="city"
               value={formik.values.city}
               onChange={(e) => {
-                setSelectedCity(e.target.value);
                 formik.handleChange(e);
               }}
               onBlur={formik.handleBlur}
