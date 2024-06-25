@@ -48,6 +48,7 @@ import CustomTextField from '@core/components/mui/TextField';
 import tableStyles from '@core/styles/table.module.css';
 
 
+
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>

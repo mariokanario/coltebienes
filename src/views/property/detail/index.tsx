@@ -10,10 +10,6 @@ import Grid from '@mui/material/Grid'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 
-
-// Type Imports
-import type { PropertiesType } from '@/types/apps/propertyTypes'
-
 import tableStyles from '@core/styles/table.module.css'
 import 'swiper/css';
 import 'swiper/css/autoplay';

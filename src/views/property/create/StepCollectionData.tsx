@@ -1,5 +1,6 @@
 // React Imports
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 // Third-party Imports
 import * as yup from 'yup';
