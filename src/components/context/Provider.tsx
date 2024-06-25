@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 interface ProviderProps {
     globalType: string;
@@ -21,12 +21,12 @@ const Provider = ({ children }: { children: ReactNode }) => {
 
 export const useProvider = () => {
     const context = useContext(Context);
+
     if (!context) {
         throw new Error('useProvider debe ser usado dentro de un Provider');
     }
+
     return context;
 };
 
 export default Provider;
-
-

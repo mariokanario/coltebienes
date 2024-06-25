@@ -64,7 +64,7 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
     },
   });
 
-  const { otherspecifications, landmarks, observations, collector, collectionmedium, collectiodate } = formik.values;
+  const { landmarks, observations, collector, collectionmedium } = formik.values;
 
   return (
     <form onSubmit={formik.handleSubmit}>

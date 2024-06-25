@@ -58,6 +58,7 @@ const LoginV2 = () => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
+
   return (
     <div className='flex bs-full justify-center'>
       <div

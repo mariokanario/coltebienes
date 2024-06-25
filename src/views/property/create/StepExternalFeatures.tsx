@@ -92,7 +92,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
   });
 
   const {
-    exposedbrick, industrialpark, parkingbay, communalbathrooms, publictoilets, leveldock, depresseddock, loadingcapacity, bridgecrane, usefulroom, digitalaccess, facade, energy, numberlevels, onfloor, otherspecifications, parking, unit, surveillance, commonzones, amountenergy
+    numberlevels, onfloor, amountenergy
   } = formik.values;
 
   return (

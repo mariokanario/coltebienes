@@ -93,7 +93,7 @@ const SchemaBuild = yup
   })
   .required();
 
-const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
+const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
 
 
   const { globalType } = useProvider();
@@ -180,7 +180,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps }: Props
   });
 
 
-  const { department, city, neighborhood, addressbuild, coownershipname, propertytype, destination, charge, canyon, salevalue, adminvalue, adminincluded, builtarea, privatearea, yearconstruction, stratum, roomsnum, bathroomnum, garagenum, } = formik.values;
+  const { neighborhood, addressbuild, coownershipname, stratum, roomsnum, bathroomnum, garagenum, } = formik.values;
 
 
   useEffect(() => {

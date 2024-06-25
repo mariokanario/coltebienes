@@ -2,6 +2,8 @@
 
 // React Imports
 import { useEffect, useState, useMemo } from 'react'
+import Link from 'next/link'
+
 
 // Next Imports
 
@@ -13,7 +15,6 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
-import { styled } from '@mui/material/styles'
 import TablePagination from '@mui/material/TablePagination'
 import type { TextFieldProps } from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
@@ -47,12 +48,10 @@ import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 import TablePaginationComponent from '@components/TablePaginationComponent'
 import CustomTextField from '@core/components/mui/TextField'
-import CustomAvatar from '@core/components/mui/Avatar'
 
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
-import Link from 'next/link'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {

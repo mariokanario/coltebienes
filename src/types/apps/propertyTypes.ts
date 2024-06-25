@@ -1,6 +1,3 @@
-// Type Imports
-import type { ThemeColor } from '@core/types'
-
 export type PropertiesType = {
   id: number
   code: string

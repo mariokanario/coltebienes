@@ -116,7 +116,7 @@ const StepInternalFeatures = ({ activeStep, handlePrev }: Props) => {
   });
 
   const {
-    coveredfinishes, heightmeters, bathtub, jacuzzi, chimney, closet, linencloset, dressingroom, kitchen, propertystatus, dining, diningroom, penthouse, yard, clotheszone, floors, hall, lounge, balcony, terrace, deck, duplex, loft, surveillance, depthmeters, frontmeters, energy, others, winery, airconditioning, centralair, securitydoor,
+    heightmeters, depthmeters, frontmeters
   } = formik.values;
 
 
