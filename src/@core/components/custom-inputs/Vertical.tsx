@@ -80,11 +80,12 @@ const CheckboxInput = styled(Checkbox, {
 }))
 
 const CustomInputVertical = (props: CustomInputVerticalProps) => {
+
   // Props
   const { type, data, name, selected, gridProps, handleChange, color = 'primary' } = props
 
   // Vars
-  const { title, value, content, asset } = data
+  const { title, value, asset } = data
 
   const renderComponent = () => {
     return (
@@ -92,14 +93,13 @@ const CustomInputVertical = (props: CustomInputVerticalProps) => {
         <Root
           onClick={() => handleChange(value)}
           className={classnames({
-            'radio-only': type === 'radio' && !asset && !title && !content,
-            'checkbox-only': type === 'checkbox' && !asset && !title && !content,
+            'radio-only': type === 'radio' && !asset && !title,
+            'checkbox-only': type === 'checkbox' && !asset && !title,
             active: type === 'radio' ? selected === value : selected.includes(value)
           })}
         >
           {asset || null}
           {title ? typeof title === 'string' ? <Title>{title}</Title> : title : null}
-          {content ? typeof content === 'string' ? <Content>{content}</Content> : content : null}
           {type === 'radio' ? (
             <RadioInput name={name} color={color} value={value} onChange={handleChange} checked={selected === value} />
           ) : (
