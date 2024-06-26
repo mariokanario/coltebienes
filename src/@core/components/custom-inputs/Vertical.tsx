@@ -57,7 +57,6 @@ const Title = styled(Typography, {
   color: 'var(--mui-palette-text-primary) !important'
 }))
 
-
 const RadioInput = styled(Radio, {
   name: 'MuiCustomInputVertical',
   slot: 'input'
