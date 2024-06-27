@@ -12,15 +12,12 @@ import Image from 'next/image'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
-import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
 
 // Third-party Imports
 import classnames from 'classnames'
 
 // Component Imports
-import Link from '@components/Link'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Config Imports
