@@ -30,6 +30,14 @@ const PropertyDetail = () => {
                                         <tbody>
                                             <tr>
                                                 <td>
+                                                    <Typography color='text.primary'>Código</Typography>
+                                                </td>
+                                                <td>
+                                                    <Typography color='text.primary'>024086</Typography>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                     <Typography color='text.primary'>Tipo</Typography>
                                                 </td>
                                                 <td>
