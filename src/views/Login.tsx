@@ -99,10 +99,11 @@ const LoginV2 = () => {
             }}
             className='flex flex-col gap-5'
           >
-            <CustomTextField autoFocus fullWidth label='Email or Username' placeholder='Enter your email or username' />
+            <CustomTextField autoFocus fullWidth label='Nombre de usuario' placeholder='Ingrese su nombre de usuario' />
+
             <CustomTextField
               fullWidth
-              label='Password'
+              label='Contraseña'
               placeholder='············'
               id='outlined-adornment-password'
               type={isPasswordShown ? 'text' : 'password'}
@@ -116,14 +117,14 @@ const LoginV2 = () => {
                 )
               }}
             />
-            <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
+            {/*  <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
               <FormControlLabel control={<Checkbox />} label='Recordarme' />
               <Typography className='text-end' color='primary' component={Link}>
                 Olvido su contraseña?
               </Typography>
-            </div>
+            </div> */}
             <Button fullWidth variant='contained' type='submit'>
-              Login
+              Ingresar
             </Button>
 
           </form>
