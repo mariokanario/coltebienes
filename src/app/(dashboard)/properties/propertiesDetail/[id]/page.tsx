@@ -1,14 +1,12 @@
-'use client'
-
-import { useParams } from 'next/navigation';
+// import { useParams } from 'next/navigation';
 
 import PropertyDetail from '@/views/property/detail';
 
 const DetailPage = () => {
 
-    const { id } = useParams();
+    // const { id } = useParams();
 
-    console.log(id);
+    // console.log(id);
 
 
     return (
