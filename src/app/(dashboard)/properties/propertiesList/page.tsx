@@ -14,12 +14,12 @@ const getData = async () => {
 
 const PropertyListApp = async () => {
   // Vars
-  const data = await getData()
+  //const data = await getData()
 
   // console.log(data);
 
 
-  return <PropertyList propertyData={data} />
+  return <PropertyList propertyData={[]} />
 }
 
 export default PropertyListApp
