@@ -2,7 +2,14 @@
 
 import PropertyDetail from '@/views/property/detail';
 
-const DetailPage = () => {
+
+const DetailPage = ({
+    params,
+    searchParams,
+}: {
+    params: { id: string }
+    searchParams: { [key: string]: string | string[] | undefined }
+}) => {
 
     // const { id } = useParams();
 
@@ -12,7 +19,7 @@ const DetailPage = () => {
     return (
         <>
             <PropertyDetail />
-            <div>página de detalles: </div>
+            <div>página de detalles: {params.id} - {searchParams.h}</div>
         </>
     )
 }
