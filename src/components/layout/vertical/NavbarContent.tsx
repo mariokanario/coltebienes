@@ -68,7 +68,7 @@ const NavbarContent = () => {
         <NavToggle />
       </div>
       <div className='flex items-center'>
-        <NotificationsDropdown notifications={notifications} />
+        {/* <NotificationsDropdown notifications={notifications} /> */}
         <UserDropdown />
       </div>
     </div>

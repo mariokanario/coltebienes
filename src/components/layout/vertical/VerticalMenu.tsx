@@ -78,16 +78,16 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         </MenuItem>
 
         <MenuSection label="Captaciones">
-          <MenuItem href='/properties/propertiesCreate' icon={<i className='tabler-building-bank' />}>
+          <MenuItem href='/acquisitions/create' icon={<i className='tabler-building-bank' />}>
             Captaciones
           </MenuItem>
-          <MenuItem href='/properties/propertiesList' icon={<i className='tabler-list-details' />}>
+          <MenuItem href='/acquisitions/list' icon={<i className='tabler-list-details' />}>
             Lista de captaciones
           </MenuItem>
         </MenuSection>
 
         <MenuSection label="Propiedades">
-          <MenuItem href='/' icon={<i className='tabler-home' />}>
+          <MenuItem href='/properties/list' icon={<i className='tabler-home' />}>
             Lista de propiedades
           </MenuItem>
           {/* <MenuItem href='/properties/propertiesCreate' icon={<i className='tabler-home-plus' />}>

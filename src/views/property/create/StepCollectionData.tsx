@@ -17,12 +17,17 @@ import FormLabel from '@mui/material/FormLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormHelperText from '@mui/material/FormHelperText';
+import type { ButtonProps } from '@mui/material/Button'
+
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider';
 import CustomTextField from '@core/components/mui/TextField';
 import DirectionalIcon from '@components/DirectionalIcon';
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
+import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
+import AddEditAddress from '@components/dialogs/address'
+
 
 // JSON Imports
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
@@ -185,6 +190,12 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
 
   const { neighborhood, addressbuild, coownershipname, stratum, roomsnum, bathroomnum, garagenum, } = formik.values;
 
+  // Vars
+  const buttonProps: ButtonProps = {
+    variant: 'contained',
+    children: 'Agregar'
+  }
+
 
   useEffect(() => {
     const department: Department | undefined = colombiaData.departamentos.find(
@@ -282,7 +293,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
 
           {/* DIRECCIÓN */}
 
-          <Grid item xs={12} md={12}>
+          <Grid item xs={10} md={10}>
             <CustomTextField
               fullWidth
               label='Dirección'
@@ -295,6 +306,10 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               helperText={!(Object.values(address).some(item => item !== "")) ? formik.errors.addressbuild : ''}
               error={!(Object.values(address).some(item => item !== ""))}
             />
+          </Grid>
+
+          <Grid item xs={2} md={2}>
+            <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={AddEditAddress} />
           </Grid>
 
           <Grid item xs={6} md={3}>

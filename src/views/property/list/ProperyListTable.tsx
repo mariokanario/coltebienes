@@ -228,7 +228,7 @@ const PropertyListTable = ({ tableData }: { tableData?: PropertiesType[] }) => {
         cell: ({ row }) => (
           <div className='flex items-center'>
             <IconButton>
-              <Link href={`propertiesDetail/${row.original.id}`}>
+              <Link href={`detail/${row.original.id}`}>
                 <i className='tabler-eye-plus text-[22px] text-textSecondary' />
               </Link>
             </IconButton>
