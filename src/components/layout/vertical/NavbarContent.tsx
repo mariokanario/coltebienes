@@ -3,7 +3,6 @@
 // Third-party Imports
 import classnames from 'classnames'
 
-import type { NotificationsType } from '@components/layout/shared/NotificationsDropdown'
 
 // Component Imports
 import NavToggle from './NavToggle'
