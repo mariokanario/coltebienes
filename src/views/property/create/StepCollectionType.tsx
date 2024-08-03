@@ -154,7 +154,7 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
         </Grid>
         <Grid item xs={12} md={6}>
           <FormControl error={formik.touched.authorization && Boolean(formik.errors.authorization)}>
-            <FormLabel>¿Autoriza publicar en portales?</FormLabel>
+            <FormLabel>¿Autoriza publicar en portales web? (Mercadolibre, Metrocuadrado, Fincaraiz, Coltebienes) </FormLabel>
             <RadioGroup
               row className='gap-2'
               name="authorization"
