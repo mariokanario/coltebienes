@@ -81,6 +81,7 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             <CustomAutocomplete
               fullWidth
               multiple
+              disableCloseOnSelect
               value={formik.values.otherspecifications}
               onChange={(e, value) => {
                 setSurroundings(value as string[])
@@ -89,10 +90,10 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
               onBlur={formik.handleBlur}
               id='otherspecifications'
               options={
-                comercioDataString[globalType].Alrededores["Otras especificaciones"].map((tipo: string) => (tipo))
+                comercioDataString[globalType].Alrededores["Alrededores"].map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Otras especificaciones' error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
+              renderInput={params => <CustomTextField {...params} label='Alrededores' error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />

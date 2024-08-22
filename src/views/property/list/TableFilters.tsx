@@ -56,7 +56,7 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: Proper
             onChange={e => setCharge(e.target.value)}
             SelectProps={{ displayEmpty: true }}
           >
-            <MenuItem value=''>Seleccione Encargo</MenuItem>
+            <MenuItem value=''>Seleccione Tipo de gestion</MenuItem>
             <MenuItem value='arriendo'>Arriendo</MenuItem>
             <MenuItem value='venta'>Venta</MenuItem>
           </CustomTextField>

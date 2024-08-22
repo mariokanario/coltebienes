@@ -152,70 +152,44 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
 
   const columns = useMemo<ColumnDef<UsersTypeWithAction, any>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
-          />
-        )
-      },
+
       columnHelper.accessor('fullName', {
-        header: 'User',
+        header: 'Usarios',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+
             <div className='flex flex-col'>
               <Typography color='text.primary' className='font-medium'>
                 {row.original.fullName}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
             </div>
           </div>
         )
       }),
       columnHelper.accessor('role', {
-        header: 'Role',
+        header: 'Rol',
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
-            <Icon
+            {/* <Icon
               className={userRoleObj[row.original.role].icon}
               sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)` }}
-            />
-            <Typography className='capitalize' color='text.primary'>
+            /> */}
+            <Typography className='capitalize' >
               {row.original.role}
             </Typography>
           </div>
         )
       }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
-        cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
-          </Typography>
-        )
+      columnHelper.accessor('document', {
+        header: 'Documento',
+        cell: ({ row }) => <Typography > {row.original.document} </Typography>
       }),
-      columnHelper.accessor('billing', {
-        header: 'Billing',
-        cell: ({ row }) => <Typography>{row.original.billing}</Typography>
+      columnHelper.accessor('email', {
+        header: 'Correo',
+        cell: ({ row }) => <Typography>{row.original.email}</Typography>
       }),
       columnHelper.accessor('status', {
-        header: 'Status',
+        header: 'Estado',
         cell: ({ row }) => (
           <div className='flex items-center gap-3'>
             <Chip
@@ -229,29 +203,32 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
         )
       }),
       columnHelper.accessor('action', {
-        header: 'Action',
+        header: 'Acción',
         cell: () => (
           <div className='flex items-center'>
-            <IconButton>
-              <i className='tabler-trash text-[22px] text-textSecondary' />
-            </IconButton>
-            <IconButton>
-              {/* <Link href={getLocalizedUrl('apps/user/view', locale as Locale)} className='flex'>
-                <i className='tabler-eye text-[22px] text-textSecondary' />
-              </Link> */}
-            </IconButton>
+
             <OptionMenu
               iconClassName='text-[22px] text-textSecondary'
               options={[
                 {
-                  text: 'Download',
-                  icon: 'tabler-download text-[22px]',
+                  text: 'Habilitar / Inhabilitar',
+                  icon: 'tabler-arrows-diff text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
                 },
                 {
-                  text: 'Edit',
+                  text: 'Editar',
                   icon: 'tabler-edit text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                },
+                {
+                  text: 'Restablecer contraseña',
+                  icon: 'tabler-lock-open text-[22px]',
+                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary' }
+                },
+                {
+                  text: 'Eliminar',
+                  icon: 'tabler-trash text-[22px]',
+                  menuItemProps: { className: 'flex items-center gap-2  text-red-500' }
                 }
               ]}
             />
@@ -293,21 +270,11 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  const getAvatar = (params: Pick<UsersType, 'avatar' | 'fullName'>) => {
-    const { avatar, fullName } = params
-
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={34} />
-    } else {
-      return <CustomAvatar size={34}>{getInitials(fullName as string)}</CustomAvatar>
-    }
-  }
-
   return (
     <>
       <Card>
-        <CardHeader title='Filters' className='pbe-4' />
-        <TableFilters setData={setData} tableData={tableData} />
+        {/* <CardHeader title='Filters' className='pbe-4' /> */}
+        {/* <TableFilters setData={setData} tableData={tableData} /> */}
         <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
           <CustomTextField
             select
@@ -319,30 +286,20 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
             <MenuItem value='25'>25</MenuItem>
             <MenuItem value='50'>50</MenuItem>
           </CustomTextField>
-          <div className='flex flex-col sm:flex-row is-full sm:is-auto items-start sm:items-center gap-4'>
-            <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search User'
-              className='is-full sm:is-auto'
-            />
-            <Button
-              color='secondary'
-              variant='tonal'
-              startIcon={<i className='tabler-upload' />}
-              className='is-full sm:is-auto'
-            >
-              Export
-            </Button>
-            <Button
-              variant='contained'
-              startIcon={<i className='tabler-plus' />}
-              onClick={() => setAddUserOpen(!addUserOpen)}
-              className='is-full sm:is-auto'
-            >
-              Add New User
-            </Button>
-          </div>
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onChange={value => setGlobalFilter(String(value))}
+            placeholder='Buscar usuario'
+            className='is-full sm:is-auto lg:w-[500px]'
+          />
+          <Button
+            variant='contained'
+            startIcon={<i className='tabler-plus' />}
+            onClick={() => setAddUserOpen(!addUserOpen)}
+            className='is-full sm:is-auto'
+          >
+            Crear nuevo usuario
+          </Button>
         </div>
         <div className='overflow-x-auto'>
           <table className={tableStyles.table}>

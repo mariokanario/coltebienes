@@ -51,9 +51,9 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
   const { globalType } = useProvider();
   const [front, setFront] = useState<string[]>([])
   const [specifications, setSpecifications] = useState<string[]>([])
+  const [specificationsAmount, setSpecificationsAmount] = useState<{ [key: string]: string }>({})
   const [watch, setWatch] = useState<string[]>([])
   const [commonZonesOption, setCommonZonesOption] = useState<string[]>([])
-  const [amountEnergyActive, setAmountEnergyActive] = useState<boolean>(false)
 
   const initialValues = globalType === "vivienda"
     ? {
@@ -62,6 +62,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
       numberlevels: '',
       onfloor: '',
       otherspecifications: specifications,
+      specificationsAmount,
       parking: '',
       surveillance: watch,
       commonzones: commonZonesOption,
@@ -78,27 +79,51 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
       usefulroom: '',
       digitalaccess: '',
       facade: front,
-      energy: '',
-      amountenergy: '',
+      amouncapacity: '',
       numberlevels: '',
       onfloor: '',
-      otherspecifications: [],
+      otherspecifications: specifications,
+      specificationsAmount,
       parking: '',
       unit: '',
       surveillance: watch,
       commonzones: commonZonesOption,
     };
 
+  const othersAmount: { [key: string]: string } = {
+    "Acceso pavimentado": "quantitypaved",
+    "Alarma de incendio": "quantityfire",
+    "Área rural": "quantityrural",
+    "Área urbana": "quantityurban",
+    "Ascensor": "quantityelevator",
+    "En centro comercial": "quantityshopping",
+    "En edificio": "quantityinbuilding",
+    "Zona comercial": "quantityshoppingarea",
+    "Zona residencial": "quantityresidentialarea",
+    "Escalera de emergencia": "quantityemergencystaircase",
+    "Esquinero": "quantitycorner",
+    "Fuera de centro comercial": "quantityoutsidemall",
+    "Malacate": "quantitywinch",
+    "Puerta camión": "quantitytruck",
+    "Puerta peatonal": "quantitypedestrian",
+    "Puerta persiana": "quantityshutter",
+    "Puerta vidriera": "quantityglassdoor",
+    "Shut de basura": "quantityshut",
+    "Ascensor privado": "quantityprivalelevator",
+    "Conjunto cerrado": "quantityclosedset",
+  }
+
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: Schema,
     onSubmit: (data) => {
+      data = { ...data, specificationsAmount }
       console.log(data);
     },
   });
 
   const {
-    numberlevels, onfloor, amountenergy
+    numberlevels, onfloor, amouncapacity, otherspecifications
   } = formik.values;
 
   return (
@@ -214,23 +239,6 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
 
                 <Grid item xs={6} md={4}>
                   <FormControl>
-                    <FormLabel>Capacidad de carga de t/m² del piso</FormLabel>
-                    <RadioGroup
-                      row
-                      className='gap-3'
-                      name="loadingcapacity"
-                      value={formik.values.loadingcapacity}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    >
-                      <FormControlLabel value='si' control={<Radio />} label='Si' />
-                      <FormControlLabel value='no' control={<Radio />} label='No' />
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-
-                <Grid item xs={6} md={4}>
-                  <FormControl>
                     <FormLabel>Puente grúa</FormLabel>
                     <RadioGroup
                       row
@@ -289,6 +297,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   <CustomAutocomplete
                     fullWidth
                     multiple
+                    disableCloseOnSelect
                     value={formik.values.facade}
                     onChange={(event, value) => {
                       setFront(value as string[])
@@ -309,42 +318,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   />
                 </Grid>
 
-                <Grid item xs={10} md={4}>
-                  <CustomTextField
-                    select
-                    fullWidth
-                    label='Energía'
-                    aria-describedby='energia'
-                    defaultValue=''
-                    id="energy"
-                    name="energy"
-                    value={formik.values.energy}
-                    onChange={(e) => {
-                      formik.handleChange(e)
-                      e.target.value != '' ? setAmountEnergyActive(true) : setAmountEnergyActive(false)
-                    }}
-                  >
-                    <MenuItem value=''>Seleccione vía</MenuItem>
-                    {
-                      comercioDataString[globalType].Externo['Energía'].map((tipo: string, index: number) => (
-                        <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
-                      ))
-                    }
-                  </CustomTextField>
-                </Grid>
 
-                <Grid item xs={2} md={2}>
-                  <CustomTextField
-                    type='number'
-                    fullWidth
-                    label='Cantidad'
-                    disabled={!amountEnergyActive ? true : false}
-                    id="amountenergy"
-                    value={amountenergy}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                </Grid>
 
               </>
 
@@ -426,6 +400,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
               <CustomAutocomplete
                 fullWidth
                 multiple
+                disableCloseOnSelect
                 value={formik.values.otherspecifications}
                 onChange={(event, value) => {
                   setSpecifications(value as string[])
@@ -445,6 +420,36 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                 }
               />
             </FormControl>
+          </Grid>
+
+          {
+            otherspecifications?.map((item, index) => (
+              <Grid key={index} item xs={6} md={3}>
+                <CustomTextField
+                  type='number'
+                  fullWidth
+                  label={`Cantidad ${item}`}
+                  id={othersAmount[item]}
+                  value={specificationsAmount[item]}
+                  onChange={(e) => {
+                    const { id, value } = e.target;
+                    setSpecificationsAmount(prev => ({
+                      ...prev,
+                      [id]: value
+                    }));
+                    formik.handleChange(e);
+                  }}
+
+                  onBlur={formik.handleBlur}
+                />
+              </Grid>
+            ))
+          }
+
+
+
+          <Grid item xs={12} md={12}>
+            <hr className="w-full h-px bg-gray-100" />
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -496,6 +501,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <CustomAutocomplete
               fullWidth
               multiple
+              disableCloseOnSelect
               id='surveillance'
               value={formik.values.surveillance}
               onChange={(event, value) => {
@@ -520,6 +526,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <CustomAutocomplete
               fullWidth
               multiple
+              disableCloseOnSelect
               id='commonzones'
               value={formik.values.commonzones}
               onChange={(event, value) => {
@@ -538,6 +545,36 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
                 ))
               }
+            />
+          </Grid>
+
+          <Grid item xs={3} md={3}>
+            <FormControl>
+              <FormLabel>Capacidad de carga de t/m² del piso</FormLabel>
+              <RadioGroup
+                row
+                className='gap-3'
+                name="loadingcapacity"
+                value={formik.values.loadingcapacity}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+              >
+                <FormControlLabel value='si' control={<Radio />} label='Si' />
+                <FormControlLabel value='no' control={<Radio />} label='No' />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={3} md={3}>
+            <CustomTextField
+              type='number'
+              fullWidth
+              label='Cantidad'
+              disabled={formik.values.loadingcapacity == "si" ? false : true}
+              id="amouncapacity"
+              value={amouncapacity}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
             />
           </Grid>
 

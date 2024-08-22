@@ -136,7 +136,7 @@ const PropertyDetail = () => {
                                                     <Typography className='font-medium'>Apartamento</Typography>
                                                 </div>
                                                 <div className='flex items-center gap-4'>
-                                                    <Typography className='min-is-[100px]'>Encargo:</Typography>
+                                                    <Typography className='min-is-[100px]'>Tipo de gestion:</Typography>
                                                     <Typography className='font-medium'>$ 120,110.000</Typography>
                                                 </div>
                                                 <div className='flex items-center gap-4'>

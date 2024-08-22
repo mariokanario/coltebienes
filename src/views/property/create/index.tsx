@@ -17,10 +17,12 @@ import type { StepProps } from '@mui/material/Step'
 import classnames from 'classnames'
 
 // Component Imports
+import { useProvider } from '@/components/context/Provider';
 import CustomAvatar from '@core/components/mui/Avatar'
 import StepCollectionType from './StepCollectionType'
 import StepCollectionData from './StepCollectionData'
-import StepInternalFeatures from './StepInternalFeatures'
+import StepInternalFeaturesComercial from './StepInternalFeaturesComercial'
+import StepInternalFeaturesVivienda from './StepInternalFeaturesVivienda'
 import StepSurroundings from './StepSurroundings'
 import StepExternalFeatures from './StepExternalFeatures'
 
@@ -64,16 +66,21 @@ const Step = styled(MuiStep)<StepProps>({
 })
 
 const getStepContent = (step: number, handleNext: () => void, handlePrev: () => void) => {
+
+  const { globalType } = useProvider();
+
   const Tag =
     step === 0
       ? StepCollectionType
       : step === 1
         ? StepCollectionData
-        : step === 2
-          ? StepInternalFeatures
-          : step === 3
-            ? StepExternalFeatures
-            : StepSurroundings
+        : step === 2 && globalType === "vivienda"
+          ? StepInternalFeaturesVivienda
+          : step === 2 && globalType === "comercio"
+            ? StepInternalFeaturesComercial
+            : step === 3
+              ? StepExternalFeatures
+              : StepSurroundings
 
   return <Tag activeStep={step} handleNext={handleNext} handlePrev={handlePrev} steps={steps} />
 }

@@ -25,13 +25,14 @@ import { useProvider } from '@/components/context/Provider';
 import CustomTextField from '@core/components/mui/TextField';
 import DirectionalIcon from '@components/DirectionalIcon';
 import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
-import AddEditAddress from '@components/dialogs/address'
+
 
 
 // JSON Imports
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
 import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json';
+import ModalAddress from './ModalAddress';
+import MapView from './MapView';
 
 const comercioDataString = comercioData as Record<string, any>;
 
@@ -43,18 +44,7 @@ type Props = {
   steps: { title: string; subtitle: string }[]
 }
 
-interface InputValues {
-  input1: string;
-  input2: string;
-  input3: string;
-  input4: string;
-  input5: string;
-  input6: string;
-  input7: string;
-  input8: string;
-  input9: string;
-  input10: string;
-}
+
 
 interface Department {
   nombre: string;
@@ -77,9 +67,6 @@ const SchemaHouse = yup
     privatearea: yup.string().required("Agregue un área"),
     yearconstruction: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
     stratum: yup.string().required("Agregue un valor"),
-    roomsnum: yup.string().required("Agregue un valor"),
-    bathroomnum: yup.string().required("Agregue un valor"),
-    garagenum: yup.string().required("Agregue un valor"),
   })
   .required();
 
@@ -97,8 +84,6 @@ const SchemaBuild = yup
     builtarea: yup.string().required("Agregue un área"),
     privatearea: yup.string().required("Agregue un área"),
     yearconstruction: yup.date().required("Agregue una fecha"),
-    bathroomnum: yup.string().required("Agregue un valor"),
-    garagenum: yup.string().required("Agregue un valor"),
   })
   .required();
 
@@ -109,32 +94,14 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
   const [date, setDate] = useState<Date | null | undefined>(null)
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [cities, setCities] = useState<string[]>([]);
+  const [open, setOpen] = useState<boolean>(false)
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild;
+  const [combinedAddress, setCombinedAddress] = useState<string>('');
 
-  const [address, setAddress] = useState<InputValues>({
-    input1: ' ',
-    input2: '',
-    input3: '',
-    input4: '',
-    input5: '',
-    input6: '',
-    input7: '',
-    input8: '',
-    input9: '',
-    input10: ''
-  });
 
-  const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-  const coordinates = ['Este', 'Norte', 'Oeste', 'Sur']
 
-  const handleAddress = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setAddress(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+  const handleClickOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
 
   const initialValues = globalType === "vivienda" ?
     {
@@ -153,9 +120,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
       privatearea: '',
       yearconstruction: '',
       stratum: '',
-      roomsnum: '',
-      bathroomnum: '',
-      garagenum: '',
       addressbuild: '',
     }
     :
@@ -173,8 +137,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
       builtarea: '',
       privatearea: '',
       yearconstruction: '',
-      bathroomnum: '',
-      garagenum: '',
       addressbuild: '',
     }
 
@@ -188,13 +150,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
   });
 
 
-  const { neighborhood, addressbuild, coownershipname, stratum, roomsnum, bathroomnum, garagenum, } = formik.values;
-
-  // Vars
-  const buttonProps: ButtonProps = {
-    variant: 'contained',
-    children: 'Agregar'
-  }
+  const { neighborhood, addressbuild, coownershipname, stratum } = formik.values;
 
 
   useEffect(() => {
@@ -207,13 +163,9 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
     } else {
       setCities([]);
     }
-  }, [selectedDepartment, formik]);
+  }, [selectedDepartment]);
 
-  useEffect(() => {
-    const newCombinedString = Object.values(address).join(' ');
 
-    formik.setValues({ ...formik.values, addressbuild: newCombinedString }, false);
-  }, [address, formik]);
 
 
   return (
@@ -291,199 +243,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <hr className="w-full h-px bg-gray-100" />
           </Grid>
 
-          {/* DIRECCIÓN */}
-
-          <Grid item xs={10} md={10}>
-            <CustomTextField
-              fullWidth
-              label='Dirección'
-              placeholder='La dirección se completará una vez diligencie los campos de este formulario'
-              inputProps={{ readOnly: true }}
-              id="addressbuild"
-              value={addressbuild}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              helperText={!(Object.values(address).some(item => item !== "")) ? formik.errors.addressbuild : ''}
-              error={!(Object.values(address).some(item => item !== ""))}
-            />
-          </Grid>
-
-          <Grid item xs={2} md={2}>
-            <OpenDialogOnElementClick element={Button} elementProps={buttonProps} dialog={AddEditAddress} />
-          </Grid>
-
-          <Grid item xs={6} md={3}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Tipo de vía'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input1'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''>Seleccione vía</MenuItem>
-              <MenuItem value='Calle'>Calle</MenuItem>
-              <MenuItem value='Carrera'>Carrera</MenuItem>
-              <MenuItem value='Circular'>Circular</MenuItem>
-              <MenuItem value='Cincunvalar'>Cincunvalar</MenuItem>
-              <MenuItem value='Diagonal'>Diagonal</MenuItem>
-              <MenuItem value='Transversal'>Transversal</MenuItem>
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              fullWidth type='number'
-              label='Número'
-              InputProps={{ inputProps: { min: 0 } }}
-              name='input2'
-              onChange={handleAddress} />
-
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Letra'
-              defaultValue=''
-              name='input3'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''></MenuItem>
-              {
-                alphabet.map((a: string) =>
-                  <MenuItem key={a} value={a}>{a}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Letra'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input4'
-              onChange={handleAddress}
-            >
-
-              <MenuItem value=''></MenuItem>
-              {
-                alphabet.map((a: string) =>
-                  <MenuItem key={a} value={a}>{a}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={3}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Sentido'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input5'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''></MenuItem>
-              {
-                coordinates.map((c: string) =>
-                  <MenuItem key={c} value={c}>{c}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              fullWidth
-              type='number'
-              label='Número'
-              InputProps={{ inputProps: { min: 0 } }}
-              name='input6'
-              onChange={handleAddress}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Letra'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input7'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''></MenuItem>
-              {
-                alphabet.map((a: string) =>
-                  <MenuItem key={a} value={a}>{a}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={2}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Letra'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input8'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''></MenuItem>
-              {
-                alphabet.map((a: string) =>
-                  <MenuItem key={a} value={a}>{a}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={3}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Sentido'
-              aria-describedby='country-select'
-              defaultValue=''
-              name='input9'
-              onChange={handleAddress}
-            >
-              <MenuItem value=''></MenuItem>
-              {
-                coordinates.map((c: string) =>
-                  <MenuItem key={c} value={c}>{c}</MenuItem>
-                )
-              }
-            </CustomTextField>
-          </Grid>
-
-          <Grid item xs={6} md={3}>
-            <CustomTextField
-              fullWidth
-              type='number'
-              label='Número'
-              InputProps={{ inputProps: { min: 0 } }}
-              name='input10'
-              onChange={handleAddress}
-            />
-          </Grid>
-
-          {/* Fin dirección */}
-
-          <Grid item xs={12} md={12}>
-            <hr className="w-full h-px bg-gray-100" />
-          </Grid>
-
           <Grid item xs={12} md={6}>
             <CustomTextField
               fullWidth
@@ -547,7 +306,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               select
               fullWidth
-              label='Encargo'
+              label='Tipo de gestión'
               id='charge'
               defaultValue=''
               name="charge"
@@ -557,7 +316,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               helperText={formik.touched.charge && formik.errors.charge ? formik.errors.charge : ''}
               error={formik.touched.charge && Boolean(formik.errors.charge)}
             >
-              {comercioDataString[globalType].Datos['Encargo'].map((tipo: string, index: number) => (
+              {comercioDataString[globalType].Datos['Tipo de gestion'].map((tipo: string, index: number) => (
                 <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
               ))}
             </CustomTextField>
@@ -743,54 +502,36 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
           </Grid>
 
 
-          {
-            globalType == "vivienda" ?
-              <Grid item xs={12} md={3}>
-                <CustomTextField
-                  fullWidth
-                  type='number'
-                  label='Número de habitaciones'
-                  InputProps={{ inputProps: { min: 0 } }}
-                  id="roomsnum"
-                  value={roomsnum}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  helperText={formik.touched.roomsnum && formik.errors.roomsnum ? formik.errors.roomsnum : ''}
-                  error={formik.touched.roomsnum && Boolean(formik.errors.roomsnum)}
-                />
-              </Grid>
-              : null
-          }
-          <Grid item xs={12} md={3}>
+
+          <Grid item xs={9} md={9} className='d-flex'>
             <CustomTextField
               fullWidth
-              type='number'
-              label='Número de baños'
-              InputProps={{ inputProps: { min: 0 } }}
-              id="bathroomnum"
-              value={bathroomnum}
+              label='Dirección'
+              id="addressbuild"
+              value={addressbuild}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.bathroomnum && formik.errors.bathroomnum ? formik.errors.bathroomnum : ''}
-              error={formik.touched.bathroomnum && Boolean(formik.errors.bathroomnum)}
+              helperText={formik.touched.addressbuild && formik.errors.addressbuild ? formik.errors.addressbuild : ''}
+              error={formik.touched.addressbuild && Boolean(formik.errors.addressbuild)}
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
-            <CustomTextField
-              fullWidth
-              type='number'
-              label='Número de parqueaderos'
-              InputProps={{ inputProps: { min: 0 } }}
-              id="garagenum"
-              value={garagenum}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.garagenum && formik.errors.garagenum ? formik.errors.garagenum : ''}
-              error={formik.touched.garagenum && Boolean(formik.errors.garagenum)}
-            />
+          <Grid item xs={3} md={3} className='flex items-end'>
+            <Button variant='outlined' onClick={handleClickOpen} className='w-100'>
+              Agregar dirección
+            </Button>
           </Grid>
 
+          {/* DIRECCIÓN */}
+
+          <ModalAddress
+            open={open}
+            handleClose={handleClose}
+          />
+
+
+
+          {/* Fin dirección */}
 
 
 

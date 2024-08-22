@@ -12,7 +12,7 @@
         "Oficina",
         "Edificio "
       ],
-      "Encargo": [
+      "Tipo de gestion": [
         "Arriendo",
         "Arriendo/Venta",
         "Venta"
@@ -52,7 +52,9 @@
       ],
       "Energía": [
         "Monofásica",
-        "Trifásica"
+        "Trifásica",
+        "KVA",
+        "Subestación"
       ],
       "Otras especificaciones": [
         "Cableado de red",
@@ -101,10 +103,6 @@
         "Ladrillo a la vista",
         "Reja"
       ],
-      "Energía": [
-        "KVA",
-        "Subestación"
-      ],
       "Cantidad": 0,
       "Cantidad de niveles": 0,
       "En el piso número": 0,
@@ -150,7 +148,7 @@
       ]
     },
     "Alrededores": {
-      "Otras especificaciones": [
+      "Alrededores": [
         "Bombas de gasolina",
         "Colegios-universidades",
         "Hospitales",
@@ -191,7 +189,7 @@
         "Mixto",
         "Vivienda"
       ],
-      "Encargo": [
+      "Tipo de gestion": [
         "Arriendo",
         "Arriendo/Venta",
         "Venta"
@@ -310,7 +308,7 @@
       ]
     },
     "Alrededores": {
-      "Otras especificaciones": [
+      "Alrededores": [
         "Bombas de gasolina",
         "Colegios-universidades",
         "Hospitales",

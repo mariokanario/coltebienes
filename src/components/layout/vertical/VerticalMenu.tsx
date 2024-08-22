@@ -96,10 +96,10 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         </MenuSection>
 
         <MenuSection label="Usuarios">
-          <MenuItem href='/users/usersList' icon={<i className='tabler-user' />} >
+          <MenuItem href='/users/list' icon={<i className='tabler-user' />} >
             Lista de usuarios
           </MenuItem>
-          <MenuItem href='/users/usersCreate' icon={<i className='tabler-user-plus' />} >
+          <MenuItem href='/users/create' icon={<i className='tabler-user-plus' />} >
             Crear usuario
           </MenuItem>
         </MenuSection>
