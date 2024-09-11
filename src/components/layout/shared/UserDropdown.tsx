@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 
 // Next Imports
@@ -23,6 +23,10 @@ import Button from '@mui/material/Button'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
+import logout from '@/app/api/login/logout'
+import Cookies from 'js-cookie'
+import me from '@/app/api/menu/me'
+import { AxiosResponse } from 'axios'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -37,6 +41,8 @@ const BadgeContentSpan = styled('span')({
 const UserDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState('')
+  const [user, setUser] = useState('')
 
   // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -58,28 +64,51 @@ const UserDropdown = () => {
     if (anchorRef.current && anchorRef.current.contains(event?.target as HTMLElement)) {
       return
     }
-
     setOpen(false)
   }
 
+  const handleRedirect = () => {
+    router.push('/update')
+  };
+
   const handleUserLogout = async () => {
-    // Redirect to login page
-    router.push('/login')
+    try {
+      await logout() as AxiosResponse
+    } catch (error) {
+      throw error
+    } finally {
+      router.push('/login')
+      Cookies.remove('auth_token')
+    }
   }
+
+  useEffect(() => {
+    const fetchMe = async () => {
+      try {
+        const response = await me()
+        const data = (response as AxiosResponse).data
+        setEmail(data.email)
+        setUser(data.name)
+      } catch (error) {
+        throw error
+      }
+    }
+
+    fetchMe()
+  }, [])
 
   return (
     <>
       <Badge
         ref={anchorRef}
         overlap='circular'
-        badgeContent={<BadgeContentSpan onClick={handleDropdownOpen} />}
+        badgeContent={Cookies.get('auth_token') ? <BadgeContentSpan onClick={handleDropdownOpen} /> : ''}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         className='mis-2'
       >
         <Avatar
           ref={anchorRef}
-          alt='John Doe'
-          src='/images/avatars/1.png'
+          src='/images/avatars/logo-user.png'
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
         />
@@ -103,31 +132,36 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='John Doe' src='/images/avatars/1.png' />
+                    {/* <Avatar alt='John Doe' src='/images/avatars/1.png' /> */}
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        John Doe
+                        {Cookies.get('auth_token') ? user : ''}
                       </Typography>
-                      <Typography variant='caption'>admin@vuexy.com</Typography>
+                      <Typography variant='caption'>
+                        {Cookies.get('auth_token') ? email : 'Debe iniciar sesión'}
+                      </Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
-                    <i className='tabler-user text-[22px]' />
-                    <Typography color='text.primary'>My Profile</Typography>
-                  </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                  <MenuItem className='mli-2 gap-3' onClick={(e) => {
+                    handleDropdownClose(e);
+                    handleRedirect(); // Redirige a la ruta deseada
+                  }}>
                     <i className='tabler-settings text-[22px]' />
-                    <Typography color='text.primary'>Settings</Typography>
+                    <Typography color='text.primary'>Cambiar contraseña</Typography>
                   </MenuItem>
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                  {/* <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
+                    <i className='tabler-settings text-[22px]' />
+                    <Typography color='text.primary'>Configuraciones</Typography>
+                  </MenuItem> */}
+                  {/* <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='tabler-currency-dollar text-[22px]' />
                     <Typography color='text.primary'>Pricing</Typography>
                   </MenuItem>
                   <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='tabler-help-circle text-[22px]' />
                     <Typography color='text.primary'>FAQ</Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
                       fullWidth
@@ -138,7 +172,7 @@ const UserDropdown = () => {
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
-                      Logout
+                      Cerrar sesión
                     </Button>
                   </div>
                 </MenuList>

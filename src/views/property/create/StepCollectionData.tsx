@@ -1,40 +1,36 @@
 // React Imports
-import { useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
+import { useEffect, useState } from 'react'
+import type { ChangeEvent } from 'react'
 
 // Third-party Imports
-import * as yup from 'yup';
-import { useFormik } from 'formik';
+import * as yup from 'yup'
+import { useFormik } from 'formik'
 
 // MUI Imports
-import Grid from '@mui/material/Grid';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormHelperText from '@mui/material/FormHelperText';
-import type { ButtonProps } from '@mui/material/Button'
-
+import Grid from '@mui/material/Grid'
+import MenuItem from '@mui/material/MenuItem'
+import Button from '@mui/material/Button'
+import InputAdornment from '@mui/material/InputAdornment'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormHelperText from '@mui/material/FormHelperText'
 
 // Component Imports
-import { useProvider } from '@/components/context/Provider';
-import CustomTextField from '@core/components/mui/TextField';
-import DirectionalIcon from '@components/DirectionalIcon';
-import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
-
-
+import { useProvider } from '@/components/context/Provider'
+import CustomTextField from '@core/components/mui/TextField'
+import DirectionalIcon from '@components/DirectionalIcon'
+import AppReactDatepicker from '@/libs/styles/AppReactDatepicker'
+import { useForm } from '../../../components/context/FormContext'
+import { formDataInterface } from '@/components/context/FormDataInterface'
 
 // JSON Imports
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
-import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json';
-import ModalAddress from './ModalAddress';
-import MapView from './MapView';
-
-const comercioDataString = comercioData as Record<string, any>;
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
+import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json'
+import ModalAddress from './ModalAddress'
+const comercioDataString = comercioData as Record<string, any>
 
 
 type Props = {
@@ -44,64 +40,90 @@ type Props = {
   steps: { title: string; subtitle: string }[]
 }
 
-
-
 interface Department {
-  nombre: string;
-  ciudades: string[];
+  nombre: string
+  ciudades: string[]
 }
 
 const SchemaHouse = yup
   .object({
-    department: yup.string().required("Elije una opción"),
-    city: yup.string().required("Elije una opción"),
+    department: yup.string().required("Elige una opción"),
+    city: yup.string().required("Elige una opción"),
     neighborhood: yup.string().required("Escriba el barrio").min(5, "Debe de tener mínimo 5 letras"),
     coownershipname: yup.string().required("Escriba el nombre").min(5, "Debe de tener mínimo 5 letras"),
-    propertytype: yup.string().required("Elije una opción"),
-    destination: yup.string().required("Elije una opción"),
-    charge: yup.string().required("Elije una opción"),
-    canyon: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    salevalue: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    adminvalue: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    builtarea: yup.number().required("Agregue un área"),
-    privatearea: yup.string().required("Agregue un área"),
-    yearconstruction: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
-    stratum: yup.string().required("Agregue un valor"),
+    property_type: yup.string().required("Elige una opción"),
+    destination_property: yup.string().required("Elige una opción"),
+    charge: yup.string().required("Elige una opción"),
+    canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    administration_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    year_of_construction: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).max(new Date(), 'La fecha no puede ser mayor que la fecha actual'),
+    stratum: yup.number().typeError('Agregue un valor válido').required("Agregue un valor").min(1, "El estrato debe ser al menos 1").transform((value, originalValue) => (originalValue === '' ? null : value)),
+    built_area: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0")
+      .transform((value, originalValue) => (originalValue === '' ? null : value)),
+    private_area: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0")
+      .transform((value, originalValue) => (originalValue === '' ? null : value)),
+    address: yup.string().required("Escriba la dirección").min(3, "Debe de tener mínimo 3 letras"),
+    include_administration: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Elige una opcion'),
   })
-  .required();
+  .required()
 
 const SchemaBuild = yup
   .object({
-    department: yup.string().required("Elije una opción"),
-    city: yup.string().required("Elije una opción"),
+    department: yup.string().required("Elige una opción"),
+    city: yup.string().required("Elige una opción"),
     neighborhood: yup.string().required("Escriba el barrio").min(5, "Debe de tener mínimo 5 letras"),
     coownershipname: yup.string().required("Escriba el nombre").min(5, "Debe de tener mínimo 5 letras"),
-    propertytype: yup.string().required("Elije una opción"),
-    charge: yup.string().required("Elije una opción"),
-    canyon: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    salevalue: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    adminvalue: yup.string().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    builtarea: yup.string().required("Agregue un área"),
-    privatearea: yup.string().required("Agregue un área"),
-    yearconstruction: yup.date().required("Agregue una fecha"),
+    property_type: yup.string().required("Elige una opción"),
+    charge: yup.string().required("Elige una opción"),
+    canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    administration_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    built_area: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0")
+      .transform((value, originalValue) => (originalValue === '' ? null : value)),
+    private_area: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0")
+      .transform((value, originalValue) => (originalValue === '' ? null : value)),
+    year_of_construction: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).max(new Date(), 'La fecha no puede ser mayor que la fecha actual'),
+    include_administration: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Elige una opcion'),
+    address: yup.string().required("Escriba la dirección").min(3, "Debe de tener mínimo 3 letras")
   })
-  .required();
+  .required()
 
-const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
+const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
 
-
-  const { globalType } = useProvider();
+  const { globalType } = useProvider()
   const [date, setDate] = useState<Date | null | undefined>(null)
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
-  const [cities, setCities] = useState<string[]>([]);
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('')
+  const [cities, setCities] = useState<string[]>([])
   const [open, setOpen] = useState<boolean>(false)
-  const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild;
-  const [combinedAddress, setCombinedAddress] = useState<string>('');
-
+  const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild
+  const { formData, setFormData } = useForm()
+  const [openAddress, setOpenAddress] = useState(true)
 
 
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  function hadleSetAddress(address: any): void {
+    formik.setFieldValue('address', address)
+    handleClose()
+  }
 
   const initialValues = globalType === "vivienda" ?
     {
@@ -109,18 +131,18 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
       city: '',
       neighborhood: '',
       coownershipname: '',
-      propertytype: '',
-      destination: '',
+      property_type: '',
+      destination_property: '',
       charge: '',
-      canyon: '',
-      salevalue: '',
-      adminvalue: '',
-      adminincluded: '',
-      builtarea: '',
-      privatearea: '',
-      yearconstruction: '',
-      stratum: '',
-      addressbuild: '',
+      canyon: 0,
+      sale_value: 0,
+      administration_value: 0,
+      include_administration: '',
+      built_area: 0,
+      private_area: 0,
+      year_of_construction: '',
+      stratum: 0,
+      address: '',
     }
     :
     {
@@ -128,117 +150,120 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
       city: '',
       neighborhood: '',
       coownershipname: '',
-      propertytype: '',
+      property_type: '',
       charge: '',
-      canyon: '',
-      salevalue: '',
-      adminvalue: '',
-      adminincluded: '',
-      builtarea: '',
-      privatearea: '',
-      yearconstruction: '',
-      addressbuild: '',
+      canyon: 0,
+      sale_value: 0,
+      administration_value: 0,
+      include_administration: '',
+      built_area: 0,
+      private_area: 0,
+      year_of_construction: '',
+      address: '',
     }
+
+  const handlePrevStep = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...formik.values,
+    }))
+    handlePrev()
+  }
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchemaVar,
-    onSubmit: (data) => {
-      console.log(data);
-
+    onSubmit: (values) => {
+      console.log("Coleccion Data")
+      console.log(values)
+      setFormData((prevData: formDataInterface) => ({
+        ...prevData,
+        ...values,
+      }))
+      handleNext()
     },
-  });
+  })
 
+  useEffect(() => {
+    if (
+      formik.values.department !== formData.department ||
+      formik.values.city !== formData.city ||
+      formik.values.neighborhood !== formData.neighborhood ||
+      formik.values.coownershipname !== formData.coownershipname ||
+      formik.values.property_type !== formData.property_type ||
+      formik.values.destination_property !== formData.destination_property ||
+      formik.values.charge !== formData.charge ||
+      formik.values.canyon !== formData.canyon ||
+      formik.values.sale_value !== formData.sale_value ||
+      formik.values.administration_value !== formData.administration_value ||
+      formik.values.include_administration !== formData.include_administration ||
+      formik.values.built_area !== formData.built_area ||
+      formik.values.private_area !== formData.private_area ||
+      formik.values.year_of_construction !== formData.year_of_construction ||
+      formik.values.stratum !== formData.stratum ||
+      formik.values.address !== formData.address
+    ) {
+      formik.setValues({
+        department: formData.department || '',
+        city: formData.city || '',
+        neighborhood: formData.neighborhood || '',
+        coownershipname: formData.coownershipname || '',
+        property_type: formData.property_type || '',
+        destination_property: formData.destination_property || '',
+        charge: formData.charge || '',
+        canyon: formData.canyon || 0,
+        sale_value: formData.sale_value || 0,
+        administration_value: formData.administration_value || 0,
+        include_administration: formData.include_administration || '',
+        built_area: formData.built_area || 0,
+        private_area: formData.private_area || 0,
+        year_of_construction: formData.year_of_construction || '',
+        stratum: formData.stratum || 0,
+        address: formData.address || ''
+      })
+    }
+  }, [formData])
 
-  const { neighborhood, addressbuild, coownershipname, stratum } = formik.values;
+  const { neighborhood, address, coownershipname, stratum } = formik.values
 
+  useEffect(() => {
+    if (formik.values.department) {
+      setSelectedDepartment(formik.values.department)
+    }
+  }, [formik.values.department])
 
   useEffect(() => {
     const department: Department | undefined = colombiaData.departamentos.find(
       (dept: Department) => dept.nombre === selectedDepartment
-    );
-
+    )
     if (department) {
-      setCities(department.ciudades);
+      setCities(department.ciudades)
     } else {
-      setCities([]);
+      setCities([])
     }
-  }, [selectedDepartment]);
+  }, [selectedDepartment])
 
+  useEffect(() => {
+    if (formik.values.department && formik.values.city) {
+      setOpenAddress(true)
+      setFormData((prevData: formDataInterface) => ({
+        ...prevData,
+        ...formik.values,
+      }))
+    } else {
+      setOpenAddress(false)
+    }
 
+  }, [formik.values])
 
+  useEffect(() => {
+    console.log(formData)
+  }, [])
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} autoComplete='off'>
         <Grid container spacing={6}>
-
-          <Grid item xs={6} md={6}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Departamento'
-              defaultValue=''
-              name="department"
-              value={formik.values.department}
-              onChange={(e) => {
-                setSelectedDepartment(e.target.value);
-                formik.handleChange(e);
-              }}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.department && formik.errors.department ? formik.errors.department : ''}
-              error={formik.touched.department && Boolean(formik.errors.department)}
-            >
-              <MenuItem value=''></MenuItem>
-              {colombiaData.departamentos.map((dept: Department) => (
-                <MenuItem key={dept.nombre} value={dept.nombre}>
-                  {dept.nombre}
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </Grid>
-
-
-          <Grid item xs={6} md={6}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Ciudad'
-              defaultValue=''
-              name="city"
-              value={formik.values.city}
-              onChange={(e) => {
-                formik.handleChange(e);
-              }}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.city && formik.errors.city ? formik.errors.city : ''}
-              error={formik.touched.city && Boolean(formik.errors.city)}
-            >
-              <MenuItem value=''></MenuItem>
-              {cities.map((cit: string) => (
-                <MenuItem key={cit} value={cit}>
-                  {cit}
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </Grid>
-
-
-
-          <Grid item xs={12} md={6}>
-            <CustomTextField
-              fullWidth
-              label='Barrio'
-              placeholder='Laureles'
-              id="neighborhood"
-              value={neighborhood}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.neighborhood && formik.errors.neighborhood ? formik.errors.neighborhood : ''}
-              error={formik.touched.neighborhood && Boolean(formik.errors.neighborhood)}
-            />
-          </Grid>
-
           <Grid item xs={12} md={12}>
             <hr className="w-full h-px bg-gray-100" />
           </Grid>
@@ -247,6 +272,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               fullWidth
               label='Nombre de la copropiedad'
+              placeholder='Ingrese nombre de la copropiedad'
               id="coownershipname"
               value={coownershipname}
               onChange={formik.handleChange}
@@ -261,15 +287,18 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               select
               fullWidth
               label='Tipo de inmueble'
-              id='propertytype'
+              id='property_type'
               defaultValue=''
-              name="propertytype"
-              value={formik.values.propertytype}
+              name="property_type"
+              value={formik.values.property_type}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.propertytype && formik.errors.propertytype ? formik.errors.propertytype : ''}
-              error={formik.touched.propertytype && Boolean(formik.errors.propertytype)}
+              helperText={formik.touched.property_type && formik.errors.property_type ? formik.errors.property_type : ''}
+              error={formik.touched.property_type && Boolean(formik.errors.property_type)}
             >
+              <MenuItem value="" disabled>
+                Seleccione el tipo de inmueble
+              </MenuItem>
               {comercioDataString[globalType].Datos['Tipo de inmueble'].map((tipo: string, index: number) => (
                 <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
               ))}
@@ -284,15 +313,18 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
                   select
                   fullWidth
                   label='Destinación'
-                  id='destination'
+                  id='destination_property'
                   defaultValue=''
-                  name="destination"
-                  value={formik.values.destination}
+                  name="destination_property"
+                  value={formik.values.destination_property}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  helperText={formik.touched.destination && formik.errors.destination ? formik.errors.destination : ''}
-                  error={formik.touched.destination && Boolean(formik.errors.destination)}
+                  helperText={formik.touched.destination_property && formik.errors.destination_property ? formik.errors.destination_property : ''}
+                  error={formik.touched.destination_property && Boolean(formik.errors.destination_property)}
                 >
+                  <MenuItem value="" disabled>
+                    Seleccione la destinación
+                  </MenuItem>
                   {comercioDataString[globalType].Datos['Destinacion'].map((tipo: string, index: number) => (
                     <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
                   ))}
@@ -316,6 +348,9 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               helperText={formik.touched.charge && formik.errors.charge ? formik.errors.charge : ''}
               error={formik.touched.charge && Boolean(formik.errors.charge)}
             >
+              <MenuItem value="" disabled>
+                Seleccione el tipo de gestión
+              </MenuItem>
               {comercioDataString[globalType].Datos['Tipo de gestion'].map((tipo: string, index: number) => (
                 <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
               ))}
@@ -327,11 +362,12 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               fullWidth
               type='number'
-              placeholder='25,000'
+              placeholder='Ingrese el valor del canon'
               label='Canon'
               id="canyon"
-              value={formik.values.canyon}
+              value={formik.values.canyon || ''}
               onChange={formik.handleChange}
+              onFocus={(e) => e.target.select()}
               onBlur={formik.handleBlur}
               helperText={formik.touched.canyon && formik.errors.canyon ? formik.errors.canyon : ''}
               error={formik.touched.canyon && Boolean(formik.errors.canyon)}
@@ -350,14 +386,15 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               fullWidth
               type='number'
-              placeholder='25,000'
+              placeholder='Ingrese el valor de venta'
               label='Valor venta'
-              id="salevalue"
-              value={formik.values.salevalue}
+              id="sale_value"
+              value={formik.values.sale_value || ''}
+              onFocus={(e) => e.target.select()}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.salevalue && formik.errors.salevalue ? formik.errors.salevalue : ''}
-              error={formik.touched.salevalue && Boolean(formik.errors.salevalue)}
+              helperText={formik.touched.sale_value && formik.errors.sale_value ? formik.errors.sale_value : ''}
+              error={formik.touched.sale_value && Boolean(formik.errors.sale_value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
@@ -373,14 +410,15 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               fullWidth
               type='number'
-              placeholder='25,000.000'
+              placeholder='Ingrese el valor de administración'
               label='Valor administración'
-              id="adminvalue"
-              value={formik.values.adminvalue}
+              id="administration_value"
+              value={formik.values.administration_value || ''}
               onChange={formik.handleChange}
+              onFocus={(e) => e.target.select()}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.adminvalue && formik.errors.adminvalue ? formik.errors.adminvalue : ''}
-              error={formik.touched.adminvalue && Boolean(formik.errors.adminvalue)}
+              helperText={formik.touched.administration_value && formik.errors.administration_value ? formik.errors.administration_value : ''}
+              error={formik.touched.administration_value && Boolean(formik.errors.administration_value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end'>
@@ -398,14 +436,17 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               <RadioGroup
                 row
                 className='gap-2'
-                name='adminincluded'
-                value={formik.values.adminincluded}
+                name='include_administration'
+                value={formik.values.include_administration}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               >
                 <FormControlLabel value='si' control={<Radio />} label='Si' />
                 <FormControlLabel value='no' control={<Radio />} label='No' />
               </RadioGroup>
+              {formik.touched.include_administration && formik.errors.include_administration && (
+                <FormHelperText style={{ color: 'red' }}>{formik.errors.include_administration}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
@@ -419,17 +460,18 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               fullWidth
               type='number'
               label='Área construida'
-              placeholder='100'
-              id="builtarea"
-              value={formik.values.builtarea}
+              placeholder='Ingrese el área del inmueble'
+              id="built_area"
+              onFocus={(e) => e.target.select()}
+              value={formik.values.built_area || ''}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.builtarea && formik.errors.builtarea ? formik.errors.builtarea : ''}
-              error={formik.touched.builtarea && Boolean(formik.errors.builtarea)}
+              helperText={formik.touched.built_area && formik.errors.built_area ? formik.errors.built_area : ''}
+              error={formik.touched.built_area && Boolean(formik.errors.built_area)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end' className='text-textDisabled'>
-                    mt2
+                    m<sup>2</sup>
                   </InputAdornment>
                 )
               }}
@@ -441,17 +483,18 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               fullWidth
               type='number'
               label='Área privada'
-              placeholder='100'
-              id="privatearea"
-              value={formik.values.privatearea}
+              placeholder='Ingrese el área privada'
+              id="private_area"
+              value={formik.values.private_area || ''}
               onChange={formik.handleChange}
+              onFocus={(e) => e.target.select()}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.privatearea && formik.errors.privatearea ? formik.errors.privatearea : ''}
-              error={formik.touched.privatearea && Boolean(formik.errors.privatearea)}
+              helperText={formik.touched.private_area && formik.errors.private_area ? formik.errors.private_area : ''}
+              error={formik.touched.private_area && Boolean(formik.errors.private_area)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position='end' className='text-textDisabled'>
-                    mt2
+                    m<sup>2</sup>
                   </InputAdornment>
                 ),
                 inputProps: { min: 0 }
@@ -462,19 +505,20 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
           <Grid item xs={12} md={6}>
             <AppReactDatepicker
               selected={date}
-              placeholderText='YYYY-MM-DD'
+              placeholderText='Ingrese la fecha de construcción'
               dateFormat={'yyyy-MM-dd'}
-              id="yearconstruction"
-              value={new Date(formik.values.yearconstruction).toLocaleDateString() || ''}
+              id="year_of_construction"
+              value={formik.values.year_of_construction ? new Date(formik.values.year_of_construction).toISOString().split('T')[0] : ''}
+              maxDate={new Date()}
               onChange={(date: Date | null) => {
-                formik.setFieldValue('yearconstruction', date ? date.toISOString() : null);
-                setDate(date);
+                formik.setFieldValue('year_of_construction', date ? date.toISOString() : null)
+                setDate(date)
               }}
               onBlur={formik.handleBlur}
-              customInput={<CustomTextField error={formik.touched.yearconstruction && Boolean(formik.errors.yearconstruction)} fullWidth label='Año de construcción' />}
+              customInput={<CustomTextField error={formik.touched.year_of_construction && Boolean(formik.errors.year_of_construction)} fullWidth label='Año de construcción' />}
             />
-            {formik.touched.yearconstruction && formik.errors.yearconstruction && (
-              <FormHelperText className='text-red-500'>{formik.errors.yearconstruction}</FormHelperText>
+            {formik.touched.year_of_construction && formik.errors.year_of_construction && (
+              <FormHelperText className='text-red-500'>{formik.errors.year_of_construction}</FormHelperText>
             )}
           </Grid>
 
@@ -484,10 +528,11 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
                 <CustomTextField
                   fullWidth
                   type='number'
-                  label='Estrato'
+                  label='Ingrese el estrato'
                   InputProps={{ inputProps: { min: 0 } }}
                   id="stratum"
-                  value={stratum}
+                  value={stratum || ''}
+                  onFocus={(e) => e.target.select()}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   helperText={formik.touched.stratum && formik.errors.stratum ? formik.errors.stratum : ''}
@@ -500,40 +545,99 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
           <Grid item xs={12} md={12}>
             <hr className="w-full h-px bg-gray-100" />
           </Grid>
-
-
-
-          <Grid item xs={9} md={9} className='d-flex'>
+          <Grid item xs={6} md={6}>
+            <CustomTextField
+              select
+              fullWidth
+              label='Departamento'
+              defaultValue=''
+              name="department"
+              value={formik.values.department}
+              onChange={(e) => {
+                setSelectedDepartment(e.target.value)
+                formik.handleChange(e)
+              }}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.department && formik.errors.department ? formik.errors.department : ''}
+              error={formik.touched.department && Boolean(formik.errors.department)}
+            >
+              <MenuItem value="" disabled>
+                Seleccione el departamento
+              </MenuItem>
+              {colombiaData.departamentos.map((dept: Department) => (
+                <MenuItem key={dept.nombre} value={dept.nombre}>
+                  {dept.nombre}
+                </MenuItem>
+              ))}
+            </CustomTextField>
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <CustomTextField
+              select
+              fullWidth
+              label='Ciudad'
+              defaultValue=''
+              name="city"
+              value={formik.values.city}
+              onChange={(e) => {
+                formik.handleChange(e)
+              }}
+              onBlur={formik.handleBlur}
+              helperText={formik.touched.city && formik.errors.city ? formik.errors.city : ''}
+              error={formik.touched.city && Boolean(formik.errors.city)}
+            >
+              <MenuItem value="" disabled>
+                Seleccione la ciudad
+              </MenuItem>
+              {cities.map((cit: string) => (
+                <MenuItem key={cit} value={cit}>
+                  {cit}
+                </MenuItem>
+              ))}
+            </CustomTextField>
+          </Grid>
+          <Grid item xs={12} md={6}>
             <CustomTextField
               fullWidth
-              label='Dirección'
-              id="addressbuild"
-              value={addressbuild}
+              label='Barrio'
+              placeholder='Ingrese el barrio'
+              id="neighborhood"
+              value={neighborhood}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.addressbuild && formik.errors.addressbuild ? formik.errors.addressbuild : ''}
-              error={formik.touched.addressbuild && Boolean(formik.errors.addressbuild)}
+              helperText={formik.touched.neighborhood && formik.errors.neighborhood ? formik.errors.neighborhood : ''}
+              error={formik.touched.neighborhood && Boolean(formik.errors.neighborhood)}
             />
           </Grid>
 
-          <Grid item xs={3} md={3} className='flex items-end'>
-            <Button variant='outlined' onClick={handleClickOpen} className='w-100'>
-              Agregar dirección
-            </Button>
-          </Grid>
-
-          {/* DIRECCIÓN */}
-
-          <ModalAddress
-            open={open}
-            handleClose={handleClose}
-          />
-
-
-
-          {/* Fin dirección */}
-
-
+          {openAddress && (
+            <>
+              <Grid item xs={9} md={9} className='d-flex'>
+                <CustomTextField
+                  fullWidth
+                  label='Dirección'
+                  id="address"
+                  placeholder='Ingrese la dirección del inmueble'
+                  value={address}
+                  disabled
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  helperText={formik.touched.address && formik.errors.address ? formik.errors.address : ''}
+                  error={formik.touched.address && Boolean(formik.errors.address)}
+                />
+              </Grid>
+              <Grid item xs={3} md={3} className='flex items-end'>
+                <Button variant='outlined' onClick={handleClickOpen} className='w-100'>
+                  {address !== '' ? 'Modificar dirección' : 'Agregar dirección'}
+                </Button>
+              </Grid>
+              <ModalAddress
+                open={open}
+                handleClose={handleClose}
+                hadleSetAddress={hadleSetAddress}
+              />
+            </>
+          )}
 
           <Grid item xs={12}>
             <div className='flex items-center justify-between'>
@@ -541,7 +645,7 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
                 variant='tonal'
                 color='secondary'
                 disabled={activeStep === 0}
-                onClick={handlePrev}
+                onClick={handlePrevStep}
                 startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
               >
                 Anterior
@@ -557,8 +661,6 @@ const StepCollectionData = ({ activeStep, handlePrev }: Props) => {
               </Button>
             </div>
           </Grid>
-
-
         </Grid>
       </form>
     </>

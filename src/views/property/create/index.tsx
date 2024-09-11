@@ -92,8 +92,6 @@ const PropertyListingWizard = () => {
   const handleNext = () => {
     if (activeStep !== steps.length - 1) {
       setActiveStep(activeStep + 1)
-    } else {
-      alert('Submitted..!!')
     }
   }
 
@@ -115,6 +113,7 @@ const PropertyListingWizard = () => {
           >
             {steps.map((label, index) => {
               return (
+                //Navegacion por click en los iconos
                 <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepLabel icon={<></>} className='p-1 cursor-pointer'>
                     <div className='step-label'>

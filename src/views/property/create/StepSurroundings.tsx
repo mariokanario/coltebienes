@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Third-party Imports
 import * as yup from "yup";
@@ -21,6 +21,9 @@ import AppReactDatepicker from '@/libs/styles/AppReactDatepicker';
 
 // JSON Imports
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+import { useForm } from '@/components/context/FormContext';
+import { formDataInterface } from '@/components/context/FormDataInterface';
+import save from '@/app/api/captaciones/save';
 
 const comercioDataString = comercioData as Record<string, any>;
 
@@ -34,12 +37,12 @@ type Props = {
 
 const SchemaHouse = yup
   .object({
-    otherspecifications: yup.array().of(yup.string().required("Eljie una opcion")).min(1, "Debe haber al menos una especificación"),
+    otherspecificationsDings: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
     landmarks: yup.string().required("Escriba lugares de referencia").min(5, "Debe de tener mínimo 5 letras"),
     observations: yup.string().required("Escriba otras características").min(5, "Debe de tener mínimo 5 letras"),
-    collector: yup.string().required("Escriba el nombre del captador").min(5, "El nombre debe de tener mínimo 5 letras"),
-    collectionmedium: yup.string().required("Escriba el medio de captación").min(5, "Debe de tener mínimo 5 letras"),
-    collectiodate: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)),
+    collector_name: yup.string().required("Escriba el nombre del captador").min(5, "El nombre debe de tener mínimo 5 letras"),
+    collection_medium: yup.string().required("Escriba el medio de captación").min(5, "Debe de tener mínimo 5 letras"),
+    collection_date: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).max(new Date(), 'La fecha no puede ser mayor que la fecha actual'),
   })
   .required();
 
@@ -48,33 +51,101 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
   const { globalType } = useProvider();
   const [surroundings, setSurroundings] = useState<string[]>([])
   const [date, setDate] = useState<Date | null | undefined>(null)
+  const [test, setTest] = useState(false)
+  const { formData, setFormData } = useForm();
+
+  async function saveFormData() {
+    const response = await save(formData)
+  }
+
+
+  useEffect(() => {
+    if (
+      formik.values.otherspecificationsDings !== formData.otherspecificationsDings ||
+      formik.values.landmarks !== formData.landmarks ||
+      formik.values.observations !== formData.observations ||
+      formik.values.collector_name !== formData.collector_name ||
+      formik.values.collection_medium !== formData.collection_medium ||
+      formik.values.collection_date !== formData.collection_date
+
+    ) {
+      formik.setValues({
+        otherspecificationsDings: formData.otherspecificationsDings || [],
+        landmarks: formData.landmarks || '',
+        observations: formData.observations || '',
+        collector_name: formData.collector_name || '',
+        collection_medium: formData.collection_medium || '',
+        collection_date: formData.collection_date || ''
+      })
+    }
+  }, [formData])
+
+  const handlePrevStep = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...formik.values,
+    }))
+    handlePrev()
+  }
+
+  function replaceSiNo(obj: any) {
+    const newObj: any = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'string') {
+        newObj[key] = value.toLowerCase() === 'si' ? true : value.toLowerCase() === 'no' ? false : value;
+      } else if (Array.isArray(value)) {
+        newObj[key] = value.map(item =>
+          typeof item === 'string' && item.toLowerCase() === 'si' ? true
+            : typeof item === 'string' && item.toLowerCase() === 'no' ? false
+              : item
+        );
+      } else if (typeof value === 'object' && value !== null) {
+        newObj[key] = replaceSiNo(value);
+      } else {
+        newObj[key] = value;
+      }
+    }
+
+    return newObj;
+  }
 
   const formik = useFormik({
     initialValues: {
-      otherspecifications: surroundings,
+      otherspecificationsDings: surroundings,
       landmarks: "",
       observations: "",
-      collector: "",
-      collectionmedium: "",
-      collectiodate: "",
+      collector_name: "",
+      collection_medium: "",
+      collection_date: "",
     },
     validationSchema: SchemaHouse,
-    onSubmit: (data) => {
-      console.log(data);
-
+    onSubmit: (values) => {
+      console.log("Coleccion Surrounding")
+      console.log(values)
+      setFormData((prevData: formDataInterface) => ({
+        ...prevData,
+        ...values,
+      }));
+      setTest(true)
+      saveFormData()
     },
   });
 
-  const { landmarks, observations, collector, collectionmedium } = formik.values;
+  useEffect(() => {
+    const formDataReplace = replaceSiNo(formData)
+  }, [test])
 
+
+  const { landmarks, observations, collector_name, collection_medium } = formik.values;
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} autoComplete='off'>
       <Grid container spacing={6}>
         <Grid item xs={12} md={12}>
           <FormControl
             error={
-              formik.touched.otherspecifications &&
-              Boolean(formik.errors.otherspecifications)
+              formik.touched.otherspecificationsDings &&
+              Boolean(formik.errors.otherspecificationsDings)
             }
             fullWidth
           >
@@ -82,18 +153,18 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
               fullWidth
               multiple
               disableCloseOnSelect
-              value={formik.values.otherspecifications}
+              value={formik.values.otherspecificationsDings}
               onChange={(e, value) => {
                 setSurroundings(value as string[])
-                formik.setFieldValue('otherspecifications', value);
+                formik.setFieldValue('otherspecificationsDings', value);
               }}
               onBlur={formik.handleBlur}
-              id='otherspecifications'
+              id='otherspecificationsDings'
               options={
                 comercioDataString[globalType].Alrededores["Alrededores"].map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Alrededores' error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
+              renderInput={params => <CustomTextField {...params} label='Alrededores' placeholder='Seleccione sus alrededores' error={formik.touched.otherspecificationsDings && Boolean(formik.errors.otherspecificationsDings)} />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -101,8 +172,8 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
               }
             />
 
-            {formik.touched.otherspecifications && formik.errors.otherspecifications && (
-              <FormHelperText>{formik.errors.otherspecifications}</FormHelperText>
+            {formik.touched.otherspecificationsDings && formik.errors.otherspecificationsDings && (
+              <FormHelperText>{formik.errors.otherspecificationsDings}</FormHelperText>
             )}
           </FormControl>
         </Grid>
@@ -112,7 +183,8 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             rows={4}
             multiline
-            label='Mencione lugares de referencia'
+            label='Lugares de referencia'
+            placeholder='Mencione lugares de referencia'
             id="landmarks"
             value={landmarks}
             onChange={formik.handleChange}
@@ -127,7 +199,8 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             rows={4}
             multiline
-            label='Otras características y observaciones'
+            label='Características y observaciones'
+            placeholder='Ingrese otras características y observaciones'
             id="observations"
             value={observations}
             onChange={formik.handleChange}
@@ -141,26 +214,26 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
           <CustomTextField
             fullWidth
             label='Captador'
-            placeholder='Nombre'
-            id="collector"
-            value={collector}
+            placeholder='Ingrese el nombre del captador'
+            id="collector_name"
+            value={collector_name}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            helperText={formik.touched.collector && formik.errors.collector ? formik.errors.collector : ''}
-            error={formik.touched.collector && Boolean(formik.errors.collector)}
+            helperText={formik.touched.collector_name && formik.errors.collector_name ? formik.errors.collector_name : ''}
+            error={formik.touched.collector_name && Boolean(formik.errors.collector_name)}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <CustomTextField
             fullWidth
             label='Medio de captación'
-            placeholder='Celular'
-            id="collectionmedium"
-            value={collectionmedium}
+            placeholder='Ingrese el medio de captación'
+            id="collection_medium"
+            value={collection_medium}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            helperText={formik.touched.collectionmedium && formik.errors.collectionmedium ? formik.errors.collectionmedium : ''}
-            error={formik.touched.collectionmedium && Boolean(formik.errors.collectionmedium)}
+            helperText={formik.touched.collection_medium && formik.errors.collection_medium ? formik.errors.collection_medium : ''}
+            error={formik.touched.collection_medium && Boolean(formik.errors.collection_medium)}
           />
         </Grid>
 
@@ -169,17 +242,18 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             selected={date}
             placeholderText='YYYY-MM-DD'
             dateFormat={'yyyy-MM-dd'}
-            id="collectiodate"
-            value={formik.values.collectiodate || ''}
+            id="collection_date"
+            maxDate={new Date()}
+            value={formik.values.collection_date || ''}
             onChange={(date: Date | null) => {
-              formik.setFieldValue('collectiodate', date ? date.toISOString() : null);
+              formik.setFieldValue('collection_date', date ? date.toISOString() : null);
               setDate(date);
             }}
             onBlur={formik.handleBlur}
-            customInput={<CustomTextField error={formik.touched.collectiodate && Boolean(formik.errors.collectiodate)} fullWidth label='Fecha *' />}
+            customInput={<CustomTextField error={formik.touched.collection_date && Boolean(formik.errors.collection_date)} fullWidth label='Fecha de registro' />}
           />
-          {formik.touched.collectiodate && formik.errors.collectiodate && (
-            <FormHelperText className='text-red-500'>{formik.errors.collectiodate}</FormHelperText>
+          {formik.touched.collection_date && formik.errors.collection_date && (
+            <FormHelperText className='text-red-500'>{formik.errors.collection_date}</FormHelperText>
           )}
         </Grid>
 

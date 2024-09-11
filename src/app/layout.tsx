@@ -1,5 +1,6 @@
 
 import Provider from '@/components/context/Provider';
+import { FormProvider } from '@/components/context/FormContext'
 
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
@@ -12,6 +13,7 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+import { AlertProvider } from '@/components/AlertContext';
 
 export const metadata = {
   title: 'Vuexy - MUI Next.js Admin Dashboard Template',
@@ -26,9 +28,14 @@ const RootLayout = ({ children }: ChildrenType) => {
   return (
     <html id='__next' lang='en' dir={direction}>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
-        <Provider>
-          {children}
-        </Provider>
+        <AlertProvider>
+          <FormProvider>
+            <Provider>
+              {children}
+            </Provider>
+          </FormProvider>
+        </AlertProvider>
+
       </body>
     </html>
   )

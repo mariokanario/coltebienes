@@ -1,96 +1,93 @@
-
 // React Imports
-import { useEffect, useState } from 'react';
-import type { ChangeEvent } from 'react';
-
-
+import { useEffect, useState } from 'react'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 // MUI Imports
-import Grid from '@mui/material/Grid';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid'
+import MenuItem from '@mui/material/MenuItem'
+import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContentText from '@mui/material/DialogContentText'
-import type { ButtonProps } from '@mui/material/Button'
-
-
-// Component Imports
-import OpenDialogOnElementClick from '@components/dialogs/OpenDialogOnElementClick'
-import AddEditAddress from '@components/dialogs/address'
-
-
 
 // Component Imports
 import CustomTextField from '@core/components/mui/TextField'
-import MapView from './MapView';
+import MapView from './MapView'
+import { useForm } from '@/components/context/FormContext'
 
 type Props = {
     open: boolean
     handleClose: () => void
+    hadleSetAddress: (address: string) => void
 }
 
-interface InputValues {
-    input1: string;
-    input2: string;
-    input3: string;
-    input4: string;
-    input5: string;
-    input6: string;
-    input7: string;
-    input8: string;
-    input9: string;
-    input10: string;
-}
+const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+const coordinates = ['Este', 'Norte', 'Oeste', 'Sur']
 
-const ModalAddress = ({ open, handleClose }: Props) => {
+const validationSchema = Yup.object({
+    input1: Yup.string().required('Requerido'),
+    input2: Yup.number().min(0, 'Número no puede ser negativo').required('Requerido'),
+    input3: Yup.string().required('Requerido'),
+    input4: Yup.string().required('Requerido'),
+    input5: Yup.string().required('Requerido'),
+    input6: Yup.number().min(0, 'Número no puede ser negativo').required('Requerido'),
+    input7: Yup.string().required('Requerido'),
+    input8: Yup.string().required('Requerido'),
+    input9: Yup.string().required('Requerido'),
+    input10: Yup.number().min(0, 'Número no puede ser negativo').required('Requerido')
+})
 
-    const [combinedAddress, setCombinedAddress] = useState<string>('');
+const ModalAddress = ({ open, handleClose, hadleSetAddress }: Props) => {
     const [viewMap, setViewMap] = useState<boolean>(false)
+    const [combinedAddressMaps, setCombinedAddressMaps] = useState('')
 
-    const [address, setAddress] = useState<InputValues>({
-        input1: ' ',
-        input2: '',
-        input3: '',
-        input4: '',
-        input5: '',
-        input6: '',
-        input7: '',
-        input8: '',
-        input9: '',
-        input10: ''
-    });
 
-    const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    const coordinates = ['Este', 'Norte', 'Oeste', 'Sur']
-
-    const handleAddress = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-
-        setAddress(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
+    const formik = useFormik({
+        initialValues: {
+            input1: '',
+            input2: '',
+            input3: '',
+            input4: '',
+            input5: '',
+            input6: '',
+            input7: '',
+            input8: '',
+            input9: '',
+            input10: ''
+        },
+        //validationSchema,
+        onSubmit: (values) => {
+            const combinedAddress = Object.values(values).join(' ')
+            hadleSetAddress(combinedAddress)
+            handleClose()
+        }
+    })
 
     useEffect(() => {
-        const newCombinedString = Object.values(address).join(' ');
+        const addressMaps = formik.values.input1 + " " +
+            formik.values.input2 + formik.values.input3 + formik.values.input4 + " " +
+            formik.values.input5 + " # " +
+            formik.values.input6 + formik.values.input7 + formik.values.input8 + formik.values.input9 + " - " +
+            formik.values.input10
+        setCombinedAddressMaps(addressMaps)
+        setViewMap(false)
+    }, [formik.values])
 
-        setCombinedAddress(newCombinedString);
+    const combinedAddress = Object.values(formik.values).join(' ')
 
-        // formik.setValues({ ...formik.values, addressbuild: newCombinedString }, false);
-    }, [address]);
+    function clearForm(): void {
+        formik.resetForm()
+    }
 
 
     return (
-        <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' maxWidth={'md'}
-            fullWidth={true}>
+        <Dialog open={open} onClose={handleClose} aria-labelledby='form-dialog-title' maxWidth={'md'} fullWidth>
             <DialogContent>
                 <DialogContentText className='mbe-3'>
-                    <form>
+                    <form onSubmit={formik.handleSubmit} autoComplete='off'>
                         <Grid container spacing={12}>
 
                             <Grid item xs={12} md={12}>
@@ -110,10 +107,12 @@ const ModalAddress = ({ open, handleClose }: Props) => {
                                     fullWidth
                                     label='Tipo de vía'
                                     aria-describedby='country-select'
-                                    defaultValue=''
+                                    value={formik.values.input1}
                                     name='input1'
-                                    onChange={handleAddress}
-
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input1 && Boolean(formik.errors.input1)}
+                                    helperText={formik.touched.input1 && formik.errors.input1}
                                 >
                                     <MenuItem value=''>Seleccione vía</MenuItem>
                                     <MenuItem value='Calle'>Calle</MenuItem>
@@ -127,79 +126,16 @@ const ModalAddress = ({ open, handleClose }: Props) => {
 
                             <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
                                 <CustomTextField
-                                    fullWidth type='number'
-                                    label='Número'
-                                    InputProps={{ inputProps: { min: 0 } }}
-                                    name='input2'
-                                    onChange={handleAddress} />
-
-                            </Grid>
-
-                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
-                                <CustomTextField
-                                    select
-                                    fullWidth
-                                    label='Letra'
-                                    defaultValue=''
-                                    name='input3'
-                                    onChange={handleAddress}
-                                >
-                                    <MenuItem value=''></MenuItem>
-                                    {
-                                        alphabet.map((a: string) =>
-                                            <MenuItem key={a} value={a}>{a}</MenuItem>
-                                        )
-                                    }
-                                </CustomTextField>
-                            </Grid>
-
-                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
-                                <CustomTextField
-                                    select
-                                    fullWidth
-                                    label='Letra'
-                                    aria-describedby='country-select'
-                                    defaultValue=''
-                                    name='input4'
-                                    onChange={handleAddress}
-                                >
-
-                                    <MenuItem value=''></MenuItem>
-                                    {
-                                        alphabet.map((a: string) =>
-                                            <MenuItem key={a} value={a}>{a}</MenuItem>
-                                        )
-                                    }
-                                </CustomTextField>
-                            </Grid>
-
-                            <Grid item xs={6} md={3} style={{ paddingTop: '1.5rem' }}>
-                                <CustomTextField
-                                    select
-                                    fullWidth
-                                    label='Sentido'
-                                    aria-describedby='country-select'
-                                    defaultValue=''
-                                    name='input5'
-                                    onChange={handleAddress}
-                                >
-                                    <MenuItem value=''></MenuItem>
-                                    {
-                                        coordinates.map((c: string) =>
-                                            <MenuItem key={c} value={c}>{c}</MenuItem>
-                                        )
-                                    }
-                                </CustomTextField>
-                            </Grid>
-
-                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
-                                <CustomTextField
                                     fullWidth
                                     type='number'
                                     label='Número'
                                     InputProps={{ inputProps: { min: 0 } }}
-                                    name='input6'
-                                    onChange={handleAddress}
+                                    value={formik.values.input2}
+                                    name='input2'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input2 && Boolean(formik.errors.input2)}
+                                    helperText={formik.touched.input2 && formik.errors.input2}
                                 />
                             </Grid>
 
@@ -208,17 +144,17 @@ const ModalAddress = ({ open, handleClose }: Props) => {
                                     select
                                     fullWidth
                                     label='Letra'
-                                    aria-describedby='country-select'
-                                    defaultValue=''
-                                    name='input7'
-                                    onChange={handleAddress}
+                                    value={formik.values.input3}
+                                    name='input3'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input3 && Boolean(formik.errors.input3)}
+                                    helperText={formik.touched.input3 && formik.errors.input3}
                                 >
                                     <MenuItem value=''></MenuItem>
-                                    {
-                                        alphabet.map((a: string) =>
-                                            <MenuItem key={a} value={a}>{a}</MenuItem>
-                                        )
-                                    }
+                                    {alphabet.map((a) => (
+                                        <MenuItem key={a} value={a}>{a}</MenuItem>
+                                    ))}
                                 </CustomTextField>
                             </Grid>
 
@@ -227,17 +163,17 @@ const ModalAddress = ({ open, handleClose }: Props) => {
                                     select
                                     fullWidth
                                     label='Letra'
-                                    aria-describedby='country-select'
-                                    defaultValue=''
-                                    name='input8'
-                                    onChange={handleAddress}
+                                    value={formik.values.input4}
+                                    name='input4'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input4 && Boolean(formik.errors.input4)}
+                                    helperText={formik.touched.input4 && formik.errors.input4}
                                 >
                                     <MenuItem value=''></MenuItem>
-                                    {
-                                        alphabet.map((a: string) =>
-                                            <MenuItem key={a} value={a}>{a}</MenuItem>
-                                        )
-                                    }
+                                    {alphabet.map((a) => (
+                                        <MenuItem key={a} value={a}>{a}</MenuItem>
+                                    ))}
                                 </CustomTextField>
                             </Grid>
 
@@ -246,17 +182,89 @@ const ModalAddress = ({ open, handleClose }: Props) => {
                                     select
                                     fullWidth
                                     label='Sentido'
-                                    aria-describedby='country-select'
-                                    defaultValue=''
-                                    name='input9'
-                                    onChange={handleAddress}
+                                    value={formik.values.input5}
+                                    name='input5'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input5 && Boolean(formik.errors.input5)}
+                                    helperText={formik.touched.input5 && formik.errors.input5}
                                 >
                                     <MenuItem value=''></MenuItem>
-                                    {
-                                        coordinates.map((c: string) =>
-                                            <MenuItem key={c} value={c}>{c}</MenuItem>
-                                        )
-                                    }
+                                    {coordinates.map((c) => (
+                                        <MenuItem key={c} value={c}>{c}</MenuItem>
+                                    ))}
+                                </CustomTextField>
+                            </Grid>
+
+                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
+                                <CustomTextField
+                                    fullWidth
+                                    type='number'
+                                    label='Número'
+                                    InputProps={{ inputProps: { min: 0 } }}
+                                    value={formik.values.input6}
+                                    name='input6'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input6 && Boolean(formik.errors.input6)}
+                                    helperText={formik.touched.input6 && formik.errors.input6}
+                                />
+                            </Grid>
+
+                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
+                                <CustomTextField
+                                    select
+                                    fullWidth
+                                    label='Letra'
+                                    value={formik.values.input7}
+                                    name='input7'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input7 && Boolean(formik.errors.input7)}
+                                    helperText={formik.touched.input7 && formik.errors.input7}
+                                >
+                                    <MenuItem value=''></MenuItem>
+                                    {alphabet.map((a) => (
+                                        <MenuItem key={a} value={a}>{a}</MenuItem>
+                                    ))}
+                                </CustomTextField>
+                            </Grid>
+
+                            <Grid item xs={6} md={2} style={{ paddingTop: '1.5rem' }}>
+                                <CustomTextField
+                                    select
+                                    fullWidth
+                                    label='Letra'
+                                    value={formik.values.input8}
+                                    name='input8'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input8 && Boolean(formik.errors.input8)}
+                                    helperText={formik.touched.input8 && formik.errors.input8}
+                                >
+                                    <MenuItem value=''></MenuItem>
+                                    {alphabet.map((a) => (
+                                        <MenuItem key={a} value={a}>{a}</MenuItem>
+                                    ))}
+                                </CustomTextField>
+                            </Grid>
+
+                            <Grid item xs={6} md={3} style={{ paddingTop: '1.5rem' }}>
+                                <CustomTextField
+                                    select
+                                    fullWidth
+                                    label='Sentido'
+                                    value={formik.values.input9}
+                                    name='input9'
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input9 && Boolean(formik.errors.input9)}
+                                    helperText={formik.touched.input9 && formik.errors.input9}
+                                >
+                                    <MenuItem value=''></MenuItem>
+                                    {coordinates.map((c) => (
+                                        <MenuItem key={c} value={c}>{c}</MenuItem>
+                                    ))}
                                 </CustomTextField>
                             </Grid>
 
@@ -266,35 +274,33 @@ const ModalAddress = ({ open, handleClose }: Props) => {
                                     type='number'
                                     label='Número'
                                     InputProps={{ inputProps: { min: 0 } }}
+                                    value={formik.values.input10}
                                     name='input10'
-                                    onChange={handleAddress}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.input10 && Boolean(formik.errors.input10)}
+                                    helperText={formik.touched.input10 && formik.errors.input10}
                                 />
                             </Grid>
 
                             <Grid item xs={12} md={12} style={{ paddingTop: '1.5rem' }}>
                                 <Button variant='contained' onClick={() => setViewMap(!viewMap)} startIcon={<i className='tabler-map-pin' />}>Ubicar mapa</Button>
+                                <Button style={{ marginLeft: '20px' }} variant='contained' onClick={() => clearForm()} >Limpiar campos</Button>
                             </Grid>
-
-                            {viewMap ?
+                            {viewMap &&
                                 <Grid item xs={12} md={12} style={{ paddingTop: '1.5rem' }}>
-                                    <MapView />
+                                    <MapView address={combinedAddressMaps} />
                                 </Grid>
-                                : null
                             }
-
-
-
                         </Grid>
                     </form>
-
-
                 </DialogContentText>
             </DialogContent>
             <DialogActions className='dialog-actions-dense'>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button onClick={handleClose} variant='contained' >Agregar</Button>
+                <Button type="submit" variant='contained' onClick={() => formik.handleSubmit()}>Agregar</Button>
             </DialogActions>
-        </Dialog >
+        </Dialog>
     )
 }
 

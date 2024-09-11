@@ -1,0 +1,16 @@
+{
+    "userData": {
+        "Datos": {
+            "Rol": [
+                "Administrador",
+                "Usuario",
+                "Comercial",
+                "Invitado"
+            ],
+            "Estado": [
+                "Activo",
+                "Inactivo"
+            ]
+        }
+    }
+}

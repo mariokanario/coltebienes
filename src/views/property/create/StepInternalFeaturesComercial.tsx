@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Third-party Imports
 import * as yup from 'yup';
@@ -26,6 +26,9 @@ import DirectionalIcon from '@components/DirectionalIcon';
 
 // JSON Imports
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+import { formDataInterface } from '@/components/context/FormDataInterface';
+import { useForm } from '../../../components/context/FormContext';
+import save from '@/app/api/captaciones/save';
 
 const comercioDataString = comercioData as Record<string, any>;
 
@@ -40,11 +43,9 @@ type Props = {
 
 const SchemaHouse = yup
   .object({
-    kitchen: yup.array().of(yup.string().required("Eljie una opcion")).min(1, "Debe haber al menos una especificación"),
-    propertystatus: yup.array().of(yup.string().required("Eljie una opcion")).min(1, "Debe haber al menos una especificación"),
-    roomsnum: yup.string().required("Agregue un valor"),
-    bathroomnum: yup.string().required("Agregue un valor"),
-    garagenum: yup.string().required("Agregue un valor"),
+    number_of_rooms: yup.number().required("Agregue un valor"),
+    number_of_bathrooms: yup.number().required("Agregue un valor"),
+    number_of_parking_spaces: yup.number().required("Agregue un valor"),
 
 
   })
@@ -52,96 +53,282 @@ const SchemaHouse = yup
 
 const SchemaBuild = yup
   .object({
-    propertystatus: yup.array().of(yup.string().required("Eljie una opcion")).min(1, "Debe haber al menos una especificación"),
-    energy: yup.string().required("Elije una opción"),
-    bathroomnum: yup.string().required("Agregue un valor"),
-    garagenum: yup.string().required("Agregue un valor"),
-
+    electric_connection: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    type_kitchen: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    coveredfinishes: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    height: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0"),
+    depth: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0"),
+    front: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0"),
+    number_of_parking_spaces: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0"),
+    number_of_bathrooms: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Agregue un área")
+      .min(1, "Ingrese un valor diferente a 0"),
+    propertystatus: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    others: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    type_floor: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    surveillance: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+    winery: yup.string()
+      .notOneOf([''], 'Debe seleccionar un tipo de bodega')
+      .required('El campo es obligatorio'),
+    has_a_balcony: yup
+      .string()
+      .required("Seleccione una opción"),
+    has_a_terrace: yup
+      .string()
+      .required("Seleccione una opción"),
+    has_air_conditioner: yup
+      .string()
+      .required("Seleccione una opción"),
+    has_central_air: yup
+      .string()
+      .required("Seleccione una opción"),
   })
   .required();
 
-const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
+const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
 
-  // States
   const { globalType } = useProvider();
-  const [kitchenDetails, setKitchenDetails] = useState<string[]>([])
+  const [type_kitchenDetails, settype_kitchenDetails] = useState<string[]>([])
   const [propertyStatusOption, setPropertyStatusOption] = useState<string[]>([])
   const [otherSpecifications, setOtherSpecifications] = useState<string[]>([])
-  const [energyOptions, setEnergyOptions] = useState<string[]>([])
-  const [floorsOptions, setFloorsOptions] = useState<string[]>([])
+  const [electric_connectionOptions, setelectric_connectionOptions] = useState<string[]>([])
+  const [type_floorOptions, settype_floorOptions] = useState<string[]>([])
   const [coveredFini, setCoveredFini] = useState<string[]>([])
   const [watch, setWatch] = useState<string[]>([])
+  const { formData, setFormData } = useForm();
+
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild;
 
   const initialValues = globalType === "vivienda"
     ? {
       coveredfinishes: coveredFini,
-      heightmeters: "",
+      height: 0,
       bathtub: "",
       jacuzzi: "",
       chimney: "",
       closet: "",
       linencloset: "",
       dressingroom: "",
-      kitchen: kitchenDetails,
+      type_kitchen: type_kitchenDetails,
       propertystatus: propertyStatusOption,
       dining: "",
       diningroom: "",
       penthouse: "",
       yard: "",
       clotheszone: "",
-      floors: floorsOptions,
+      type_floor: type_floorOptions,
       hall: "",
       lounge: "",
-      balcony: "",
-      terrace: "",
+      has_a_balcony: "",
+      has_a_terrace: "",
       deck: "",
       duplex: "",
       loft: "",
       securitydoor: "",
-      roomsnum: '',
-      bathroomnum: '',
-      garagenum: '',
+      number_of_rooms: 0,
+      number_of_bathrooms: 0,
+      number_of_parking_spaces: 0,
 
     }
     :
     {
       coveredfinishes: coveredFini,
-      heightmeters: "",
-      depthmeters: "",
-      frontmeters: "",
-      kitchen: kitchenDetails,
+      height: 0,
+      depth: 0,
+      front: 0,
+      type_kitchen: type_kitchenDetails,
       propertystatus: propertyStatusOption,
-      energy: energyOptions,
+      electric_connection: electric_connectionOptions,
       others: otherSpecifications,
       winery: "",
-      floors: floorsOptions,
-      balcony: "",
-      terrace: "",
-      airconditioning: "",
-      centralair: "",
+      type_floor: type_floorOptions,
+      has_a_balcony: "",
+      has_a_terrace: "",
+      has_air_conditioner: "",
+      has_central_air: "",
       surveillance: watch,
-      bathroomnum: '',
-      garagenum: '',
+      number_of_bathrooms: 0,
+      number_of_parking_spaces: 0,
 
     }
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchemaVar,
-    onSubmit: (data) => {
-      console.log(data);
+    onSubmit: (values) => {
+      console.log("Coleccion comercial")
+      console.log(values)
+      setFormData((prevData) => {
+        const updatedValues: any = {};
 
+        for (const [key, value] of Object.entries(values)) {
+          if (typeof value === 'string' && value.toLowerCase() === 'si') {
+            updatedValues[key] = true;
+          } else if (typeof value === 'string' && value.toLowerCase() === 'no') {
+            updatedValues[key] = false;
+          } else {
+            updatedValues[key] = value;
+          }
+        }
+
+        return {
+          ...prevData,
+          ...updatedValues,
+        };
+      })
+      handleNext()
     },
   });
 
+
+  const handlePrevStep = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...formik.values,
+    }));
+    handlePrev();
+  };
+
+  async function saveCollectionData() {
+    const response = await save(formData)
+  }
+
+  // useEffect(() => {
+  //   console.log(formData)
+  //   saveCollectionData()
+  // }, [])
+
+
+  useEffect(() => {
+    if (globalType === "vivienda") {
+      if (
+        formik.values.coveredfinishes !== formData.coveredfinishes ||
+        formik.values.height !== formData.height ||
+        formik.values.bathtub !== formData.bathtub ||
+        formik.values.jacuzzi !== formData.jacuzzi ||
+        formik.values.chimney !== formData.chimney ||
+        formik.values.closet !== formData.closet ||
+        formik.values.linencloset !== formData.linencloset ||
+        formik.values.dressingroom !== formData.dressingroom ||
+        formik.values.type_kitchen !== formData.type_kitchen ||
+        formik.values.propertystatus !== formData.propertystatus ||
+        formik.values.dining !== formData.dining ||
+        formik.values.diningroom !== formData.diningroom ||
+        formik.values.penthouse !== formData.penthouse ||
+        formik.values.yard !== formData.yard ||
+        formik.values.clotheszone !== formData.clotheszone ||
+        formik.values.type_floor !== formData.type_floor ||
+        formik.values.hall !== formData.hall ||
+        formik.values.lounge !== formData.lounge ||
+        formik.values.has_a_balcony !== formData.has_a_balcony ||
+        formik.values.has_a_terrace !== formData.has_a_terrace ||
+        formik.values.deck !== formData.deck ||
+        formik.values.duplex !== formData.duplex ||
+        formik.values.loft !== formData.loft ||
+        formik.values.securitydoor !== formData.securitydoor ||
+        formik.values.number_of_rooms !== formData.number_of_rooms ||
+        formik.values.number_of_bathrooms !== formData.number_of_bathrooms ||
+        formik.values.number_of_parking_spaces !== formData.number_of_parking_spaces
+      ) {
+        formik.setValues({
+          coveredfinishes: formData.coveredfinishes || [],
+          height: formData.height || 0,
+          bathtub: formData.bathtub || '',
+          jacuzzi: formData.jacuzzi || '',
+          chimney: formData.chimney || '',
+          closet: formData.closet || '',
+          linencloset: formData.linencloset || '',
+          dressingroom: formData.dressingroom || '',
+          type_kitchen: formData.type_kitchen || [],
+          propertystatus: formData.propertystatus || [],
+          dining: formData.dining || '',
+          diningroom: formData.diningroom || '',
+          penthouse: formData.penthouse || '',
+          yard: formData.yard || '',
+          clotheszone: formData.clotheszone || '',
+          type_floor: formData.type_floor || [],
+          hall: formData.hall || '',
+          lounge: formData.lounge || '',
+          has_a_balcony: formData.has_a_balcony || '',
+          has_a_terrace: formData.has_a_terrace || '',
+          deck: formData.deck || '',
+          duplex: formData.duplex || '',
+          loft: formData.loft || '',
+          securitydoor: formData.securitydoor || '',
+          number_of_rooms: formData.number_of_rooms || 0,
+          number_of_bathrooms: formData.number_of_bathrooms || 0,
+          number_of_parking_spaces: formData.number_of_parking_spaces || 0
+        });
+      }
+    } else {
+      if (
+        formik.values.coveredfinishes !== formData.coveredfinishes ||
+        formik.values.height !== formData.height ||
+        formik.values.depth !== formData.depth ||
+        formik.values.front !== formData.front ||
+        formik.values.type_kitchen !== formData.type_kitchen ||
+        formik.values.propertystatus !== formData.propertystatus ||
+        formik.values.electric_connection !== formData.electric_connection ||
+        formik.values.others !== formData.others ||
+        formik.values.winery !== formData.winery ||
+        formik.values.type_floor !== formData.type_floor ||
+        formik.values.has_a_balcony !== formData.has_a_balcony ||
+        formik.values.has_a_terrace !== formData.has_a_terrace ||
+        formik.values.has_air_conditioner !== formData.has_air_conditioner ||
+        formik.values.has_central_air !== formData.has_central_air ||
+        formik.values.surveillance !== formData.surveillance ||
+        formik.values.number_of_bathrooms !== formData.number_of_bathrooms ||
+        formik.values.number_of_parking_spaces !== formData.number_of_parking_spaces
+      ) {
+        formik.setValues({
+          coveredfinishes: formData.coveredfinishes || [],
+          height: formData.height || 0,
+          depth: formData.depth || 0,
+          front: formData.front || 0,
+          type_kitchen: formData.type_kitchen || [],
+          propertystatus: formData.propertystatus || [],
+          electric_connection: formData.electric_connection || [],
+          others: formData.others || [],
+          winery: formData.winery || '',
+          type_floor: formData.type_floor || [],
+          has_a_balcony: formData.has_a_balcony || '',
+          has_a_terrace: formData.has_a_terrace || '',
+          has_air_conditioner: formData.has_air_conditioner || '',
+          has_central_air: formData.has_central_air || '',
+          surveillance: formData.surveillance || [],
+          number_of_bathrooms: formData.number_of_bathrooms || 0,
+          number_of_parking_spaces: formData.number_of_parking_spaces || 0
+        });
+      }
+    }
+  }, [formData, globalType]);
+
+
   const {
-    heightmeters, depthmeters, frontmeters, roomsnum, bathroomnum, garagenum
+    depth, front, number_of_rooms, number_of_bathrooms, number_of_parking_spaces
   } = formik.values;
 
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit} autoComplete='off'>
       <Grid container spacing={6}>
 
         <Grid item xs={12} md={6} >
@@ -161,7 +348,12 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
               comercioDataString[globalType].Interno["Acabados cubierta"].map((tipo: string) => (tipo))
             }
             getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Acabados cubierta' />}
+            renderInput={params =>
+              <CustomTextField {...params} label='Acabados cubierta' placeholder='Seleccione los acabados'
+                error={Boolean(formik.touched.coveredfinishes && formik.errors.coveredfinishes)}
+                helperText={formik.touched.coveredfinishes && formik.errors.coveredfinishes ? formik.errors.coveredfinishes : ""}
+              />
+            }
             renderTags={(value: string[], getTagProps) =>
               value.map((option: string, index: number) => (
                 <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -176,19 +368,24 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             type='number'
             label='Altura en metros'
-            placeholder='3'
-            id="heightmeters"
-            value={heightmeters}
+            onFocus={(e) => e.target.select()}
+            placeholder='Ingrese la altura en metros'
+            id="height"
+            value={formik.touched.height}
+            error={formik.touched.height && Boolean(formik.errors.height)}
+            helperText={formik.touched.height && formik.errors.height}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end' className='text-textDisabled'>
-                  mt
+                  m
                 </InputAdornment>
+
               ),
               inputProps: { min: 0 }
             }}
+
           />
         </Grid>
 
@@ -198,16 +395,20 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             type='number'
             label='Fondo en metros'
-            placeholder='3'
-            id="depthmeters"
-            value={depthmeters}
+            placeholder='Ingrese el fondo en metros'
+            id="depth"
+            value={depth || ''}
+            error={formik.touched.depth && Boolean(formik.errors.depth)}
+            helperText={formik.touched.depth && formik.errors.depth}
+            onFocus={(e) => e.target.select()}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end' className='text-textDisabled'>
-                  mt
+                  m
                 </InputAdornment>
+
               ),
               inputProps: { min: 0 }
             }}
@@ -218,10 +419,13 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
           <CustomTextField
             fullWidth
             type='number'
-            label='Frente en metros'
-            placeholder='3'
-            id="frontmeters"
-            value={frontmeters}
+            label='Frente'
+            placeholder='Ingrese el frente en metros'
+            id="front"
+            value={front || ''}
+            error={formik.touched.front && Boolean(formik.errors.front)}
+            helperText={formik.touched.front && formik.errors.front}
+            onFocus={(e) => e.target.select()}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             InputProps={{
@@ -234,18 +438,13 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             }}
           />
         </Grid>
-
-
-
-
-
         <Grid item xs={12} md={6}>
 
           <FormControl
             error={
               globalType === "vivienda" ?
-                formik.touched.kitchen &&
-                Boolean(formik.errors.kitchen)
+                formik.touched.type_kitchen &&
+                Boolean(formik.errors.type_kitchen)
                 :
                 false
             }
@@ -255,23 +454,20 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
               fullWidth
               multiple
               disableCloseOnSelect
-              value={formik.values.kitchen}
+              value={formik.values.type_kitchen}
               onChange={(event, value) => {
-                setKitchenDetails(value as string[])
-                formik.setFieldValue('kitchen', value);
+                settype_kitchenDetails(value as string[])
+                formik.setFieldValue('type_kitchen', value);
               }}
-              id='kitchen'
+              id='type_kitchen'
               options={
                 comercioDataString[globalType].Interno.Cocina.map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
               renderInput={params =>
-                <CustomTextField {...params}
-                  label={`Cocina ${globalType === "vivienda" ? " *" : ""}`}
-                  error={globalType === "vivienda" ?
-                    formik.touched.kitchen && Boolean(formik.errors.kitchen)
-                    : false
-                  }
+                <CustomTextField {...params} placeholder='Seleccione el tipo de cocina'
+                  label={`Cocina ${globalType === "vivienda" ? " *" : ""}`} error={Boolean(formik.touched.type_kitchen && formik.errors.type_kitchen)}
+                  helperText={formik.touched.type_kitchen && formik.errors.type_kitchen ? formik.errors.type_kitchen : ""}
                 />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
@@ -279,9 +475,6 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
                 ))
               }
             />
-            {globalType === "vivienda" && formik.touched.kitchen && formik.errors.kitchen && (
-              <FormHelperText>{formik.errors.kitchen}</FormHelperText>
-            )}
           </FormControl>
         </Grid>
 
@@ -307,59 +500,58 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
                 comercioDataString[globalType].Interno["Estado del inmueble"].map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Estado del inmueble *' error={formik.touched.propertystatus && Boolean(formik.errors.propertystatus)} />}
+              renderInput={params => <CustomTextField {...params} label='Estado del inmueble' placeholder='Seleccione el estado del inmueble' error={formik.touched.propertystatus && Boolean(formik.errors.propertystatus)} />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
                 ))
               }
             />
-
             {formik.touched.propertystatus && formik.errors.propertystatus && (
               <FormHelperText>{formik.errors.propertystatus}</FormHelperText>
             )}
 
           </FormControl>
         </Grid>
-
-
-
         <Grid item xs={12} md={6}>
-
           <CustomAutocomplete
             fullWidth
             multiple
             disableCloseOnSelect
-            id='energy'
-            value={formik.values.energy}
+            id="electric_connection"
+            value={formik.values.electric_connection}
             onChange={(event, value) => {
-              setEnergyOptions(value as string[])
-              formik.setFieldValue('energy', value);
-
+              setelectric_connectionOptions(value as string[]);
+              formik.setFieldValue("electric_connection", value);
             }}
             onBlur={formik.handleBlur}
-            options={
-              comercioDataString[globalType].Interno["Energía"].map((tipo: string) => (tipo))
-            }
-            getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Energía' />}
+            options={comercioDataString[globalType].Interno["Energía"].map((tipo: string) => tipo)}
+            getOptionLabel={(option) => option || ""}
+            renderInput={(params) => (
+              <CustomTextField
+                {...params}
+                label="Tipo de energia"
+                placeholder='Seleccione el tipo de energia'
+                error={Boolean(formik.touched.electric_connection && formik.errors.electric_connection)}
+                helperText={formik.touched.electric_connection && formik.errors.electric_connection ? formik.errors.electric_connection : ""}
+              />
+            )}
             renderTags={(value: string[], getTagProps) =>
               value.map((option: string, index: number) => (
-                <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
+                <Chip label={option} size="small" {...getTagProps({ index })} key={index} />
               ))
             }
-
           />
-
         </Grid>
         {/*  <Grid item xs={2} md={2}>
                 <CustomTextField
                   type='number'
                   fullWidth
                   label='Cantidad'
-                  disabled={!amountEnergyActive ? true : false}
-                  id="amountenergy"
-                  value={amountenergy}
+                  disabled={!amountelectric_connectionActive ? true : false}
+                  onFocus={(e) => e.target.select()}
+                  id="amountelectric_connection"
+                  value={amountelectric_connection}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
@@ -381,8 +573,9 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             options={
               comercioDataString[globalType].Interno["Otras especificaciones"].map((tipo: string) => (tipo))
             }
+
             getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Otras especificaciones' error={formik.touched.others && Boolean(formik.errors.others)} />}
+            renderInput={params => <CustomTextField {...params} label='Otras especificaciones' placeholder='Seleccione otras especificaciones' error={formik.touched.others && Boolean(formik.errors.others)} helperText={formik.touched.others && formik.errors.others ? formik.errors.others : ""} />}
             renderTags={(value: string[], getTagProps) =>
               value.map((option: string, index: number) => (
                 <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -401,10 +594,13 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             defaultValue=''
             id="winery"
             name="winery"
+            error={formik.touched.winery && Boolean(formik.errors.winery)}
+            helperText={formik.touched.winery && formik.errors.winery ? formik.errors.winery : ""}
             value={formik.values.winery}
             onChange={formik.handleChange}
+
           >
-            <MenuItem value=''>Seleccione tipo de bodega</MenuItem>
+            <MenuItem value='' disabled>Seleccione tipo de bodega</MenuItem>
             {
               comercioDataString[globalType].Interno['Tipo de bodega'].map((tipo: string) => (
                 <MenuItem key={tipo} value={tipo}> {tipo} </MenuItem>
@@ -418,11 +614,11 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             multiple
             disableCloseOnSelect
-            id='floors'
-            value={formik.values.floors}
+            id='type_floor'
+            value={formik.values.type_floor}
             onChange={(event, value) => {
-              setFloorsOptions(value as string[])
-              formik.setFieldValue('floors', value);
+              settype_floorOptions(value as string[])
+              formik.setFieldValue('type_floor', value);
 
             }}
             onBlur={formik.handleBlur}
@@ -430,7 +626,8 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
               comercioDataString[globalType].Interno["Pisos"].map((tipo: string) => (tipo))
             }
             getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Pisos' />}
+            renderInput={params => <CustomTextField {...params} label='Tipo de piso' error={Boolean(formik.touched.type_floor && formik.errors.type_floor)}
+              helperText={formik.touched.type_floor && formik.errors.type_floor ? formik.errors.type_floor : ""} placeholder='Seleccione los tipo de pisos' />}
             renderTags={(value: string[], getTagProps) =>
               value.map((option: string, index: number) => (
                 <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -443,78 +640,86 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
 
 
         <Grid item xs={6} md={6}>
-          <FormControl>
+          <FormControl error={formik.touched.has_a_balcony && Boolean(formik.errors.has_a_balcony)}>
             <FormLabel>Balcón</FormLabel>
             <RadioGroup
               row
               className='gap-3'
-              name="balcony"
-              value={formik.values.balcony}
+              name="has_a_balcony"
+              value={formik.values.has_a_balcony}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
               <FormControlLabel value='si' control={<Radio />} label='Si' />
               <FormControlLabel value='no' control={<Radio />} label='No' />
             </RadioGroup>
+            {formik.touched.has_a_balcony && formik.errors.has_a_balcony && (
+              <FormHelperText>{formik.errors.has_a_balcony}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
 
 
         <Grid item xs={12} md={6}>
-          <FormControl>
+          <FormControl error={formik.touched.has_a_terrace && Boolean(formik.errors.has_a_terrace)}>
             <FormLabel>Terraza</FormLabel>
             <RadioGroup
               row
               className='gap-3'
-              name="terrace"
-              value={formik.values.terrace}
+              name="has_a_terrace"
+              value={formik.values.has_a_terrace}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
               <FormControlLabel value='si' control={<Radio />} label='Si' />
               <FormControlLabel value='no' control={<Radio />} label='No' />
             </RadioGroup>
+            {formik.touched.has_a_terrace && formik.errors.has_a_terrace && (
+              <FormHelperText>{formik.errors.has_a_terrace}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
 
 
 
         <Grid item xs={12} md={6}>
-          <FormControl>
+          <FormControl error={formik.touched.has_air_conditioner && Boolean(formik.errors.has_air_conditioner)}>
             <FormLabel>Aire acondicionado</FormLabel>
             <RadioGroup
               row
               className='gap-3'
-              name="airconditioning"
-              value={formik.values.airconditioning}
+              name="has_air_conditioner"
+              value={formik.values.has_air_conditioner}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
               <FormControlLabel value='si' control={<Radio />} label='Si' />
               <FormControlLabel value='no' control={<Radio />} label='No' />
             </RadioGroup>
+            {formik.touched.has_air_conditioner && formik.errors.has_air_conditioner && (
+              <FormHelperText>{formik.errors.has_air_conditioner}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
-
         <Grid item xs={12} md={6}>
-          <FormControl>
+          <FormControl error={formik.touched.has_central_air && Boolean(formik.errors.has_central_air)}>
             <FormLabel>Aire central</FormLabel>
             <RadioGroup
               row
               className='gap-3'
-              name="centralair"
-              value={formik.values.centralair}
+              name="has_central_air"
+              value={formik.values.has_central_air}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
               <FormControlLabel value='si' control={<Radio />} label='Si' />
               <FormControlLabel value='no' control={<Radio />} label='No' />
             </RadioGroup>
+            {formik.touched.has_central_air && formik.errors.has_central_air && (
+              <FormHelperText>{formik.errors.has_central_air}</FormHelperText>
+            )}
           </FormControl>
         </Grid>
-
-
-
         <Grid item xs={12} md={6}>
           <CustomAutocomplete
             fullWidth
@@ -530,7 +735,9 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
               comercioDataString[globalType].Externo["Vigilancia"].map((tipo: string) => (tipo))
             }
             getOptionLabel={option => option || ''}
-            renderInput={params => <CustomTextField {...params} label='Vigilancia' />}
+            renderInput={params => <CustomTextField {...params} label='Tipo de vigilacia' error={Boolean(formik.touched.surveillance && formik.errors.surveillance)}
+              helperText={formik.touched.surveillance && formik.errors.surveillance ? formik.errors.surveillance : ""} placeholder='Seleccione el tipo de vigilancia' />
+            }
             renderTags={(value: string[], getTagProps) =>
               value.map((option: string, index: number) => (
                 <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -545,13 +752,15 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
             fullWidth
             type='number'
             label='Número de baños'
+            placeholder='Ingrese el número de baños'
             InputProps={{ inputProps: { min: 0 } }}
-            id="bathroomnum"
-            value={bathroomnum}
+            id="number_of_bathrooms"
+            value={number_of_bathrooms || ''}
+            onFocus={(e) => e.target.select()}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            helperText={formik.touched.bathroomnum && formik.errors.bathroomnum ? formik.errors.bathroomnum : ''}
-            error={formik.touched.bathroomnum && Boolean(formik.errors.bathroomnum)}
+            helperText={formik.touched.number_of_bathrooms && formik.errors.number_of_bathrooms ? formik.errors.number_of_bathrooms : ''}
+            error={formik.touched.number_of_bathrooms && Boolean(formik.errors.number_of_bathrooms)}
           />
         </Grid>
 
@@ -559,14 +768,16 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
           <CustomTextField
             fullWidth
             type='number'
-            label='Número de parqueaderos'
+            label='Parqueaderos'
+            placeholder='Ingrese el número de parqueaderos'
             InputProps={{ inputProps: { min: 0 } }}
-            id="garagenum"
-            value={garagenum}
+            id="number_of_parking_spaces"
+            value={number_of_parking_spaces || ''}
             onChange={formik.handleChange}
+            onFocus={(e) => e.target.select()}
             onBlur={formik.handleBlur}
-            helperText={formik.touched.garagenum && formik.errors.garagenum ? formik.errors.garagenum : ''}
-            error={formik.touched.garagenum && Boolean(formik.errors.garagenum)}
+            helperText={formik.touched.number_of_parking_spaces && formik.errors.number_of_parking_spaces ? formik.errors.number_of_parking_spaces : ''}
+            error={formik.touched.number_of_parking_spaces && Boolean(formik.errors.number_of_parking_spaces)}
           />
         </Grid>
 
@@ -577,7 +788,7 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev }: Props) => {
               variant='tonal'
               color='secondary'
               disabled={activeStep === 0}
-              onClick={handlePrev}
+              onClick={handlePrevStep}
               startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
             >
               Anterior

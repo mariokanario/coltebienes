@@ -1,0 +1,126 @@
+//Data recogida paso por paso
+{
+    "name": "Santiago Yepez", --
+    "cellphone": "3014092841",--
+    "email": "yepes.s07@gmail.com",--
+    "authorization": "si",--
+    "owner_identification": "1152709561",--
+
+        "department": "Antioquia",--
+        "city": "Medellín",--
+        "neighborhood": "Francisco Antonio Zea",--
+        "coownershipname": "Nombre de la propiedad Santi",
+    "propertytype": "Local",--
+        "destination": "",
+    "charge": "Arriendo",
+    "canyon": 100000,
+    "salevalue": 200000,--
+        "adminvalue": 300000,--
+        "adminincluded": "si",--
+        "builtarea": 11,--
+        "privatearea": 22,--
+        "yearconstruction": "2024-09-01T05:00:00.000Z",--
+        "stratum": 0,
+    "addressbuild": "Calle 91 D   65    10",--
+
+    
+            "coveredfinishes": [
+        "Teja eternit",
+        "Teja plástica",
+        "Teja térmica",
+        "Tipo coliseo"
+    ],
+    "heightmeters": 44,--
+            "depthmeters": 55,--
+            "frontmeters": 66,--
+            "kitchen": [
+        "Cocineta",
+        "Gas natural"
+    ], --
+            "propertystatus": [
+        "Bueno",
+        "En construcción",
+        "Excelente estado",
+        "Nuevo",
+        "En plano"
+    ],
+    "energy": [
+        "Monofásica",
+        "Subestación",
+        "KVA",
+        "Trifásica"
+    ], --
+            "others": [
+        "Cableado de red",
+        "Cableado estructurado",
+        "Área del mezanine"
+    ],
+    "winery": "Liviana",
+    "floors": [
+        "Adoquín",
+        "Baldosa",
+        "Cerámica",
+        "Concreto",
+        "Concreto reforzado"
+    ], --
+            "balcony": "si", --
+            "terrace": "si", --
+            "airconditioning": "si",--
+            "centralair": "si",--
+            "surveillance": [
+        "Portería vigilancia",
+        "Vigilancia 24x7"
+    ],
+    "bathroomnum": 7,--
+            "garagenum": 8,
+    "industrialpark": "no", --
+                "parkingbay": "no",--
+                "communalbathrooms": "si",--
+                "publictoilets": "si", --
+                "leveldock": "no", --
+                "depresseddock": "si", --
+                "loadingcapacity": "si",
+    "bridgecrane": "si",
+    "usefulroom": "si",--
+                "digitalaccess": "no",--
+                "facade": [
+        "Antejardín",
+        "Cemento",
+        "Reja",
+        "Ladrillo a la vista"
+    ],
+    "amouncapacity": 22,
+    "numberlevels": 33,
+    "onfloor": 43,
+    "otherspecifications": [
+        "Acceso pavimentado",
+        "Alarma de incendio"
+    ],
+    "specificationsAmount": {},
+    "parking": "Comunal",
+    "unit": "Abierta", --
+                "surveillanceExternal": [
+        "Portería vigilancia",
+        "Vigilancia 24x7"
+    ],
+    "commonzones": [
+        "Auditorio",
+        "Cafetería comunal",
+        "Salón conferencias",
+        "Terraza comunal"
+    ],  -- Objeto
+                "quantitypaved": 88,
+    "quantityfire": 99,
+    "otherspecificationsDings": [
+        "Bombas de gasolina",
+        "Colegios-universidades",
+        "Hospitales",
+        "Iglesias",
+        "Sector comercial"
+    ],
+    "landmarks": "Lugares de referencia", --
+                    "observations": "Caracteristicas y observaciones", --
+                    "collector": "Santiago Yepes",--
+                    "collectionmedium": "Celular",--
+                    "collectiodate": "2024-09-08T05:00:00.000Z" --
+}

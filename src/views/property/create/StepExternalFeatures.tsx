@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Third-party Imports
 import * as yup from 'yup';
@@ -24,10 +24,11 @@ import CustomAutocomplete from '@core/components/mui/Autocomplete';
 
 // JSON Imports
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+import { useForm } from '../../../components/context/FormContext';
+import { formDataInterface } from '@/components/context/FormDataInterface';
+import { FormHelperText } from '@mui/material';
 
 const comercioDataString = comercioData as Record<string, any>;
-
-
 
 type Props = {
   activeStep: number
@@ -39,14 +40,76 @@ type Props = {
 
 const Schema = yup
   .object({
-    numberlevels: yup.string().required("Elije una opción"),
-    onfloor: yup.string().required("Elije una opción"),
-    otherspecifications: yup.array().of(yup.string().required("Eljie una opcion")).min(1, "Debe haber al menos una especificación"),
-
+    industrial_park: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    parking_bay: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    communal_bathrooms: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    public_toilets: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    level_dock: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    idepressed_dock: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    floor_load_capacity: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    bridgecrane: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    useful_room: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    digital_access_in_building: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    number_of_levels: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Es requerido").min(1, "Ingrese un valor diferente a 0"),
+    floor_number: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Es requerido").min(1, "Ingrese un valor diferente a 0"),
+    otherspecifications: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    surveillanceExternal: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    facade: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    commonzones: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    unit_type: yup.string().required('Seleccione una opción de parqueadero'),
+    parking_lot: yup.string().required('Seleccione una opción de parqueadero'),
+    quantity_load_capacity: yup.number()
+      .nullable()
+      .when('floor_load_capacity', (floor_load_capacity: any, schema) => {
+        if (floor_load_capacity[0] === 'si') {
+          return schema
+            .required('Ingrese un valor')
+            .min(1, 'Ingrese un valor diferente a 0');
+        } else {
+          return schema.notRequired().nullable();
+        }
+      }),
   })
   .required();
 
-const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
+const SchemaVivienda = yup
+  .object({
+    useful_room: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    number_of_levels: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Es requerido").min(1, "Ingrese un valor diferente a 0"),
+    floor_number: yup
+      .number()
+      .typeError('Agregue un valor válido')
+      .required("Es requerido").min(1, "Ingrese un valor diferente a 0"),
+    otherspecifications: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    exposedbrick: yup.string().required('Este campo es obligatorio'),
+    parking_lot: yup.string().required('Seleccione una opción de parqueadero'),
+    surveillanceExternal: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    commonzones: yup.array().of(yup.string().required("Elige una opcion")).min(1, "Debe haber al menos una especificación"),
+    floor_load_capacity: yup.string().oneOf(['si', 'no'], 'Debes seleccionar una opción válida').required('Este campo es obligatorio'),
+    quantity_load_capacity: yup.number()
+      .nullable()
+      .when('floor_load_capacity', (floor_load_capacity: any, schema) => {
+        if (floor_load_capacity[0] === 'si') {
+          return schema
+            .required('Ingrese un valor')
+            .min(1, 'Ingrese un valor diferente a 0');
+        } else {
+          return schema.notRequired().nullable();
+        }
+      }),
+  })
+  .required();
+
+const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
 
   const { globalType } = useProvider();
   const [front, setFront] = useState<string[]>([])
@@ -54,39 +117,43 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
   const [specificationsAmount, setSpecificationsAmount] = useState<{ [key: string]: string }>({})
   const [watch, setWatch] = useState<string[]>([])
   const [commonZonesOption, setCommonZonesOption] = useState<string[]>([])
+  const { formData, setFormData } = useForm();
+
 
   const initialValues = globalType === "vivienda"
     ? {
-      usefulroom: '',
+      useful_room: '',
       exposedbrick: '',
-      numberlevels: '',
-      onfloor: '',
+      number_of_levels: 0,
+      floor_number: 0,
       otherspecifications: specifications,
       specificationsAmount,
-      parking: '',
-      surveillance: watch,
+      quantity_load_capacity: 0,
+      parking_lot: '',
+      surveillanceExternal: watch,
       commonzones: commonZonesOption,
+      floor_load_capacity: '',
     }
     : {
-      industrialpark: '',
-      parkingbay: '',
-      communalbathrooms: '',
-      publictoilets: '',
-      leveldock: '',
-      depresseddock: '',
-      loadingcapacity: '',
+      industrial_park: '',
+      parking_bay: '',
+      communal_bathrooms: '',
+      public_toilets: '',
+      level_dock: '',
+      idepressed_dock: '',
+      floor_load_capacity: '',
       bridgecrane: '',
-      usefulroom: '',
-      digitalaccess: '',
+      useful_room: '',
+      digital_access_in_building: '',
       facade: front,
-      amouncapacity: '',
-      numberlevels: '',
-      onfloor: '',
+      quantity_load_capacity: 0,
+      number_of_levels: 0,
+      floor_number: 0,
       otherspecifications: specifications,
       specificationsAmount,
-      parking: '',
-      unit: '',
-      surveillance: watch,
+      parking_lot: '',
+      unit_type: '',
+      surveillanceExternal: watch,
       commonzones: commonZonesOption,
     };
 
@@ -115,20 +182,117 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
 
   const formik = useFormik({
     initialValues: initialValues,
-    validationSchema: Schema,
-    onSubmit: (data) => {
-      data = { ...data, specificationsAmount }
-      console.log(data);
+    validationSchema: globalType === "vivienda" ? SchemaVivienda : Schema,
+    onSubmit: (values) => {
+      console.log("Coleccion external")
+      console.log(values)
+      setFormData((prevData: formDataInterface) => ({
+        ...prevData,
+        ...values,
+      }));
+      handleNext()
     },
   });
 
+  const handlePrevStep = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      ...formik.values,
+    }));
+    handlePrev();
+  };
+
+  useEffect(() => {
+    if (globalType === "vivienda") {
+      if (
+        formik.values.useful_room !== formData.useful_room ||
+        formik.values.exposedbrick !== formData.exposedbrick ||
+        formik.values.number_of_levels !== formData.number_of_levels ||
+        formik.values.floor_number !== formData.floor_number ||
+        formik.values.otherspecifications !== formData.otherspecifications ||
+        formik.values.specificationsAmount !== formData.specificationsAmount ||
+        formik.values.parking_lot !== formData.parking_lot ||
+        formik.values.surveillanceExternal !== formData.surveillanceExternal ||
+        formik.values.commonzones !== formData.commonzones ||
+        formik.values.floor_load_capacity !== formData.floor_load_capacity ||
+        formik.values.quantity_load_capacity !== formData.quantity_load_capacity
+      ) {
+        formik.setValues({
+          useful_room: formData.useful_room || '',
+          exposedbrick: formData.exposedbrick || '',
+          number_of_levels: formData.number_of_levels || 0,
+          floor_number: formData.floor_number || 0,
+          otherspecifications: formData.otherspecifications || [],
+          specificationsAmount: formData.specificationsAmount || {},
+          parking_lot: formData.parking_lot || '',
+          surveillanceExternal: formData.surveillanceExternal || [],
+          commonzones: formData.commonzones || [],
+          floor_load_capacity: formData.floor_load_capacity || '',
+          quantity_load_capacity: formData.quantity_load_capacity || 0,
+
+        });
+      }
+    } else {
+      if (
+        formik.values.industrial_park !== formData.industrial_park ||
+        formik.values.parking_bay !== formData.parking_bay ||
+        formik.values.communal_bathrooms !== formData.communal_bathrooms ||
+        formik.values.public_toilets !== formData.public_toilets ||
+        formik.values.level_dock !== formData.level_dock ||
+        formik.values.idepressed_dock !== formData.idepressed_dock ||
+        formik.values.floor_load_capacity !== formData.floor_load_capacity ||
+        formik.values.bridgecrane !== formData.bridgecrane ||
+        formik.values.useful_room !== formData.useful_room ||
+        formik.values.digital_access_in_building !== formData.digital_access_in_building ||
+        formik.values.facade !== formData.facade ||
+        formik.values.quantity_load_capacity !== formData.quantity_load_capacity ||
+        formik.values.number_of_levels !== formData.number_of_levels ||
+        formik.values.floor_number !== formData.floor_number ||
+        formik.values.otherspecifications !== formData.otherspecifications ||
+        formik.values.specificationsAmount !== formData.specificationsAmount ||
+        formik.values.parking_lot !== formData.parking_lot ||
+        formik.values.unit_type !== formData.unit_type ||
+        formik.values.surveillanceExternal !== formData.surveillanceExternal ||
+        formik.values.commonzones !== formData.commonzones
+      ) {
+        formik.setValues({
+          industrial_park: formData.industrial_park || '',
+          parking_bay: formData.parking_bay || '',
+          communal_bathrooms: formData.communal_bathrooms || '',
+          public_toilets: formData.public_toilets || '',
+          level_dock: formData.level_dock || '',
+          idepressed_dock: formData.idepressed_dock || '',
+          floor_load_capacity: formData.floor_load_capacity || '',
+          bridgecrane: formData.bridgecrane || '',
+          useful_room: formData.useful_room || '',
+          digital_access_in_building: formData.digital_access_in_building || '',
+          facade: formData.facade || [],
+          quantity_load_capacity: formData.quantity_load_capacity || 0,
+          number_of_levels: formData.number_of_levels || 0,
+          floor_number: formData.floor_number || 0,
+          otherspecifications: formData.otherspecifications || [],
+          specificationsAmount: formData.specificationsAmount || {},
+          parking_lot: formData.parking_lot || '',
+          unit_type: formData.unit_type || '',
+          surveillanceExternal: formData.surveillanceExternal || [],
+          commonzones: formData.commonzones || []
+        });
+      }
+    }
+  }, [formData, globalType]);
+
+  useEffect(() => {
+    console.log(formData)
+  }, [])
+
+
   const {
-    numberlevels, onfloor, amouncapacity, otherspecifications
+    number_of_levels, floor_number, quantity_load_capacity, otherspecifications
   } = formik.values;
 
   return (
     <>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} autoComplete='off'>
         <Grid container spacing={6}>
 
           {
@@ -141,14 +305,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="industrialpark"
-                      value={formik.values.industrialpark}
+                      name="industrial_park"
+                      value={formik.values.industrial_park}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.industrial_park && formik.errors.industrial_park && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.industrial_park}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -158,14 +325,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="parkingbay"
-                      value={formik.values.parkingbay}
+                      name="parking_bay"
+                      value={formik.values.parking_bay}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.parking_bay && formik.errors.parking_bay && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.parking_bay}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -175,14 +345,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="communalbathrooms"
-                      value={formik.values.communalbathrooms}
+                      name="communal_bathrooms"
+                      value={formik.values.communal_bathrooms}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.communal_bathrooms && formik.errors.communal_bathrooms && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.communal_bathrooms}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -192,14 +365,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="publictoilets"
-                      value={formik.values.publictoilets}
+                      name="public_toilets"
+                      value={formik.values.public_toilets}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.public_toilets && formik.errors.public_toilets && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.public_toilets}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -209,14 +385,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="leveldock"
-                      value={formik.values.leveldock}
+                      name="level_dock"
+                      value={formik.values.level_dock}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.level_dock && formik.errors.level_dock && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.level_dock}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -226,14 +405,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="depresseddock"
-                      value={formik.values.depresseddock}
+                      name="idepressed_dock"
+                      value={formik.values.idepressed_dock}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.idepressed_dock && formik.errors.idepressed_dock && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.idepressed_dock}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -251,6 +433,9 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.bridgecrane && formik.errors.bridgecrane && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.bridgecrane}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -260,14 +445,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="usefulroom"
-                      value={formik.values.usefulroom}
+                      name="useful_room"
+                      value={formik.values.useful_room}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.useful_room && formik.errors.useful_room && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.useful_room}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -277,14 +465,17 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="digitalaccess"
-                      value={formik.values.digitalaccess}
+                      name="digital_access_in_building"
+                      value={formik.values.digital_access_in_building}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.digital_access_in_building && formik.errors.digital_access_in_building && (
+                      <FormHelperText style={{ color: 'red' }}>{formik.errors.digital_access_in_building}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
@@ -309,7 +500,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                       comercioDataString[globalType].Externo["Fachada"].map((tipo: string) => (tipo))
                     }
                     getOptionLabel={option => option || ''}
-                    renderInput={params => <CustomTextField {...params} label='Fachada' />}
+                    renderInput={params => <CustomTextField {...params} placeholder='Seleccione la fachada' label='Fachada' helperText={formik.touched.facade && formik.errors.facade ? formik.errors.facade : ''}
+                      error={formik.touched.facade && Boolean(formik.errors.facade)} />}
                     renderTags={(value: string[], getTagProps) =>
                       value.map((option: string, index: number) => (
                         <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -326,24 +518,28 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
 
               <>
                 <Grid item xs={6} md={4}>
-                  <FormControl>
+                  <FormControl error={formik.touched.useful_room && Boolean(formik.errors.useful_room)}>
                     <FormLabel>Cuarto útil</FormLabel>
                     <RadioGroup
                       row
                       className='gap-3'
-                      name="usefulroom"
-                      value={formik.values.usefulroom}
+                      name="useful_room"
+                      value={formik.values.useful_room}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     >
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.useful_room && formik.errors.useful_room && (
+                      <FormHelperText>{formik.errors.useful_room}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
 
+
                 <Grid item xs={6} md={4}>
-                  <FormControl>
+                  <FormControl error={formik.touched.exposedbrick && Boolean(formik.errors.exposedbrick)}>
                     <FormLabel>Ladrillo a la vista</FormLabel>
                     <RadioGroup
                       row
@@ -356,8 +552,12 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                       <FormControlLabel value='si' control={<Radio />} label='Si' />
                       <FormControlLabel value='no' control={<Radio />} label='No' />
                     </RadioGroup>
+                    {formik.touched.exposedbrick && formik.errors.exposedbrick && (
+                      <FormHelperText>{formik.errors.exposedbrick}</FormHelperText>
+                    )}
                   </FormControl>
                 </Grid>
+
               </>
           }
 
@@ -365,13 +565,15 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               type='number'
               fullWidth
-              label='Cantidad de niveles *'
-              id="numberlevels"
-              value={numberlevels}
+              onFocus={(e) => e.target.select()}
+              label='Cantidad de niveles'
+              id="number_of_levels"
+              placeholder='Ingrese la cantidad de niveles'
+              value={number_of_levels || ''}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.numberlevels && formik.errors.numberlevels ? formik.errors.numberlevels : ''}
-              error={formik.touched.numberlevels && Boolean(formik.errors.numberlevels)}
+              helperText={formik.touched.number_of_levels && formik.errors.number_of_levels ? formik.errors.number_of_levels : ''}
+              error={formik.touched.number_of_levels && Boolean(formik.errors.number_of_levels)}
             />
           </Grid>
 
@@ -379,13 +581,15 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               type='number'
               fullWidth
-              label='En el piso número *'
-              id="onfloor"
-              value={onfloor}
+              label='En el piso número'
+              placeholder='Ingrese el numero de pisos'
+              id="floor_number"
+              value={floor_number || ''}
+              onFocus={(e) => e.target.select()}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              helperText={formik.touched.onfloor && formik.errors.onfloor ? formik.errors.onfloor : ''}
-              error={formik.touched.onfloor && Boolean(formik.errors.onfloor)}
+              helperText={formik.touched.floor_number && formik.errors.floor_number ? formik.errors.floor_number : ''}
+              error={formik.touched.floor_number && Boolean(formik.errors.floor_number)}
             />
           </Grid>
 
@@ -412,7 +616,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   comercioDataString[globalType].Externo["Otras especificaciones"].map((tipo: string) => (tipo))
                 }
                 getOptionLabel={option => option || ''}
-                renderInput={params => <CustomTextField {...params} label='Otras especificaciones *' error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
+                renderInput={params => <CustomTextField {...params} label='Otras especificaciones' placeholder='Seleccione otras especificaciones' helperText={formik.touched.otherspecifications && formik.errors.otherspecifications ? formik.errors.otherspecifications : ''}
+                  error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
                 renderTags={(value: string[], getTagProps) =>
                   value.map((option: string, index: number) => (
                     <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -429,8 +634,10 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   type='number'
                   fullWidth
                   label={`Cantidad ${item}`}
+                  placeholder='Ingrese la cantidad'
                   id={othersAmount[item]}
                   value={specificationsAmount[item]}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => {
                     const { id, value } = e.target;
                     setSpecificationsAmount(prev => ({
@@ -453,25 +660,31 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <CustomTextField
-              select
-              fullWidth
-              label='Parqueadero'
-              aria-describedby='parqueadero'
-              defaultValue=''
-              id="parking"
-              name="parking"
-              value={formik.values.parking}
-              onChange={formik.handleChange}
-            >
-              <MenuItem value=''>Seleccione parqueadero</MenuItem>
-              {
-                comercioDataString[globalType].Externo['Parqueadero'].map((tipo: string, index: number) => (
-                  <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
-                ))
-              }
-            </CustomTextField>
+            <FormControl fullWidth error={formik.touched.parking_lot && Boolean(formik.errors.parking_lot)}>
+              <CustomTextField
+                select
+                fullWidth
+                label='Parqueadero'
+                aria-describedby='parqueadero'
+                defaultValue=''
+                id="parking_lot"
+                name="parking_lot"
+                value={formik.values.parking_lot}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.parking_lot && formik.errors.parking_lot ? formik.errors.parking_lot : ''}
+                error={formik.touched.parking_lot && Boolean(formik.errors.parking_lot)}
+              >
+                <MenuItem value='' disabled>Seleccione parqueadero</MenuItem>
+                {
+                  comercioDataString[globalType].Externo['Parqueadero'].map((tipo: string, index: number) => (
+                    <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
+                  ))
+                }
+              </CustomTextField>
+            </FormControl>
           </Grid>
+
 
           {
             globalType == "comercio" ?
@@ -482,12 +695,14 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                   label='Unidad'
                   aria-describedby='unidad'
                   defaultValue=''
-                  id="unit"
-                  name="unit"
-                  value={formik.values.unit}
+                  id="unit_type"
+                  name="unit_type"
+                  value={formik.values.unit_type}
                   onChange={formik.handleChange}
+                  helperText={formik.touched.unit_type && formik.errors.unit_type ? formik.errors.unit_type : ''}
+                  error={formik.touched.unit_type && Boolean(formik.errors.unit_type)}
                 >
-                  <MenuItem value=''>Seleccione unidad</MenuItem>
+                  <MenuItem value='' disabled>Seleccione unidad</MenuItem>
                   {
                     comercioDataString[globalType].Externo['Unidad'].map((tipo: string, index: number) => (
                       <MenuItem key={index} value={tipo}> {tipo} </MenuItem>
@@ -502,18 +717,19 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
               fullWidth
               multiple
               disableCloseOnSelect
-              id='surveillance'
-              value={formik.values.surveillance}
+              id='surveillanceExternal'
+              value={formik.values.surveillanceExternal}
               onChange={(event, value) => {
                 setWatch(value as string[])
-                formik.setFieldValue('surveillance', value);
+                formik.setFieldValue('surveillanceExternal', value);
               }}
               onBlur={formik.handleBlur}
               options={
                 comercioDataString[globalType].Externo["Vigilancia"].map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Vigilancia' />}
+              renderInput={params => <CustomTextField {...params} label='Seleccione el tipo de vigilancia' helperText={formik.touched.surveillanceExternal && formik.errors.surveillanceExternal ? formik.errors.surveillanceExternal : ''}
+                error={formik.touched.surveillanceExternal && Boolean(formik.errors.surveillanceExternal)} />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -539,7 +755,8 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                 comercioDataString[globalType].Externo["Zonas comunes"].map((tipo: string) => (tipo))
               }
               getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Zonas comunes' />}
+              renderInput={params => <CustomTextField {...params} placeholder='Seleccione las zonas comunes' label='Zonas comunes' helperText={formik.touched.commonzones && formik.errors.commonzones ? formik.errors.commonzones : ''}
+                error={formik.touched.commonzones && Boolean(formik.errors.commonzones)} />}
               renderTags={(value: string[], getTagProps) =>
                 value.map((option: string, index: number) => (
                   <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
@@ -549,19 +766,22 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
           </Grid>
 
           <Grid item xs={3} md={3}>
-            <FormControl>
+            <FormControl error={formik.touched.floor_load_capacity && Boolean(formik.errors.floor_load_capacity)}>
               <FormLabel>Capacidad de carga de t/m² del piso</FormLabel>
               <RadioGroup
                 row
                 className='gap-3'
-                name="loadingcapacity"
-                value={formik.values.loadingcapacity}
+                name="floor_load_capacity"
+                value={formik.values.floor_load_capacity}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
               >
                 <FormControlLabel value='si' control={<Radio />} label='Si' />
                 <FormControlLabel value='no' control={<Radio />} label='No' />
               </RadioGroup>
+              {formik.touched.floor_load_capacity && formik.errors.floor_load_capacity && (
+                <FormHelperText style={{ color: 'red' }}>{formik.errors.floor_load_capacity}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
 
@@ -569,12 +789,16 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
             <CustomTextField
               type='number'
               fullWidth
+              placeholder='Ingrese la cantidad'
               label='Cantidad'
-              disabled={formik.values.loadingcapacity == "si" ? false : true}
-              id="amouncapacity"
-              value={amouncapacity}
+              onFocus={(e) => e.target.select()}
+              disabled={formik.values.floor_load_capacity == "si" ? false : true}
+              id="quantity_load_capacity"
+              value={quantity_load_capacity || ''}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
+              error={formik.touched.quantity_load_capacity && Boolean(formik.errors.quantity_load_capacity)}
+              helperText={formik.touched.quantity_load_capacity && formik.errors.quantity_load_capacity}
             />
           </Grid>
 
@@ -586,7 +810,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev }: Props) => {
                 variant='tonal'
                 color='secondary'
                 disabled={activeStep === 0}
-                onClick={handlePrev}
+                onClick={handlePrevStep}
                 startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
               >
                 Anterior
