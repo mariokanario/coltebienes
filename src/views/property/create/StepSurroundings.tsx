@@ -24,6 +24,7 @@ import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
 import { useForm } from '@/components/context/FormContext';
 import { formDataInterface } from '@/components/context/FormDataInterface';
 import save from '@/app/api/captaciones/save';
+import { throws } from 'assert';
 
 const comercioDataString = comercioData as Record<string, any>;
 
@@ -53,10 +54,6 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
   const [date, setDate] = useState<Date | null | undefined>(null)
   const [test, setTest] = useState(false)
   const { formData, setFormData } = useForm();
-
-  async function saveFormData() {
-    const response = await save(formData)
-  }
 
 
   useEffect(() => {
@@ -110,6 +107,15 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
     return newObj;
   }
 
+  const saveData = async () => {
+    try {
+      const response = await save(formData)
+      console.log(response)
+    } catch (error) {
+      throw error
+    }
+  }
+
   const formik = useFormik({
     initialValues: {
       otherspecificationsDings: surroundings,
@@ -128,12 +134,13 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
         ...values,
       }));
       setTest(true)
-      saveFormData()
+      saveData()
     },
   });
 
   useEffect(() => {
-    const formDataReplace = replaceSiNo(formData)
+    console.log(formData)
+
   }, [test])
 
 
@@ -236,17 +243,17 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             error={formik.touched.collection_medium && Boolean(formik.errors.collection_medium)}
           />
         </Grid>
-
         <Grid item xs={12} md={6}>
           <AppReactDatepicker
             selected={date}
             placeholderText='YYYY-MM-DD'
-            dateFormat={'yyyy-MM-dd'}
+            dateFormat='yyyy-MM-dd'
             id="collection_date"
             maxDate={new Date()}
-            value={formik.values.collection_date || ''}
+            value={formik.values.collection_date ? new Date(formik.values.collection_date).toISOString().split('T')[0] : ''}
             onChange={(date: Date | null) => {
-              formik.setFieldValue('collection_date', date ? date.toISOString() : null);
+              const formattedDate = date ? new Date(date).toISOString().split('T')[0] : null;
+              formik.setFieldValue('collection_date', formattedDate);
               setDate(date);
             }}
             onBlur={formik.handleBlur}
@@ -256,6 +263,7 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             <FormHelperText className='text-red-500'>{formik.errors.collection_date}</FormHelperText>
           )}
         </Grid>
+
 
         <Grid item xs={12}>
           <div className='flex items-center justify-between'>

@@ -1,34 +1,34 @@
 // React Imports
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 // Third-party Imports
-import * as yup from 'yup';
-import { useFormik } from 'formik';
+import * as yup from 'yup'
+import { useFormik } from 'formik'
 
 // MUI Imports
-import Grid from '@mui/material/Grid';
-import FormControl from '@mui/material/FormControl';
-import MenuItem from '@mui/material/MenuItem';
-import FormLabel from '@mui/material/FormLabel';
-import Radio from '@mui/material/Radio';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import RadioGroup from '@mui/material/RadioGroup';
-import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid'
+import FormControl from '@mui/material/FormControl'
+import MenuItem from '@mui/material/MenuItem'
+import FormLabel from '@mui/material/FormLabel'
+import Radio from '@mui/material/Radio'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import RadioGroup from '@mui/material/RadioGroup'
+import Chip from '@mui/material/Chip'
+import Button from '@mui/material/Button'
 
 // Component Imports
-import { useProvider } from '@/components/context/Provider';
-import CustomTextField from '@core/components/mui/TextField';
-import DirectionalIcon from '@components/DirectionalIcon';
-import CustomAutocomplete from '@core/components/mui/Autocomplete';
+import { useProvider } from '@/components/context/Provider'
+import CustomTextField from '@core/components/mui/TextField'
+import DirectionalIcon from '@components/DirectionalIcon'
+import CustomAutocomplete from '@core/components/mui/Autocomplete'
 
 // JSON Imports
-import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
-import { useForm } from '../../../components/context/FormContext';
-import { formDataInterface } from '@/components/context/FormDataInterface';
-import { FormHelperText } from '@mui/material';
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
+import { useForm } from '../../../components/context/FormContext'
+import { formDataInterface } from '@/components/context/FormDataInterface'
+import { FormHelperText } from '@mui/material'
 
-const comercioDataString = comercioData as Record<string, any>;
+const comercioDataString = comercioData as Record<string, any>
 
 type Props = {
   activeStep: number
@@ -70,13 +70,13 @@ const Schema = yup
         if (floor_load_capacity[0] === 'si') {
           return schema
             .required('Ingrese un valor')
-            .min(1, 'Ingrese un valor diferente a 0');
+            .min(1, 'Ingrese un valor diferente a 0')
         } else {
-          return schema.notRequired().nullable();
+          return schema.notRequired().nullable()
         }
       }),
   })
-  .required();
+  .required()
 
 const SchemaVivienda = yup
   .object({
@@ -101,23 +101,23 @@ const SchemaVivienda = yup
         if (floor_load_capacity[0] === 'si') {
           return schema
             .required('Ingrese un valor')
-            .min(1, 'Ingrese un valor diferente a 0');
+            .min(1, 'Ingrese un valor diferente a 0')
         } else {
-          return schema.notRequired().nullable();
+          return schema.notRequired().nullable()
         }
       }),
   })
-  .required();
+  .required()
 
 const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
 
-  const { globalType } = useProvider();
+  const { globalType } = useProvider()
   const [front, setFront] = useState<string[]>([])
   const [specifications, setSpecifications] = useState<string[]>([])
-  const [specificationsAmount, setSpecificationsAmount] = useState<{ [key: string]: string }>({})
+  const [specificationsAmount, setSpecificationsAmount] = useState<{ [key: string]: number }>({})
   const [watch, setWatch] = useState<string[]>([])
   const [commonZonesOption, setCommonZonesOption] = useState<string[]>([])
-  const { formData, setFormData } = useForm();
+  const { formData, setFormData } = useForm()
 
 
   const initialValues = globalType === "vivienda"
@@ -155,7 +155,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
       unit_type: '',
       surveillanceExternal: watch,
       commonzones: commonZonesOption,
-    };
+    }
 
   const othersAmount: { [key: string]: string } = {
     "Acceso pavimentado": "quantitypaved",
@@ -185,22 +185,45 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
     validationSchema: globalType === "vivienda" ? SchemaVivienda : Schema,
     onSubmit: (values) => {
       console.log("Coleccion external")
-      console.log(values)
+      const combinedSpecifications = formik.values.otherspecifications.map((spec) => {
+        const amountKey = othersAmount[spec];
+        return {
+          specification: spec,
+          amount: specificationsAmount[amountKey] || 0,
+        };
+      });
+
+      console.log("Colección externa");
+      console.log({
+        ...values,
+        combinedSpecifications,
+      });
+
       setFormData((prevData: formDataInterface) => ({
         ...prevData,
         ...values,
+        combinedSpecifications,
       }));
-      handleNext()
+      handleNext();
     },
-  });
+  })
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setSpecificationsAmount(prev => ({
+      ...prev,
+      [id]: Number(value)
+    }));
+    formik.setFieldValue(id, Number(value));
+  }
 
   const handlePrevStep = () => {
     setFormData((prevData) => ({
       ...prevData,
       ...formik.values,
-    }));
-    handlePrev();
-  };
+    }))
+    handlePrev()
+  }
 
   useEffect(() => {
     if (globalType === "vivienda") {
@@ -230,7 +253,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
           floor_load_capacity: formData.floor_load_capacity || '',
           quantity_load_capacity: formData.quantity_load_capacity || 0,
 
-        });
+        })
       }
     } else {
       if (
@@ -276,19 +299,32 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
           unit_type: formData.unit_type || '',
           surveillanceExternal: formData.surveillanceExternal || [],
           commonzones: formData.commonzones || []
-        });
+        })
       }
     }
-  }, [formData, globalType]);
+  }, [formData, globalType])
 
   useEffect(() => {
     console.log(formData)
   }, [])
 
+  useEffect(() => {
+    if (formData?.combinedSpecifications) {
+      const initialAmounts = formData.combinedSpecifications.reduce((acc, { specification, amount }) => {
+        const key = othersAmount[specification];
+        if (key) {
+          acc[key] = amount;
+        }
+        return acc;
+      }, {} as { [key: string]: number });
+
+      setSpecificationsAmount(initialAmounts);
+    }
+  }, [formData]);
 
   const {
     number_of_levels, floor_number, quantity_load_capacity, otherspecifications
-  } = formik.values;
+  } = formik.values
 
   return (
     <>
@@ -492,7 +528,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
                     value={formik.values.facade}
                     onChange={(event, value) => {
                       setFront(value as string[])
-                      formik.setFieldValue('facade', value);
+                      formik.setFieldValue('facade', value)
                     }
                     }
                     id='facade'
@@ -607,53 +643,43 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
                 disableCloseOnSelect
                 value={formik.values.otherspecifications}
                 onChange={(event, value) => {
-                  setSpecifications(value as string[])
-                  formik.setFieldValue('otherspecifications', value);
-                }
-                }
-                id='otherspecifications'
-                options={
-                  comercioDataString[globalType].Externo["Otras especificaciones"].map((tipo: string) => (tipo))
-                }
-                getOptionLabel={option => option || ''}
-                renderInput={params => <CustomTextField {...params} label='Otras especificaciones' placeholder='Seleccione otras especificaciones' helperText={formik.touched.otherspecifications && formik.errors.otherspecifications ? formik.errors.otherspecifications : ''}
-                  error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)} />}
-                renderTags={(value: string[], getTagProps) =>
-                  value.map((option: string, index: number) => (
-                    <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
+                  formik.setFieldValue('otherspecifications', value)
+                }}
+                options={comercioDataString[globalType].Externo["Otras especificaciones"]}
+                getOptionLabel={(option) => option || ''}
+                renderInput={(params) => (
+                  <CustomTextField
+                    {...params}
+                    label='Otras especificaciones'
+                    placeholder='Seleccione otras especificaciones'
+                    helperText={formik.touched.otherspecifications && formik.errors.otherspecifications ? formik.errors.otherspecifications : ''}
+                    error={formik.touched.otherspecifications && Boolean(formik.errors.otherspecifications)}
+                  />
+                )}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip label={option} size='small' {...getTagProps({ index })} key={index} />
                   ))
                 }
               />
             </FormControl>
           </Grid>
 
-          {
-            otherspecifications?.map((item, index) => (
-              <Grid key={index} item xs={6} md={3}>
-                <CustomTextField
-                  type='number'
-                  fullWidth
-                  label={`Cantidad ${item}`}
-                  placeholder='Ingrese la cantidad'
-                  id={othersAmount[item]}
-                  value={specificationsAmount[item]}
-                  onFocus={(e) => e.target.select()}
-                  onChange={(e) => {
-                    const { id, value } = e.target;
-                    setSpecificationsAmount(prev => ({
-                      ...prev,
-                      [id]: value
-                    }));
-                    formik.handleChange(e);
-                  }}
-
-                  onBlur={formik.handleBlur}
-                />
-              </Grid>
-            ))
-          }
-
-
+          {/* Campos dinámicos para las cantidades */}
+          {formik.values.otherspecifications.map((item, index) => (
+            <Grid key={index} item xs={6} md={3}>
+              <CustomTextField
+                type='number'
+                fullWidth
+                label={`Cantidad ${item}`}
+                placeholder='Ingrese la cantidad'
+                id={othersAmount[item]}
+                value={specificationsAmount[othersAmount[item]] || ''}
+                onChange={handleAmountChange}
+                onBlur={formik.handleBlur}
+              />
+            </Grid>
+          ))}
 
           <Grid item xs={12} md={12}>
             <hr className="w-full h-px bg-gray-100" />
@@ -721,7 +747,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
               value={formik.values.surveillanceExternal}
               onChange={(event, value) => {
                 setWatch(value as string[])
-                formik.setFieldValue('surveillanceExternal', value);
+                formik.setFieldValue('surveillanceExternal', value)
               }}
               onBlur={formik.handleBlur}
               options={
@@ -747,7 +773,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
               value={formik.values.commonzones}
               onChange={(event, value) => {
                 setCommonZonesOption(value as string[])
-                formik.setFieldValue('commonzones', value);
+                formik.setFieldValue('commonzones', value)
 
               }}
               onBlur={formik.handleBlur}

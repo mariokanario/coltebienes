@@ -80,15 +80,18 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
       cellphone: "",
       owner_email: "",
       authorizes_publishing: "",
-      owner_identification: ""
+      owner_identification: "",
+      globalTypePage: ""
     },
     validationSchema: Schema,
     onSubmit: (values) => {
       console.log("Coleccion type")
       console.log(values)
+      console.log(globalType)
       setFormData((prevData) => ({
         ...prevData,
         ...values,
+        globalTypePage: globalType
       }))
       handleNext()
     },
@@ -100,14 +103,16 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
       formik.values.cellphone !== formData.cellphone ||
       formik.values.owner_email !== formData.owner_email ||
       formik.values.authorizes_publishing !== formData.authorizes_publishing ||
-      formik.values.owner_identification !== formData.owner_identification
+      formik.values.owner_identification !== formData.owner_identification ||
+      formik.values.globalTypePage !== formData.globalTypePage
     ) {
       formik.setValues({
         name: formData.name || '',
         cellphone: formData.cellphone || '',
         owner_email: formData.owner_email || '',
         authorizes_publishing: formData.authorizes_publishing || '',
-        owner_identification: formData.owner_identification || ''
+        owner_identification: formData.owner_identification || '',
+        globalTypePage: formData.globalTypePage || ''
       })
     }
   }, [formData])

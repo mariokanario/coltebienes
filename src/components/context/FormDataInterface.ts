@@ -1,4 +1,5 @@
 export interface formDataInterface {
+    globalTypePage?: string
     name?: string
     cellphone?: string
     owner_identification?: string
@@ -13,6 +14,7 @@ export interface formDataInterface {
     charge?: string
     canyon?: number
     sale_value?: number
+    valuesArrayAddress?: string[]
     administration_value?: number
     include_administration?: string
     dressingroomcount?: number
@@ -27,7 +29,7 @@ export interface formDataInterface {
     depth?: number
     front?: number
     type_kitchen?: string[]
-    propertystatus?: string[]
+    propertystatus?: string
     electric_connection?: string[]
     others?: string[]
     winery?: string
@@ -62,7 +64,9 @@ export interface formDataInterface {
     number_of_levels?: number
     floor_number?: number
     otherspecifications?: string[]
-    specificationsAmount?: { [key: string]: string }
+    combinedSpecifications?: { specification: string; amount: number }[];
+    specificationsWithAmounts?: {}
+    specificationsAmount?: { [key: string]: number }
     parking_lot?: string
     surveillanceExternal?: string[]
     commonzones?: string[]

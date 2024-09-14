@@ -11,7 +11,7 @@ export const API_ACTION_STATE = 'api/state'
 export const API_ACTION_DELETE = 'api/delete'
 export const API_ACTION_UPDATE = 'api/update'
 export const API_ACTION_UPDATE_PASSWORD = 'api/update/password'
-export const API_ACTION_SAVE_FORM_DATA = 'api/property/create'
+export const API_ACTION_SAVE_FORM_DATA = 'api/propertydata/create'
 
 
 export const API_PROTOCOL = 'http://'

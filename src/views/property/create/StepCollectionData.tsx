@@ -115,12 +115,14 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild
   const { formData, setFormData } = useForm()
   const [openAddress, setOpenAddress] = useState(true)
+  const [sendArrayAddress, SetSendArrayAddress] = useState<string[]>([])
 
 
   const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  function hadleSetAddress(address: any): void {
+  function hadleSetAddress(address: any, arrayAddress: string[]): void {
+    SetSendArrayAddress(arrayAddress)
     formik.setFieldValue('address', address)
     handleClose()
   }
@@ -176,9 +178,11 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
     onSubmit: (values) => {
       console.log("Coleccion Data")
       console.log(values)
-      setFormData((prevData: formDataInterface) => ({
+      console.log(sendArrayAddress)
+      setFormData((prevData) => ({
         ...prevData,
         ...values,
+        valuesArrayAddress: sendArrayAddress
       }))
       handleNext()
     },
@@ -506,13 +510,14 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
             <AppReactDatepicker
               selected={date}
               placeholderText='Ingrese la fecha de construcción'
-              dateFormat={'yyyy-MM-dd'}
+              dateFormat='yyyy-MM-dd'
               id="year_of_construction"
               value={formik.values.year_of_construction ? new Date(formik.values.year_of_construction).toISOString().split('T')[0] : ''}
               maxDate={new Date()}
               onChange={(date: Date | null) => {
-                formik.setFieldValue('year_of_construction', date ? date.toISOString() : null)
-                setDate(date)
+                const formattedDate = date ? new Date(date).toISOString().split('T')[0] : null;
+                formik.setFieldValue('year_of_construction', formattedDate);
+                setDate(date);
               }}
               onBlur={formik.handleBlur}
               customInput={<CustomTextField error={formik.touched.year_of_construction && Boolean(formik.errors.year_of_construction)} fullWidth label='Año de construcción' />}
@@ -521,6 +526,7 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
               <FormHelperText className='text-red-500'>{formik.errors.year_of_construction}</FormHelperText>
             )}
           </Grid>
+
 
           {
             globalType == "vivienda" ?

@@ -21,7 +21,7 @@ import { useForm } from '@/components/context/FormContext'
 type Props = {
     open: boolean
     handleClose: () => void
-    hadleSetAddress: (address: string) => void
+    hadleSetAddress: (address: string, arrayAddress: string[]) => void
 }
 
 const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -43,6 +43,9 @@ const validationSchema = Yup.object({
 const ModalAddress = ({ open, handleClose, hadleSetAddress }: Props) => {
     const [viewMap, setViewMap] = useState<boolean>(false)
     const [combinedAddressMaps, setCombinedAddressMaps] = useState('')
+    const [sendArrayAddressModal, SetSendArrayAddressModal] = useState<string[]>([])
+    const { formData, setFormData } = useForm()
+
 
 
     const formik = useFormik({
@@ -61,10 +64,25 @@ const ModalAddress = ({ open, handleClose, hadleSetAddress }: Props) => {
         //validationSchema,
         onSubmit: (values) => {
             const combinedAddress = Object.values(values).join(' ')
-            hadleSetAddress(combinedAddress)
-            handleClose()
+            const valuesArray = Object.values(values);
+            SetSendArrayAddressModal(valuesArray)
+            sendData(valuesArray, combinedAddress)
         }
     })
+
+    const sendData = ((val: string[], valAdd: any) => {
+        hadleSetAddress(valAdd, val)
+        handleClose()
+    })
+
+    useEffect(() => {
+        if (formData.valuesArrayAddress && formData.valuesArrayAddress.length > 0) {
+            formData.valuesArrayAddress.forEach((value, index) => {
+                formik.setFieldValue(`input${index + 1}`, value || '')
+            })
+        }
+    }, [formData.valuesArrayAddress])
+
 
     useEffect(() => {
         const addressMaps = formik.values.input1 + " " +

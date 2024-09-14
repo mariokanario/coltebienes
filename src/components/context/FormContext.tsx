@@ -13,6 +13,7 @@ const FormContext = createContext<FormContextProps | undefined>(undefined)
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
     const initialFormData: formDataInterface = {
+        globalTypePage: '',
         name: '',
         cellphone: '',
         owner_identification: '',
@@ -38,8 +39,9 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         height: 0,
         depth: 0,
         front: 0,
+        valuesArrayAddress: [],
         type_kitchen: [],
-        propertystatus: [],
+        propertystatus: '',
         electric_connection: [],
         others: [],
         winery: "",
@@ -76,6 +78,8 @@ export const FormProvider = ({ children }: { children: ReactNode }) => {
         number_of_levels: 0,
         floor_number: 0,
         otherspecifications: [],
+        combinedSpecifications: [],
+        specificationsWithAmounts: {},
         specificationsAmount: {},
         parking_lot: '',
         surveillanceExternal: [],

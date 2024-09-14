@@ -46,10 +46,9 @@ const validationSchema = Yup.object({
     .min(1, 'Seleccione al menos un acabado de cubierta')
     .required('Este campo es obligatorio'),
 
-  propertystatus: Yup.array()
-    .of(Yup.string())
-    .min(1, 'Seleccione al menos un estado del inmueble')
-    .required('Este campo es obligatorio'),
+  propertystatus: Yup.string()
+    .notOneOf([''], 'Debe seleccionar el estado del inmueble')
+    .required('El campo es obligatorio'),
   number_of_bathrooms: Yup
     .number()
     .typeError('Agregue un valor válido')
@@ -169,7 +168,6 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
   const { globalType } = useProvider();
   const { formData, setFormData } = useForm();
   const [type_kitchenDetails, settype_kitchenDetails] = useState<string[]>([])
-  const [propertyStatusOption, setPropertyStatusOption] = useState<string[]>([])
   const [otherSpecifications, setOtherSpecifications] = useState<string[]>([])
   const [electric_connectionOptions, setelectric_connectionOptions] = useState<string[]>([])
   const [type_floorOptions, settype_floorOptions] = useState<string[]>([])
@@ -187,7 +185,7 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
       linencloset: "",
       dressingroom: "",
       type_kitchen: type_kitchenDetails,
-      propertystatus: propertyStatusOption,
+      propertystatus: "",
       dining: "",
       diningroom: "",
       penthouse: "",
@@ -216,7 +214,7 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
       depth: 0,
       front: 0,
       type_kitchen: type_kitchenDetails,
-      propertystatus: propertyStatusOption,
+      propertystatus: "",
       electric_connection: electric_connectionOptions,
       others: otherSpecifications,
       winery: "",
@@ -298,7 +296,7 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
           linencloset: formData.linencloset || '',
           dressingroom: formData.dressingroom || '',
           type_kitchen: formData.type_kitchen || [],
-          propertystatus: formData.propertystatus || [],
+          propertystatus: formData.propertystatus || "",
           dining: formData.dining || '',
           diningroom: formData.diningroom || '',
           penthouse: formData.penthouse || '',
@@ -347,7 +345,7 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
           depth: formData.depth || 0,
           front: formData.front || 0,
           type_kitchen: formData.type_kitchen || [],
-          propertystatus: formData.propertystatus || [],
+          propertystatus: formData.propertystatus || "",
           electric_connection: formData.electric_connection || [],
           others: formData.others || [],
           winery: formData.winery || '',
@@ -397,40 +395,26 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <FormControl
-            error={
-              formik.touched.propertystatus &&
-              Boolean(formik.errors.propertystatus)
-            }
+          <CustomTextField
+            select
             fullWidth
+            label="Estado del inmueble"
+            id="propertystatus"
+            name="propertystatus"
+            value={formik.values.propertystatus}
+            onChange={formik.handleChange}
+            error={formik.touched.propertystatus && Boolean(formik.errors.propertystatus)}
+            helperText={formik.touched.propertystatus && formik.errors.propertystatus ? formik.errors.propertystatus : ""}
           >
-            <CustomAutocomplete
-              fullWidth
-              multiple
-              disableCloseOnSelect
-              value={formik.values.propertystatus}
-              onChange={(event, value) => {
-                setPropertyStatusOption(value as string[])
-                formik.setFieldValue('propertystatus', value);
-              }}
-              id='propertystatus'
-              options={
-                comercioDataString[globalType].Interno["Estado del inmueble"].map((tipo: string) => (tipo))
-              }
-              getOptionLabel={option => option || ''}
-              renderInput={params => <CustomTextField {...params} label='Seleccione el estado del inmueble' error={formik.touched.propertystatus && Boolean(formik.errors.propertystatus)} />}
-              renderTags={(value: string[], getTagProps) =>
-                value.map((option: string, index: number) => (
-                  <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
-                ))
-              }
-            />
-
-            {formik.touched.propertystatus && formik.errors.propertystatus && (
-              <FormHelperText>{formik.errors.propertystatus}</FormHelperText>
-            )}
-
-          </FormControl>
+            <MenuItem value="" disabled>
+              Seleccione estado del inmueble
+            </MenuItem>
+            {comercioDataString[globalType].Interno["Estado del inmueble"].map((estado: string) => (
+              <MenuItem key={estado} value={estado}>
+                {estado}
+              </MenuItem>
+            ))}
+          </CustomTextField>
         </Grid>
         <Grid item xs={12} md={4}>
           <CustomTextField
