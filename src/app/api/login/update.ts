@@ -4,6 +4,7 @@ import axios from "axios"
 const updateUser = async (data: any, id: any) => {
     const dataUser = {
         'name': data.name,
+        'number_document': data.number_document,
         'email': data.email,
         'role': data.role,
         'state': data.status === "Activo" ? 1 : 0

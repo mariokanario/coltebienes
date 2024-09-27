@@ -27,6 +27,7 @@ import logout from '@/app/api/login/logout'
 import Cookies from 'js-cookie'
 import me from '@/app/api/menu/me'
 import { AxiosResponse } from 'axios'
+import { useProvider } from '@/components/context/Provider'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -43,6 +44,8 @@ const UserDropdown = () => {
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [user, setUser] = useState('')
+  const { setClearUser, globalUser, setGlobalUser } = useProvider()
+
 
   // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
@@ -79,6 +82,7 @@ const UserDropdown = () => {
     } finally {
       router.push('/login')
       Cookies.remove('auth_token')
+      setClearUser(true)
     }
   }
 
@@ -87,6 +91,7 @@ const UserDropdown = () => {
       try {
         const response = await me()
         const data = (response as AxiosResponse).data
+        setGlobalUser(data)
         setEmail(data.email)
         setUser(data.name)
       } catch (error) {

@@ -30,6 +30,10 @@ import { formDataInterface } from '@/components/context/FormDataInterface'
 import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json'
 import colombiaData from '@/app/api/fake-db/apps/form-list/colombiaData.json'
 import ModalAddress from './ModalAddress'
+import save from '@/app/api/captaciones/save'
+import { useRouter } from 'next/navigation'
+import { useAlert } from '@/components/AlertContext'
+import Cookies from 'js-cookie'
 const comercioDataString = comercioData as Record<string, any>
 
 
@@ -54,8 +58,8 @@ const SchemaHouse = yup
     property_type: yup.string().required("Elige una opción"),
     destination_property: yup.string().required("Elige una opción"),
     charge: yup.string().required("Elige una opción"),
-    canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    //canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    //sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
     administration_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
     year_of_construction: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).max(new Date(), 'La fecha no puede ser mayor que la fecha actual'),
     stratum: yup.number().typeError('Agregue un valor válido').required("Agregue un valor").min(1, "El estrato debe ser al menos 1").transform((value, originalValue) => (originalValue === '' ? null : value)),
@@ -84,8 +88,8 @@ const SchemaBuild = yup
     coownershipname: yup.string().required("Escriba el nombre").min(5, "Debe de tener mínimo 5 letras"),
     property_type: yup.string().required("Elige una opción"),
     charge: yup.string().required("Elige una opción"),
-    canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
-    sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    //canyon: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
+    //sale_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
     administration_value: yup.number().required("Agregue un valor").min(4, "Debe de tener mínimo 4 números"),
     built_area: yup
       .number()
@@ -106,16 +110,19 @@ const SchemaBuild = yup
   .required()
 
 const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
-
-  const { globalType } = useProvider()
+  const { globalType, setClearUser, globalUser, setGlobalUser } = useProvider()
   const [date, setDate] = useState<Date | null | undefined>(null)
   const [selectedDepartment, setSelectedDepartment] = useState<string>('')
   const [cities, setCities] = useState<string[]>([])
   const [open, setOpen] = useState<boolean>(false)
+  const [typeManagement, setTypeManagement] = useState('')
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild
-  const { formData, setFormData } = useForm()
+  const { formData, setFormData, resetFormData, setResetFormData } = useForm()
   const [openAddress, setOpenAddress] = useState(true)
   const [sendArrayAddress, SetSendArrayAddress] = useState<string[]>([])
+  const router = useRouter()
+  const { showMessage } = useAlert()
+
 
 
   const handleClickOpen = () => setOpen(true)
@@ -182,11 +189,50 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
       setFormData((prevData) => ({
         ...prevData,
         ...values,
-        valuesArrayAddress: sendArrayAddress
+        valuesArrayAddress: sendArrayAddress,
+        status_complete: false
       }))
+      saveCollectionData()
       handleNext()
     },
   })
+
+  async function saveCollectionData() {
+    try {
+      const { status } = await save(formData)
+      if (status !== 200) {
+        showMessage("Error al guardar los datos, por favor intenta de nuevo.", "error")
+        return;
+      }
+      showMessage("Datos guardados exitosamente", "success")
+    } catch (error: any) {
+      if (error.response?.status === 401 || error.response?.status === 403 || error.response?.status === 500) {
+        showMessage("Error, vuelve a iniciar sesión", "error")
+        Cookies.remove("auth_token")
+        router.push("/login")
+      } else {
+        console.error("Error al guardar los datos:", error)
+        showMessage("Ocurrió un error inesperado, por favor intenta de nuevo.", "error")
+        Cookies.remove("auth_token")
+        router.push("/login")
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (formik.values.charge) {
+      console.log(formik.values.charge)
+      setTypeManagement(formik.values.charge)
+    }
+  }, [formik.values.charge])
+
+
+  useEffect(() => {
+    if (resetFormData === true) {
+      formik.resetForm()
+      setResetFormData(false)
+    }
+  }, [resetFormData])
 
   useEffect(() => {
     if (
@@ -336,8 +382,6 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
               </Grid>
               : null
           }
-
-
           <Grid item xs={12} md={6}>
             <CustomTextField
               select
@@ -362,53 +406,59 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
           </Grid>
 
 
-          <Grid item xs={12} md={6}>
-            <CustomTextField
-              fullWidth
-              type='number'
-              placeholder='Ingrese el valor del canon'
-              label='Canon'
-              id="canyon"
-              value={formik.values.canyon || ''}
-              onChange={formik.handleChange}
-              onFocus={(e) => e.target.select()}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.canyon && formik.errors.canyon ? formik.errors.canyon : ''}
-              error={formik.touched.canyon && Boolean(formik.errors.canyon)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <i className='tabler-currency-dollar' />
-                  </InputAdornment>
-                ),
-                inputProps: { min: 0 }
-              }}
-            />
-          </Grid>
+          {(typeManagement === 'Arriendo' || typeManagement === 'Arriendo/Venta') && (
+            <Grid item xs={12} md={6}>
+              <CustomTextField
+                fullWidth
+                type='number'
+                placeholder='Ingrese el valor del canon'
+                label='Canon'
+                id="canyon"
+                value={formik.values.canyon || ''}
+                onChange={formik.handleChange}
+                onFocus={(e) => e.target.select()}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.canyon && formik.errors.canyon ? formik.errors.canyon : ''}
+                error={formik.touched.canyon && Boolean(formik.errors.canyon)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <i className='tabler-currency-dollar' />
+                    </InputAdornment>
+                  ),
+                  inputProps: { min: 0 }
+                }}
+              />
+            </Grid>
+          )}
 
-          <Grid item xs={12} md={6}>
-            <CustomTextField
-              fullWidth
-              type='number'
-              placeholder='Ingrese el valor de venta'
-              label='Valor venta'
-              id="sale_value"
-              value={formik.values.sale_value || ''}
-              onFocus={(e) => e.target.select()}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              helperText={formik.touched.sale_value && formik.errors.sale_value ? formik.errors.sale_value : ''}
-              error={formik.touched.sale_value && Boolean(formik.errors.sale_value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <i className='tabler-currency-dollar' />
-                  </InputAdornment>
-                ),
-                inputProps: { min: 0 }
-              }}
-            />
-          </Grid>
+
+          {(typeManagement === 'Venta' || typeManagement === 'Arriendo/Venta') && (
+            <Grid item xs={12} md={6}>
+              <CustomTextField
+                fullWidth
+                type='number'
+                placeholder='Ingrese el valor de venta'
+                label='Valor venta'
+                id="sale_value"
+                value={formik.values.sale_value || ''}
+                onFocus={(e) => e.target.select()}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.sale_value && formik.errors.sale_value ? formik.errors.sale_value : ''}
+                error={formik.touched.sale_value && Boolean(formik.errors.sale_value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <i className='tabler-currency-dollar' />
+                    </InputAdornment>
+                  ),
+                  inputProps: { min: 0 }
+                }}
+              />
+            </Grid>
+          )}
+
 
           <Grid item xs={12} md={3}>
             <CustomTextField

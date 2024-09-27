@@ -114,7 +114,7 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, ste
   const [type_floorOptions, settype_floorOptions] = useState<string[]>([])
   const [coveredFini, setCoveredFini] = useState<string[]>([])
   const [watch, setWatch] = useState<string[]>([])
-  const { formData, setFormData } = useForm();
+  const { formData, setFormData, setResetFormComercial, resetFormComercial } = useForm();
 
   const validationSchemaVar = globalType === "vivienda" ? SchemaHouse : SchemaBuild;
 
@@ -194,14 +194,12 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, ste
     handlePrev();
   };
 
-  async function saveCollectionData() {
-    const response = await save(formData)
-  }
-
   useEffect(() => {
-    console.log(formData)
-    //saveCollectionData()
-  }, [])
+    if (resetFormComercial === true) {
+      formik.resetForm()
+      setResetFormComercial(false)
+    }
+  }, [resetFormComercial])
 
 
   useEffect(() => {

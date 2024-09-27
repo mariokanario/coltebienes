@@ -8,12 +8,9 @@ import { useEffect, useState, useMemo } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
-import Checkbox from '@mui/material/Checkbox'
-import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import TablePagination from '@mui/material/TablePagination'
 import type { TextFieldProps } from '@mui/material/TextField'
@@ -43,15 +40,10 @@ import type { UsersType } from '@/types/apps/userTypes'
 
 
 // Component Imports
-import TableFilters from './TableFilters'
 import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 import TablePaginationComponent from '@components/TablePaginationComponent'
 import CustomTextField from '@core/components/mui/TextField'
-import CustomAvatar from '@core/components/mui/Avatar'
-
-// Util Imports
-import { getInitials } from '@/utils/getInitials'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'

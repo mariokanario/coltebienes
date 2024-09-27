@@ -1,5 +1,7 @@
 export interface formDataInterface {
-    globalTypePage?: string
+    id?: number
+    owner_id?: number
+    globaltype?: string
     name?: string
     cellphone?: string
     owner_identification?: string
@@ -21,6 +23,7 @@ export interface formDataInterface {
     built_area?: number
     linenclosetcount?: number
     private_area?: number
+    status_complete: boolean
     year_of_construction?: string
     stratum?: number
     address?: string
@@ -86,6 +89,7 @@ export interface formDataInterface {
     landmarks?: string
     observations?: string
     collector_name?: string
+    type_contact?: string
     collection_medium?: string
     collection_date?: string
     closetcount?: string

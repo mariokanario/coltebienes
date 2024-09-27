@@ -1,5 +1,5 @@
 // React Imports
-import { useEffect, type ChangeEvent } from 'react'
+import { useEffect, useState, type ChangeEvent } from 'react'
 
 // Third-party Imports
 import * as yup from 'yup'
@@ -14,7 +14,8 @@ import FormLabel from '@mui/material/FormLabel'
 import FormHelperText from '@mui/material/FormHelperText'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
-import { useForm } from '../../../components/context/FormContext'
+import { initialFormData, useForm } from '../../../components/context/FormContext'
+import { useRouter } from 'next/navigation'
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider'
@@ -22,6 +23,12 @@ import CustomInputVertical from '@core/components/custom-inputs/Vertical'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
 import { useHandleRefreshToken } from '@/components/context/RefreshContext'
+import show from '@/app/api/captaciones/show'
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import { formDataInterface } from '@/components/context/FormDataInterface'
+import searchDocument from '@/app/api/login/searchDocument'
+import Cookies from 'js-cookie'
+import { useAlert } from '@/components/AlertContext'
 
 type Props = {
   activeStep: number
@@ -58,19 +65,59 @@ const Schema = yup
   .required()
 
 const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
-  const { formData, setFormData } = useForm()
-  const { globalType, setGlobalType } = useProvider()
-  const { handleRefreshToken } = useHandleRefreshToken()
+  const { formData, setFormData, setResetFormType, resetFormType } = useForm();
+  const { globalType, setGlobalType, globalUser } = useProvider()
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [formDataLocal, setFormDataLocal] = useState<formDataInterface>(initialFormData)
+  const { showMessage } = useAlert()
+  const router = useRouter()
+
+  //const { handleRefreshToken } = useHandleRefreshToken()
 
   useEffect(() => {
-    handleRefreshToken()
+    //handleRefreshToken()
+    if (formData.owner_identification === "") {
+      handleGetDataIncomplete()
+    }
   }, [])
 
-  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
+  const handleGetDataIncomplete = async () => {
+    try {
+      const { data: { number_document } } = await searchDocument()
+      const { status, data } = await show(number_document)
+      console.log(data)
+      if (status === 200) {
+        setConfirmOpen(true)
+        setFormDataLocal(data)
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status === 500) {
+        showMessage("Error, vuelve a iniciar sesión", "error")
+        Cookies.remove("auth_token")
+        router.push("/login")
+      } else {
+        console.error("Error fetching incomplete data:", error)
+        showMessage("Ocurrió un error al obtener los datos.", "error")
+        Cookies.remove("auth_token")
+        router.push("/login")
+      }
+    }
+  };
+
+  const hadleSubmitCompleteData = () => {
+    handleOptionChange(formDataLocal.globaltype)
+    setFormData(formDataLocal)
+    setFormDataLocal(initialFormData)
+    setConfirmOpen(false)
+  }
+
+
+
+  const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement> | undefined) => {
     if (typeof prop === 'string') {
       setGlobalType(prop)
     } else {
-      setGlobalType((prop.target as HTMLInputElement).value)
+      setGlobalType((prop?.target as HTMLInputElement).value)
     }
   }
 
@@ -81,7 +128,7 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
       owner_email: "",
       authorizes_publishing: "",
       owner_identification: "",
-      globalTypePage: ""
+      globaltype: ""
     },
     validationSchema: Schema,
     onSubmit: (values) => {
@@ -91,20 +138,21 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
       setFormData((prevData) => ({
         ...prevData,
         ...values,
-        globalTypePage: globalType
+        globaltype: globalType
       }))
       handleNext()
     },
   })
 
   useEffect(() => {
+    console.log(formData)
     if (
       formik.values.name !== formData.name ||
       formik.values.cellphone !== formData.cellphone ||
       formik.values.owner_email !== formData.owner_email ||
       formik.values.authorizes_publishing !== formData.authorizes_publishing ||
       formik.values.owner_identification !== formData.owner_identification ||
-      formik.values.globalTypePage !== formData.globalTypePage
+      formik.values.globaltype !== formData.globaltype
     ) {
       formik.setValues({
         name: formData.name || '',
@@ -112,7 +160,7 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
         owner_email: formData.owner_email || '',
         authorizes_publishing: formData.authorizes_publishing || '',
         owner_identification: formData.owner_identification || '',
-        globalTypePage: formData.globalTypePage || ''
+        globaltype: formData.globaltype || ''
       })
     }
   }, [formData])
@@ -124,6 +172,14 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
     }))
     handlePrev()
   }
+
+  useEffect(() => {
+    if (resetFormType === true) {
+      formik.resetForm()
+      setResetFormType(false)
+    }
+  }, [resetFormType])
+
 
   const { name, cellphone, owner_email, owner_identification } = formik.values
 
@@ -260,6 +316,30 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
           </div>
         </Grid>
       </Grid>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => {
+          setFormData(initialFormData)
+          setConfirmOpen(false)
+        }}
+      >
+        <DialogTitle>Confirmar carga de datos</DialogTitle>
+        <DialogContent>
+          Tiene un formulario en curso.
+          ¿Desea continuar con el formulario?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setFormData(initialFormData)
+            setConfirmOpen(false)
+          }} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={hadleSubmitCompleteData} color="secondary">
+            Cargar datos
+          </Button>
+        </DialogActions>
+      </Dialog>
     </form>
   )
 }

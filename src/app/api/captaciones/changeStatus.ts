@@ -1,14 +1,12 @@
-import { formDataInterface } from "@/components/context/FormDataInterface"
-import { API_PROTOCOL, API_BASE_URL, API_BASE_PORT, API_ACTION_SAVE_FORM_DATA } from "@/configs/enviroments"
+import { API_PROTOCOL, API_BASE_URL, API_BASE_PORT, API_ACTION_CHANGE_TO_STATUS_VIVIENDA } from "@/configs/enviroments"
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const save = async (form: formDataInterface) => {
-    console.log(form)
+const changeStatus = async (id: number, data?: any) => {
     try {
         const response = await axios.post(
-            `${API_PROTOCOL}${API_BASE_URL}:${API_BASE_PORT}/${API_ACTION_SAVE_FORM_DATA}`,
-            form,
+            `${API_PROTOCOL}${API_BASE_URL}:${API_BASE_PORT}/${API_ACTION_CHANGE_TO_STATUS_VIVIENDA}/${id}`,
+            data,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,4 +20,4 @@ const save = async (form: formDataInterface) => {
     }
 }
 
-export default save
+export default changeStatus

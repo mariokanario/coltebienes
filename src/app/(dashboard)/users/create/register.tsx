@@ -39,6 +39,7 @@ const SchemaHouseUpdate = yup
       }),
     name: yup.string().required("Escriba su nombre").min(5, "El nombre debe de tener mínimo 5 letras"),
     role: yup.string().required("Elige un rol"),
+    number_document: yup.number().required("Escriba su número de documento").min(5, "El nombre debe de tener mínimo 5 letras"),
     status: yup.string().required("Elige un estado"),
     email: yup.string().required("El correo es obligatorio").min(5, "El correo debe de tener mínimo 5 letras").email("Ingresa un correo válido"),
   })
@@ -49,6 +50,7 @@ const SchemaHouseRegister = yup
     password: yup.string().required("Escriba su clave").oneOf([yup.ref('passwordConfirm')], 'Las claves deben ser iguales').min(5, "Debe de tener mínimo 5 letras"),
     passwordConfirm: yup.string().required("Escriba de nuevo su clave").oneOf([yup.ref('password')], 'Las claves deben ser iguales').min(5, "Debe de tener mínimo 5 letras"),
     name: yup.string().required("Escriba su nombre").min(5, "El nombre debe de tener mínimo 5 letras"),
+    number_document: yup.number().required("Escriba su número de documento").min(5, "El nombre debe de tener mínimo 5 letras"),
     role: yup.string().required("Elige un rol"),
     status: yup.string().required("Elige un estado "),
     email: yup.string().required("El correo es obligatorio").min(5, "El correo debe de tener mínimo 5 letras").email("Ingresa un correo válido")
@@ -73,6 +75,7 @@ const Page = React.forwardRef<{ submit: () => void }, PageProps>(({ onSuccess, u
       password: "",
       passwordConfirm: "",
       name: userDataPage?.name || "",
+      number_document: userDataPage?.number_document || "",
       email: userDataPage?.email || "",
       role: userDataPage?.role || "",
       status: userDataPage?.state.toString() === "1" ? "Activo" : userDataPage?.state.toString() === "0" ? "Inactivo" : ""
@@ -116,6 +119,19 @@ const Page = React.forwardRef<{ submit: () => void }, PageProps>(({ onSuccess, u
             onBlur={formik.handleBlur}
             helperText={formik.touched.name && formik.errors.name ? formik.errors.name : ''}
             error={formik.touched.name && Boolean(formik.errors.name)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CustomTextField
+            fullWidth
+            label='Número de documento'
+            placeholder='Ingrese un número de documento'
+            id="number_document"
+            value={formik.values.number_document}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.number_document && formik.errors.number_document ? formik.errors.number_document : ''}
+            error={formik.touched.number_document && Boolean(formik.errors.number_document)}
           />
         </Grid>
         <Grid item xs={12} md={6}>

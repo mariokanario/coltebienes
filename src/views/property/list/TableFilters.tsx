@@ -1,4 +1,3 @@
-// React Imports
 import { useState, useEffect } from 'react'
 
 // MUI Imports
@@ -7,28 +6,37 @@ import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 
 // Type Imports
-import type { PropertiesType } from '@/types/apps/propertyTypes'
+import type { formDataInterface } from '@/components/context/FormDataInterface'
 
 // Component Imports
 import CustomTextField from '@core/components/mui/TextField'
+import { Button } from '@mui/material'
 
-const TableFilters = ({ setData, tableData }: { setData: any; tableData?: PropertiesType[] }) => {
-  // States
-  const [type, setType] = useState<PropertiesType['type']>('')
-  const [charge, setCharge] = useState<PropertiesType['charge']>('')
-  const [status, setStatus] = useState<PropertiesType['status']>('')
+const TableFilters = ({ setData, tableData }: { setData: any; tableData?: formDataInterface[] }) => {
+  const [type, setType] = useState<string>('')
+  const [charge, setCharge] = useState<string>('')
+  const [status, setStatus] = useState<string>('')
 
   useEffect(() => {
     const filteredData = tableData?.filter(user => {
-      if (type && user.type !== type) return false
-      if (charge && user.charge !== charge) return false
-      if (status && user.status !== status) return false
 
-      return true
-    })
+      if (charge && user.charge !== charge) {
+        return false
+      }
 
-    setData(filteredData)
-  }, [type, charge, status, tableData, setData])
+      if (type && user.globaltype !== type) {
+        return false
+      }
+      //if (status && user.status !== status) return false; // Filtra por 'status'
+
+      return true;
+    });
+
+    setData(filteredData);
+
+  }, [charge, type, status, tableData, setData])
+
+
 
   return (
     <CardContent>
@@ -37,36 +45,40 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: Proper
           <CustomTextField
             select
             fullWidth
-            id='select-role'
+            id='select-type'
             value={type}
+            label="Seleccione Tipo"
             onChange={e => setType(e.target.value)}
             SelectProps={{ displayEmpty: true }}
           >
             <MenuItem value=''>Seleccione Tipo</MenuItem>
-            <MenuItem value='casa'>Casa</MenuItem>
-            <MenuItem value='local'>Local</MenuItem>
+            <MenuItem value='vivienda'>Vivienda</MenuItem>
+            <MenuItem value='comercio'>Comercio</MenuItem>
           </CustomTextField>
         </Grid>
         <Grid item xs={12} sm={4}>
           <CustomTextField
             select
             fullWidth
-            id='select-plan'
+            id='select-charge'
             value={charge}
+            label="Seleccione Tipo de gestión"
             onChange={e => setCharge(e.target.value)}
             SelectProps={{ displayEmpty: true }}
           >
-            <MenuItem value=''>Seleccione Tipo de gestion</MenuItem>
-            <MenuItem value='arriendo'>Arriendo</MenuItem>
-            <MenuItem value='venta'>Venta</MenuItem>
+            <MenuItem value=''>Seleccione Tipo de gestión</MenuItem>
+            <MenuItem value='Arriendo'>Arriendo</MenuItem>
+            <MenuItem value='Venta'>Venta</MenuItem>
+            <MenuItem value='Arriendo/Venta'>Arriendo/Venta</MenuItem>
           </CustomTextField>
         </Grid>
-        <Grid item xs={12} sm={4}>
+        {/* <Grid item xs={12} sm={4}>
           <CustomTextField
             select
             fullWidth
             id='select-status'
             value={status}
+            label="Seleccione Estado"
             onChange={e => setStatus(e.target.value)}
             SelectProps={{ displayEmpty: true }}
           >
@@ -74,6 +86,23 @@ const TableFilters = ({ setData, tableData }: { setData: any; tableData?: Proper
             <MenuItem value='inactivo'>Inactivo</MenuItem>
             <MenuItem value='publicado'>Publicado</MenuItem>
           </CustomTextField>
+        </Grid> */}
+        <Grid item xs={12} sm={4}>
+          <Button
+            sx={{
+              position: 'relative',
+              top: '18px'
+            }}
+            onClick={() => {
+              setStatus('')
+              setCharge('')
+              setType('')
+            }}
+            variant='contained'
+            className='sm:is-auto'
+          >
+            Limpiar filtros
+          </Button>
         </Grid>
       </Grid>
     </CardContent>

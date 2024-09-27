@@ -166,7 +166,7 @@ const validationSchema = Yup.object({
 
 const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, steps }: Props) => {
   const { globalType } = useProvider();
-  const { formData, setFormData } = useForm();
+  const { formData, setFormData, resetFormVivendia, setResetFormVivendia } = useForm();
   const [type_kitchenDetails, settype_kitchenDetails] = useState<string[]>([])
   const [otherSpecifications, setOtherSpecifications] = useState<string[]>([])
   const [electric_connectionOptions, setelectric_connectionOptions] = useState<string[]>([])
@@ -243,6 +243,13 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
     },
 
   });
+
+  useEffect(() => {
+    if (resetFormVivendia === true) {
+      formik.resetForm()
+      setResetFormVivendia(false)
+    }
+  }, [resetFormVivendia])
 
   const handlePrevStep = () => {
     setFormData((prevData) => ({

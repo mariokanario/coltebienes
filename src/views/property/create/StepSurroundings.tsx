@@ -24,7 +24,10 @@ import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
 import { useForm } from '@/components/context/FormContext';
 import { formDataInterface } from '@/components/context/FormDataInterface';
 import save from '@/app/api/captaciones/save';
-import { throws } from 'assert';
+import { useRouter } from 'next/navigation';
+import { AxiosResponse } from 'axios';
+import { useAlert } from '@/components/AlertContext';
+import Cookies from 'js-cookie';
 
 const comercioDataString = comercioData as Record<string, any>;
 
@@ -42,6 +45,7 @@ const SchemaHouse = yup
     landmarks: yup.string().required("Escriba lugares de referencia").min(5, "Debe de tener mínimo 5 letras"),
     observations: yup.string().required("Escriba otras características").min(5, "Debe de tener mínimo 5 letras"),
     collector_name: yup.string().required("Escriba el nombre del captador").min(5, "El nombre debe de tener mínimo 5 letras"),
+    type_contact: yup.string().required("Escriba el metodo de contacto").min(5, "El metodo debe de tener mínimo 5 letras"),
     collection_medium: yup.string().required("Escriba el medio de captación").min(5, "Debe de tener mínimo 5 letras"),
     collection_date: yup.date().required("Agregue una fecha").nullable().transform((value, originalValue) => (originalValue === '' ? null : value)).max(new Date(), 'La fecha no puede ser mayor que la fecha actual'),
   })
@@ -52,9 +56,10 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
   const { globalType } = useProvider();
   const [surroundings, setSurroundings] = useState<string[]>([])
   const [date, setDate] = useState<Date | null | undefined>(null)
-  const [test, setTest] = useState(false)
-  const { formData, setFormData } = useForm();
-
+  const [send, setSend] = useState(false)
+  const { formData, setFormData, resetFormSurro, setResetFormSurro, setResetFormAll } = useForm()
+  const router = useRouter()
+  const { showMessage } = useAlert()
 
   useEffect(() => {
     if (
@@ -63,7 +68,8 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
       formik.values.observations !== formData.observations ||
       formik.values.collector_name !== formData.collector_name ||
       formik.values.collection_medium !== formData.collection_medium ||
-      formik.values.collection_date !== formData.collection_date
+      formik.values.collection_date !== formData.collection_date ||
+      formik.values.type_contact !== formData.type_contact
 
     ) {
       formik.setValues({
@@ -72,7 +78,8 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
         observations: formData.observations || '',
         collector_name: formData.collector_name || '',
         collection_medium: formData.collection_medium || '',
-        collection_date: formData.collection_date || ''
+        collection_date: formData.collection_date || '',
+        type_contact: formData.type_contact || ''
       })
     }
   }, [formData])
@@ -108,11 +115,22 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
   }
 
   const saveData = async () => {
+    setResetFormAll(true)
+    setResetFormSurro(true)
     try {
-      const response = await save(formData)
-      console.log(response)
+      const response = await save(formData) as AxiosResponse
+      console.log("Respuesta:", response)
+      if (response.status !== 200) {
+        showMessage("Error, vuelve a iniciar sesión", "error")
+        Cookies.remove("auth_token")
+        router.push("/login")
+      } else {
+        showMessage(response.data.message, "success")
+      }
     } catch (error) {
-      throw error
+      showMessage("Error, vuelve a iniciar sesión", "error")
+      Cookies.remove("auth_token")
+      router.push("/login")
     }
   }
 
@@ -124,24 +142,38 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
       collector_name: "",
       collection_medium: "",
       collection_date: "",
+      type_contact: ""
     },
     validationSchema: SchemaHouse,
     onSubmit: (values) => {
       console.log("Coleccion Surrounding")
       console.log(values)
-      setFormData((prevData: formDataInterface) => ({
-        ...prevData,
-        ...values,
-      }));
-      setTest(true)
-      saveData()
+      setFormData((prevData: formDataInterface) => {
+        const updatedData = {
+          ...prevData,
+          ...values,
+          status_complete: true
+        }
+        return updatedData
+      });
+      setSend(true);
     },
   });
 
   useEffect(() => {
-    console.log(formData)
+    if (send) {
+      saveData()
+      setSend(false)
+    }
+  }, [send, formData])
 
-  }, [test])
+  useEffect(() => {
+    if (resetFormSurro === true) {
+      formik.resetForm()
+      setResetFormSurro(false)
+    }
+  }, [resetFormSurro])
+
 
 
   const { landmarks, observations, collector_name, collection_medium } = formik.values;
@@ -241,6 +273,19 @@ const StepSurroundings = ({ activeStep, handlePrev }: Props) => {
             onBlur={formik.handleBlur}
             helperText={formik.touched.collection_medium && formik.errors.collection_medium ? formik.errors.collection_medium : ''}
             error={formik.touched.collection_medium && Boolean(formik.errors.collection_medium)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CustomTextField
+            fullWidth
+            label='Medio de contacto (Whatsapp, correo, teléfono)'
+            placeholder='Ingrese el medio de contacto'
+            id="type_contact"
+            value={formik.values.type_contact}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            helperText={formik.touched.type_contact && formik.errors.type_contact ? formik.errors.type_contact : ''}
+            error={formik.touched.type_contact && Boolean(formik.errors.type_contact)}
           />
         </Grid>
         <Grid item xs={12} md={6}>

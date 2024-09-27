@@ -117,7 +117,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
   const [specificationsAmount, setSpecificationsAmount] = useState<{ [key: string]: number }>({})
   const [watch, setWatch] = useState<string[]>([])
   const [commonZonesOption, setCommonZonesOption] = useState<string[]>([])
-  const { formData, setFormData } = useForm()
+  const { formData, setFormData, resetFormExternal, setResetFormExternal } = useForm()
 
 
   const initialValues = globalType === "vivienda"
@@ -224,6 +224,13 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
     }))
     handlePrev()
   }
+
+  useEffect(() => {
+    if (resetFormExternal === true) {
+      formik.resetForm()
+      setResetFormExternal(false)
+    }
+  }, [resetFormExternal])
 
   useEffect(() => {
     if (globalType === "vivienda") {
@@ -618,7 +625,7 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
               type='number'
               fullWidth
               label='En el piso número'
-              placeholder='Ingrese el numero de pisos'
+              placeholder='Ingrese el número de pisos'
               id="floor_number"
               value={floor_number || ''}
               onFocus={(e) => e.target.select()}
