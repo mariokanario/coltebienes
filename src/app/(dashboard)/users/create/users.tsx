@@ -44,10 +44,6 @@ const userStatusObj: UserStatusType = {
     inactivo: 'warning'
 }
 
-interface PropertyListTableProps {
-    tableData?: formDataInterface[]
-    isHouse: boolean
-}
 
 interface PropertySubmitHouseProps {
     observations_house?: string
@@ -112,8 +108,6 @@ export default function ListUsers() {
     const [rowSelection, setRowSelection] = useState({})
     const [rowId, setRowId] = useState(0)
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [formDataList, setFormDataList] = useState<formDataInterface[]>([])
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [globalFilter, setGlobalFilter] = useState('')
     const { showMessage } = useAlert()

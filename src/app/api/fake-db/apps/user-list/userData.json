@@ -3,9 +3,7 @@
         "Datos": {
             "Rol": [
                 "Administrador",
-                "Usuario",
-                "Comercial",
-                "Invitado"
+                "Usuario"
             ],
             "Estado": [
                 "Activo",
