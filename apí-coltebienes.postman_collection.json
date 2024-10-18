@@ -1,0 +1,637 @@
+{
+	"info": {
+		"_postman_id": "0de39b59-8668-447d-9036-42cc887bd947",
+		"name": "apí-coltebienes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7885338"
+	},
+	"item": [
+		{
+			"name": "registro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Santi Ye\",\r\n    \"cedula\": 1152709561,\r\n    \"email\": \"s1@s.com\",\r\n    \"password\": \"123123\",\r\n    \"password_confirmation\": \"123123\",\r\n    \"role\":\"Administrador\",\r\n    \"state\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/register",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3JlZ2lzdGVyIiwiaWF0IjoxNzI0NTM3NzA5LCJleHAiOjE3MjQ1NDEzMDksIm5iZiI6MTcyNDUzNzcwOSwianRpIjoiS0dqcjhDcXZGYzlYSWdEMCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.yUu6j-LQR-T8k5q-BJoEjp-gcbpGHd170sICq-0NTVs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"s1@s.com\",\r\n    \"password\": \"123123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLC2JhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI0NTY1NTA4LCJleHAiOjE3MjQ1NjkxMDgsIm5iZiI6MTcyNDU2NTUwOCwianRpIjoiNjhLTXNaWGlHZGxaRXpybSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.6QdwRIJNJ7CAs9pE6e2jyMT4oDFVIkpUA48Hs_PedVc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/logout",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI2ODA3MzAzLCJleHAiOjE3MjY4MTA5MDMsIm5iZiI6MTcyNjgwNzMwMywianRpIjoicGpVNWp1ZXZhZ3JmVjY2NCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.dRqOxTAxRDIdMC7P-LC7BeULip019tSWk3Uo2MqhRw0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/me",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI1NTcyMzc5LCJleHAiOjE3MjU1NzU5NzksIm5iZiI6MTcyNTU3MjM3OSwianRpIjoibXFYdGdoVU0wZ3MzdzFpMiIsInN1YiI6IjE4IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.LLel0tgwHoAS6nvgNQyywMGY8DDfrxZZmLBJpORy_JQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/refresh",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear captacion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3JlZ2lzdGVyIiwiaWF0IjoxNzI3MjM0NDUxLCJleHAiOjE3MjcyMzgwNTEsIm5iZiI6MTcyNzIzNDQ1MSwianRpIjoibGpiU01GVWxMN1lMa1ozQSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.p4g2Mm_vTFnqqam-14oh3S5kzMpf4saVp0NM08CR10U",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Santiago Gonzalez Yepes\",\r\n    \"globaltype\": \"comercio\",\r\n    \"cellphone\": \"301409241\",\r\n    \"owner_identification\": \"1152709561\",\r\n    \"owner_email\": \"ssss@sss.com\",\r\n    \"authorizes_publishing\": \"si\",\r\n    \"department\": \"Antioquia\",\r\n    \"city\": \"Envigado\",\r\n    \"neighborhood\": \"dwdqwdwqqwddqw\",\r\n    \"coownershipname\": \"Nombre propiedad\",\r\n    \"property_type\": \"Apartaestudio\",\r\n    \"destination_property\": \"Comercio\",\r\n    \"charge\": \"Arriendo\",\r\n    \"canyon\": 12312132231,\r\n    \"sale_value\": 123123312123,\r\n    \"administration_value\": 123123312123,\r\n    \"include_administration\": \"si\",\r\n    \"built_area\": 22222,\r\n    \"private_area\": 222222,\r\n    \"year_of_construction\": \"2024-09-10\",\r\n    \"stratum\": 4,\r\n    \"address\": \"Carrera 22    33 J I Este 44\",\r\n    \"coveredfinishes\": [\r\n        \"Teja eternit\",\r\n        \"Teja plástica\",\r\n        \"Teja térmica\",\r\n        \"Tipo coliseo\"\r\n    ],\r\n    \"height\": 1,\r\n    \"depth\": 22,\r\n    \"front\": 33,\r\n    \"valuesArrayAddress\": [\r\n        \"Carrera\",\r\n        22,\r\n        \"\",\r\n        \"\",\r\n        \"\",\r\n        33,\r\n        \"J\",\r\n        \"I\",\r\n        \"Este\",\r\n        44\r\n    ],\r\n    \"type_kitchen\": [\r\n        \"Cocineta\"\r\n    ],\r\n    \"propertystatus\": \"Bueno\",\r\n    \"electric_connection\": [\r\n        \"Trifásica\",\r\n        \"KVA\"\r\n    ],\r\n    \"others\": [\r\n        \"Cableado de red\",\r\n        \"Cableado estructurado\"\r\n    ],\r\n    \"winery\": \"Liviana\",\r\n    \"type_floor\": [\r\n        \"Adoquín\"\r\n    ],\r\n    \"has_a_balcony\": \"si\",\r\n    \"has_a_terrace\": \"si\",\r\n    \"has_air_conditioner\": \"si\",\r\n    \"has_central_air\": \"si\",\r\n    \"dressingroomcount\": 444,\r\n    \"surveillance\": [\r\n        \"Portería vigilancia\"\r\n    ],\r\n    \"number_of_bathrooms\": 11,\r\n    \"number_of_parking_spaces\": 22,\r\n    \"linenclosetcount\": 555,\r\n    \"bathtub\": \"si\",\r\n    \"jacuzzi\": \"no\",\r\n    \"chimney\": \"no\",\r\n    \"closet\": \"si\",\r\n    \"linencloset\": \"si\",\r\n    \"dressingroom\": \"si\",\r\n    \"dining\": \"si\",\r\n    \"diningroom\": \"si\",\r\n    \"penthouse\": \"si\",\r\n    \"yard\": \"si\",\r\n    \"clotheszone\": \"si\",\r\n    \"hall\": \"si\",\r\n    \"lounge\": \"no\",\r\n    \"deck\": \"no\",\r\n    \"duplex\": \"si\",\r\n    \"loft\": \"si\",\r\n    \"securitydoor\": \"si\",\r\n    \"number_of_rooms\": 3,\r\n    \"useful_room\": \"si\",\r\n    \"exposedbrick\": \"si\",\r\n    \"number_of_levels\": 11,\r\n    \"floor_number\": 22,\r\n    \"otherspecifications\": [\r\n        \"Acceso pavimentado\",\r\n        \"Alarma de incendio\",\r\n        \"Área urbana\",\r\n        \"En centro comercial\"\r\n    ],\r\n    \"combinedSpecifications\": [\r\n        {\r\n            \"specification\": \"Acceso pavimentado\",\r\n            \"amount\": 11\r\n        },\r\n        {\r\n            \"specification\": \"Alarma de incendio\",\r\n            \"amount\": 22\r\n        },\r\n        {\r\n            \"specification\": \"Área urbana\",\r\n            \"amount\": 33\r\n        },\r\n        {\r\n            \"specification\": \"En centro comercial\",\r\n            \"amount\": 44\r\n        }\r\n    ],\r\n    \"specificationsWithAmounts\": {},\r\n    \"specificationsAmount\": {},\r\n    \"parking_lot\": \"Cubierto\",\r\n    \"surveillanceExternal\": [\r\n        \"Vigilancia 24x7\"\r\n    ],\r\n    \"commonzones\": [\r\n        \"Auditorio\"\r\n    ],\r\n    \"industrial_park\": \"no\",\r\n    \"parking_bay\": \"si\",\r\n    \"communal_bathrooms\": \"si\",\r\n    \"public_toilets\": \"si\",\r\n    \"level_dock\": \"si\",\r\n    \"idepressed_dock\": \"si\",\r\n    \"floor_load_capacity\": \"si\",\r\n    \"bridgecrane\": \"si\",\r\n    \"digital_access_in_building\": \"si\",\r\n    \"facade\": [\r\n        \"Antejardín\",\r\n        \"Cemento\"\r\n    ],\r\n    \"quantity_load_capacity\": 888,\r\n    \"unit_type\": \"Abierta\",\r\n    \"otherspecificationsDings\": [\r\n        \"Bombas de gasolina\",\r\n        \"Colegios-universidades\"\r\n    ],\r\n    \"landmarks\": \"Testt\",\r\n    \"observations\": \"Testttt\",\r\n    \"collector_name\": \"Nombre\",\r\n    \"collection_medium\": \"No se\",\r\n    \"type_contact\": \"Por Whatsapp\",\r\n    \"collection_date\": \"2024-09-09\",\r\n    \"closetcount\": 666,\r\n    \"status_complete\": true,\r\n    \"status_property\" : false,\r\n    \"observations_house\" : \"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/propertydata/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar captacion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3JlZ2lzdGVyIiwiaWF0IjoxNzIyNTU1NzQ1LCJleHAiOjE3MjI1NTkzNDUsIm5iZiI6MTcyMjU1NTc0NSwianRpIjoiY2ZhZm5zWkxUbXpYYUJLQyIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.DS9hT6ubMgBziOoFI21JCjo_R2UTOJpNJhHD3jl1uSs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"owner_name\": \"Juan Pérez hoyos\",\r\n    \"owner_identification\": \"123456789\",\r\n    \"cellphone\": \"3001234567\",\r\n    \"owner_email\": \"juan.perez@example.com\",\r\n    \"authorizes_publishing\": true,\r\n    \"department\": \"Antioquia\",\r\n    \"city\": \"Medellín\",\r\n    \"neighborhood\": \"El Poblado\",\r\n    \"address\": \"Calle 10 # 20 - 30\",\r\n    \"type_of_main_road\": \"Calle\",\r\n    \"number_of_main_road\": \"10\",\r\n    \"letter_of_main_road\": \"A\",\r\n    \"number_secondary_road\": \"20\",\r\n    \"letter_of_secondary_road\": \"B\",\r\n    \"complement\": \"Apartamento 101\",\r\n    \"co-ownership_name\": \"Edificio Torre Azul\",\r\n    \"property_type\": \"Apartamento\",\r\n    \"type_of_management\": [\"Alquiler\"],\r\n    \"lease_value\": 1500000.00,\r\n    \"sale_value\": 300000000.00,\r\n    \"administration_value\": 200000.00,\r\n    \"include_administration\": true,\r\n    \"built_area\": 80.5,\r\n    \"private_area\": 75.0,\r\n    \"year_of_construction\": 2015,\r\n    \"number_of_bathrooms\": 2,\r\n    \"number_of_parking_spaces\": 1,\r\n    \"destination_property\": \"Residencial\",\r\n    \"socioeconomic_level\": \"Medio\",\r\n    \"number_of_rooms\": 3,\r\n    \"roof_finishes\": [\"Techo en dry wall\"],\r\n    \"height\": 2.5,\r\n    \"depth\": 10.0,\r\n    \"front\": 5.0,\r\n    \"type_kitchen\": [\"Integral\"],\r\n    \"property_status\": \"Nuevo\",\r\n    \"electric_connection\": [\"Monofásica\"],\r\n    \"other_specifications_internal\":[ \"Cocina equipada\", \"aire acondicionado\"],\r\n    \"type_floor\": [\"Cerámica\"],\r\n    \"type_of_store\": \"No\",\r\n    \"has_a_balcony\": true,\r\n    \"has_a_terrace\": false,\r\n    \"has_air_conditioner\": true,\r\n    \"has_central_air\": false,\r\n    \"security_guard\": true,\r\n    \"has_a_bathtub\": false,\r\n    \"has_jacuzzi\": false,\r\n    \"has_a_fireplace\": false,\r\n    \"has_a_closet\": true,\r\n    \"has_a_linen_closet\": false,\r\n    \"has_a_dressing_room\": true,\r\n    \"has_a_dining_room\": true,\r\n    \"has_a_living_dining_room\": false,\r\n    \"has_a_penthouse\": false,\r\n    \"has_a_patio\": false,\r\n    \"has_a_clothes_zone\": true,\r\n    \"has_a_hall\": false,\r\n    \"has_a_living_room\": true,\r\n    \"has_a_deck\": false,\r\n    \"has_duplex\": false,\r\n    \"has_a_loft\": false,\r\n    \"has_a_security_door\": true,\r\n    \"closed_circuit\": true,\r\n    \"parking_lot\": \"Cubierto\",\r\n    \"electrical_supply\": \"Suministro público\",\r\n    \"electrical_supply_quantity\": \"1\",\r\n    \"industrial_park\": false,\r\n    \"parking_bay\": true,\r\n    \"communal_bathrooms\": false,\r\n    \"public_toilets\": false,\r\n    \"level_dock\": false,\r\n    \"depressed_dock\": false,\r\n    \"floor_load_capacity\": true,\r\n    \"quantity_load_capacity\": 300,\r\n    \"overhead_crane\": false,\r\n    \"useful_room\": true,\r\n    \"digital_access_in_building\": true,\r\n    \"facade\": [\"Ladrillo\", \"Cemento\"],\r\n    \"number_of_levels\": \"5\",\r\n    \"floor_number\": \"3\",\r\n    \"other_specifications_external\": [\"Ascensor\", \"Conjunto cerrado\"],\r\n    \"other_specifications_details\": [\"Área urbana\"],\r\n    \"unit_type\": \"Abierta\",\r\n    \"common_zones\": \"Piscina, gimnasio\",\r\n    \"landmarks\": \"Cerca del parque\",\r\n    \"exposed_brick\": true,\r\n    \"places_of_interest\": \"Supermercados, parques\",\r\n    \"other_specifications_surroundings\": \"Zona tranquila\",\r\n    \"observarions\": \"Propiedad en excelente estado\",\r\n    \"collector_name\": \"Pedro Gómez\",\r\n    \"collection_medium\": \"Transferencia\",\r\n    \"collection_date\": \"2024-08-01\",\r\n    \"collector_observarions\": \"Pago recibido\",\r\n    \"owner_sign\": \"firma.png\",\r\n    \"latitude\": 6.21700000,\r\n    \"longitude\": -75.57500000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/propertydata/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ver Captacion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3JlZ2lzdGVyIiwiaWF0IjoxNzI0NzIwNjI5LCJleHAiOjE3MjQ3MjQyMjksIm5iZiI6MTcyNDcyMDYyOSwianRpIjoidlRQQlhuYXFiNEhrb0cyNCIsInN1YiI6IjIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.GduVu6X-zPZDe3wkq5RH96v3oUvkHopxeVS9G4SrTkM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    // \"id\":1,\r\n    // \"address\":\"Calle 10\",\r\n    \"owner_name\":\"andres\",\r\n    \"collector_name\":\"andres\",\r\n    \"publication_status\":null,\r\n    \"property_type\":\"Apartamento\"\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/propertydata/show",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"show"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar Captacion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI2NTUzMDQ5LCJleHAiOjE3MjY1NTY2NDksIm5iZiI6MTcyNjU1MzA0OSwianRpIjoiY3piemdaMkxkbUZnTU1UcCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.QcLrf9r8wZ6c78lQy1XM5-VOPpEm8A4n85B1bD0jZyI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/propertydata/destroy/7",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"destroy",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ver todas las captaciones",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI3MjMxMjUyLCJleHAiOjE3MjcyMzQ4NTIsIm5iZiI6MTcyNzIzMTI1MiwianRpIjoiM1RPWXNKT1p2cVRsdU5vViIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.IznVfoxEkvgbxwWyhzlczuSdGwrQkR1U04FYq425gZ0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/propertydata/list/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"list",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/update/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "state",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/state/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"state",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/delete/3",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"delete",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\": \"123123\",\r\n    \"password_confirmation\": \"123123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/update/password/18",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"update",
+						"password",
+						"18"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIncompleteData",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI3MjM0NTU5LCJleHAiOjE3MjcyMzgxNTksIm5iZiI6MTcyNzIzNDU1OSwianRpIjoiVWxkaXZFbUJvM2p4MDVnWSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.L6spNho4Se-Bb5iU2Pf3dpXbUL6CqUmcl9X5KILtziU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/propertydata/getIncompleteData/1152709561",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"getIncompleteData",
+						"1152709561"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "searchUserDocument",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI2NTQyNDc4LCJleHAiOjE3MjY1NDYwNzgsIm5iZiI6MTcyNjU0MjQ3OCwianRpIjoiU3BpOHJRNXhPMmNBOUxLMiIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.c_Rm6iaNBqM9O-WqUPfchJQp0OkypV2Ok6hUKa-efzQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/searchUserDocument",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"searchUserDocument"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "changePropertyStatus",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzI3MjM0NTU5LCJleHAiOjE3MjcyMzgxNTksIm5iZiI6MTcyNzIzNDU1OSwianRpIjoiVWxkaXZFbUJvM2p4MDVnWSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.L6spNho4Se-Bb5iU2Pf3dpXbUL6CqUmcl9X5KILtziU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"observations_house\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/propertydata/updateStatusProperty/3",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"propertydata",
+						"updateStatusProperty",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -90,7 +90,7 @@ const getStepContent = (step: number, handleNext: () => void, handlePrev: () => 
                         ? StepExternalFeatures
                         : StepSurroundings
 
-    return <Tag activeStep={step} handleNext={handleNext} handlePrev={handlePrev} steps={steps} id={id} propertyData={propertyData} />
+    return <Tag activeStep={step} handleNext={handleNext} handlePrev={handlePrev} steps={steps} id={id} />
 }
 
 
@@ -112,11 +112,7 @@ const PropertyDetail = ({ id, propertyData }: PropertyDetailProps) => {
             setActiveStep(activeStep - 1)
         }
     }
-
-
     return (
-
-
         <Card className='flex flex-col lg:flex-row'>
             <CardContent className='max-lg:border-be lg:border-ie lg:min-is-[300px]'>
                 <StepperWrapper>

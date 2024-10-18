@@ -175,8 +175,7 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, ste
     initialValues: initialValues,
     validationSchema: validationSchemaVar,
     onSubmit: (values) => {
-      console.log("Coleccion comercial")
-      console.log(values)
+
       setFormData((prevData: formDataInterface) => ({
         ...prevData,
         ...values,
@@ -200,7 +199,6 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, ste
       setResetFormComercial(false)
     }
   }, [resetFormComercial])
-
 
   useEffect(() => {
     if (globalType === "vivienda") {
@@ -356,7 +354,7 @@ const StepInternalFeaturesComercial = ({ activeStep, handlePrev, handleNext, ste
             onFocus={(e) => e.target.select()}
             placeholder='Ingrese la altura en metros'
             id="height"
-            value={formik.touched.height || ''}
+            value={formik.values.height || ''}
             error={formik.touched.height && Boolean(formik.errors.height)}
             helperText={formik.touched.height && formik.errors.height}
             onChange={formik.handleChange}

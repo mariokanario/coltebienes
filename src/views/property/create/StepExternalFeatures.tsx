@@ -184,7 +184,6 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
     initialValues: initialValues,
     validationSchema: globalType === "vivienda" ? SchemaVivienda : Schema,
     onSubmit: (values) => {
-      console.log("Coleccion external")
       const combinedSpecifications = formik.values.otherspecifications.map((spec) => {
         const amountKey = othersAmount[spec];
         return {
@@ -192,13 +191,6 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
           amount: specificationsAmount[amountKey] || 0,
         };
       });
-
-      console.log("Colección externa");
-      console.log({
-        ...values,
-        combinedSpecifications,
-      });
-
       setFormData((prevData: formDataInterface) => ({
         ...prevData,
         ...values,
@@ -311,9 +303,6 @@ const StepExternalFeatures = ({ activeStep, handlePrev, handleNext, steps }: Pro
     }
   }, [formData, globalType])
 
-  useEffect(() => {
-    console.log(formData)
-  }, [])
 
   useEffect(() => {
     if (formData?.combinedSpecifications) {

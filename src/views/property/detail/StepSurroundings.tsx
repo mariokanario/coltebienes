@@ -13,6 +13,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider';
+import { useForm } from '@/components/context/FormContext';
 
 
 type Props = {
@@ -21,29 +22,18 @@ type Props = {
     handlePrev: () => void
     steps: { title: string; subtitle: string }[]
     id: string
-    propertyData: any;
 }
 
-const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, propertyData }: Props) => {
+const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id }: Props) => {
 
     const { setGlobalType } = useProvider();
-
-    const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
-        if (typeof prop === 'string') {
-            setGlobalType(prop)
-
-        } else {
-            setGlobalType((prop.target as HTMLInputElement).value)
-
-        }
-    }
-
+    const { formData } = useForm()
     return (
 
         <Grid container spacing={12}>
 
             <Grid item xs={12} md={6}>
-                <div className='overflow-x-auto border rounded'>
+                <div className='border rounded'>
                     <table className={tableStyles.table}>
                         <tbody>
                             <tr>
@@ -51,9 +41,15 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                     <Typography color='text.primary'>Alrededores</Typography>
                                 </td>
                                 <td>
-                                    <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.surroundings.join(', ')}
-                                    </Typography>
+                                    {formData.otherspecificationsDings?.length ? (
+                                        formData.otherspecificationsDings.map((spec, index) => (
+                                            <Typography color="text.primary" sx={{ fontWeight: 'bold' }} key={index}>
+                                                {spec}
+                                            </Typography>
+                                        ))
+                                    ) : (
+                                        <Typography color="text.primary">No specifications available</Typography>
+                                    )}
                                 </td>
                             </tr>
                             <tr>
@@ -62,7 +58,7 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.landmarks}
+                                        {formData.landmarks}
                                     </Typography>
                                 </td>
                             </tr>
@@ -72,7 +68,7 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.observations}
+                                        {formData.observations}
                                     </Typography>
                                 </td>
                             </tr>
@@ -91,7 +87,7 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.collector}
+                                        {formData.collector_name}
                                     </Typography>
                                 </td>
                             </tr>
@@ -101,7 +97,7 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.collectionmedium}
+                                        {formData.collection_medium}
                                     </Typography>
                                 </td>
                             </tr>
@@ -111,7 +107,7 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.collectiodate}
+                                        {formData.collection_date}
                                     </Typography>
                                 </td>
                             </tr>
@@ -134,16 +130,6 @@ const StepSurroundings = ({ activeStep, handleNext, handlePrev, steps, id, prope
                         startIcon={<DirectionalIcon ltrIconClass='tabler-arrow-left' rtlIconClass='tabler-arrow-right' />}
                     >
                         Anterior
-                    </Button>
-                    <Button
-                        variant='contained'
-                        color='primary'
-                        onClick={handleNext}
-                        disabled
-                        endIcon={<DirectionalIcon ltrIconClass='tabler-arrow-right' rtlIconClass='tabler-arrow-left' />
-                        }
-                    >
-                        Siguiente
                     </Button>
                 </div>
             </Grid>

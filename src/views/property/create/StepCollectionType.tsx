@@ -22,13 +22,19 @@ import { useProvider } from '@/components/context/Provider'
 import CustomInputVertical from '@core/components/custom-inputs/Vertical'
 import DirectionalIcon from '@components/DirectionalIcon'
 import CustomTextField from '@core/components/mui/TextField'
-import { useHandleRefreshToken } from '@/components/context/RefreshContext'
 import show from '@/app/api/captaciones/show'
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@mui/material'
 import { formDataInterface } from '@/components/context/FormDataInterface'
 import searchDocument from '@/app/api/login/searchDocument'
 import Cookies from 'js-cookie'
 import { useAlert } from '@/components/AlertContext'
+import CustomAutocomplete from '@/@core/components/mui/Autocomplete'
+import comercioData from '@/app/api/fake-db/apps/form-list/comercioData.json';
+
+
+const comercioDataString = comercioData as Record<string, any>;
+
+
 
 type Props = {
   activeStep: number
@@ -60,14 +66,17 @@ const Schema = yup
       .email("Ingresa un correo válido"),
     authorizes_publishing: yup
       .string()
-      .required("Seleccione una opción")
+      .required("Seleccione una opción"),
+    type_contact: yup.array().of(yup.string()).min(1, "Elige al menos una opción").required("Este campo es requerido"),
+
   })
   .required()
 
 const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props) => {
   const { formData, setFormData, setResetFormType, resetFormType } = useForm();
-  const { globalType, setGlobalType, globalUser } = useProvider()
+  const { globalType, setGlobalType } = useProvider()
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [typeContact, setTypeContact] = useState<string[]>([])
   const [formDataLocal, setFormDataLocal] = useState<formDataInterface>(initialFormData)
   const { showMessage } = useAlert()
   const router = useRouter()
@@ -85,7 +94,6 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
     try {
       const { data: { number_document } } = await searchDocument()
       const { status, data } = await show(number_document)
-      console.log(data)
       if (status === 200) {
         setConfirmOpen(true)
         setFormDataLocal(data)
@@ -106,12 +114,17 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
 
   const hadleSubmitCompleteData = () => {
     handleOptionChange(formDataLocal.globaltype)
-    setFormData(formDataLocal)
+    const updatedFormData = {
+      ...formDataLocal,
+      type_contact: typeof formDataLocal.type_contact === 'string'
+        ? JSON.parse(formDataLocal.type_contact)
+        : formDataLocal.type_contact
+    };
+
+    setFormData(updatedFormData);
     setFormDataLocal(initialFormData)
     setConfirmOpen(false)
   }
-
-
 
   const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement> | undefined) => {
     if (typeof prop === 'string') {
@@ -128,13 +141,13 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
       owner_email: "",
       authorizes_publishing: "",
       owner_identification: "",
-      globaltype: ""
+      globaltype: "",
+      type_contact: typeContact,
+      publication_status: ""
+
     },
     validationSchema: Schema,
     onSubmit: (values) => {
-      console.log("Coleccion type")
-      console.log(values)
-      console.log(globalType)
       setFormData((prevData) => ({
         ...prevData,
         ...values,
@@ -145,14 +158,16 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
   })
 
   useEffect(() => {
-    console.log(formData)
     if (
       formik.values.name !== formData.name ||
       formik.values.cellphone !== formData.cellphone ||
       formik.values.owner_email !== formData.owner_email ||
       formik.values.authorizes_publishing !== formData.authorizes_publishing ||
       formik.values.owner_identification !== formData.owner_identification ||
-      formik.values.globaltype !== formData.globaltype
+      formik.values.globaltype !== formData.globaltype ||
+      formik.values.type_contact !== formData.type_contact ||
+      formik.values.publication_status !== formData.publication_status
+
     ) {
       formik.setValues({
         name: formData.name || '',
@@ -160,7 +175,10 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
         owner_email: formData.owner_email || '',
         authorizes_publishing: formData.authorizes_publishing || '',
         owner_identification: formData.owner_identification || '',
-        globaltype: formData.globaltype || ''
+        globaltype: formData.globaltype || '',
+        type_contact: formData.type_contact || [],
+        publication_status: formData.publication_status || "",
+
       })
     }
   }, [formData])
@@ -273,7 +291,33 @@ const StepCollectionType = ({ activeStep, handleNext, handlePrev, steps }: Props
             error={formik.touched.owner_email && Boolean(formik.errors.owner_email)}
           />
         </Grid>
-
+        <Grid item xs={12} md={6}>
+          <CustomAutocomplete
+            fullWidth
+            multiple
+            disableCloseOnSelect
+            id='type_contact'
+            value={formik.values.type_contact}
+            onChange={(event, value) => {
+              setTypeContact(value as string[])
+              formik.setFieldValue('type_contact', value);
+            }}
+            options={
+              comercioDataString?.[globalType]?.Datos?.["Tipo de contacto"]?.map(
+                (tipo: string) => tipo
+              ) || []
+            }
+            getOptionLabel={option => option || ''}
+            renderInput={params => <CustomTextField {...params} label='Tipo de contacto' error={Boolean(formik.touched.type_contact && formik.errors.type_contact)}
+              helperText={formik.touched.type_contact && formik.errors.type_contact ? formik.errors.type_contact : ""} placeholder='Seleccione el tipo de contacto' />
+            }
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip label={option} size='small' {...(getTagProps({ index }) as {})} key={index} />
+              ))
+            }
+          />
+        </Grid>
         <Grid item xs={12} md={6}>
           <FormControl error={formik.touched.authorizes_publishing && Boolean(formik.errors.authorizes_publishing)}>
             <FormLabel>¿Autoriza publicar en portales web? (Mercadolibre, Metrocuadrado, Fincaraiz, Coltebienes)</FormLabel>

@@ -183,9 +183,6 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
     initialValues: initialValues,
     validationSchema: validationSchemaVar,
     onSubmit: (values) => {
-      console.log("Coleccion Data")
-      console.log(values)
-      console.log(sendArrayAddress)
       setFormData((prevData) => ({
         ...prevData,
         ...values,
@@ -221,7 +218,6 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
 
   useEffect(() => {
     if (formik.values.charge) {
-      console.log(formik.values.charge)
       setTypeManagement(formik.values.charge)
     }
   }, [formik.values.charge])
@@ -305,10 +301,6 @@ const StepCollectionData = ({ activeStep, handlePrev, handleNext, steps }: Props
     }
 
   }, [formik.values])
-
-  useEffect(() => {
-    console.log(formData)
-  }, [])
 
   return (
     <>

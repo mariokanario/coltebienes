@@ -1,11 +1,11 @@
-import { API_PROTOCOL, API_BASE_URL, API_BASE_PORT, API_ACTION_SHOW_FORM_DATA } from "@/configs/enviroments"
+import { API_PROTOCOL, API_BASE_URL, API_BASE_PORT, API_ACTION_GET_ALL_PORTALS } from "@/configs/enviroments"
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const show = async (cedula: any) => {
+const getPortals = async () => {
     try {
         const response = await axios.get(
-            `${API_PROTOCOL}${API_BASE_URL}:${API_BASE_PORT}/${API_ACTION_SHOW_FORM_DATA}/${cedula}`,
+            `${API_PROTOCOL}${API_BASE_URL}:${API_BASE_PORT}/${API_ACTION_GET_ALL_PORTALS}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -14,9 +14,9 @@ const show = async (cedula: any) => {
             }
         )
         return response
-    } catch (error: any) {
-        return error
+    } catch (error) {
+
     }
 }
 
-export default show
+export default getPortals

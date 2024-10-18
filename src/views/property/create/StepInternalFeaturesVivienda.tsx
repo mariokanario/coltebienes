@@ -233,8 +233,7 @@ const StepInternalFeaturesVivienda = ({ activeStep, handlePrev, handleNext, step
     initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log("Coleccion vivienda")
-      console.log(values)
+
       setFormData((prevData: formDataInterface) => ({
         ...prevData,
         ...values,

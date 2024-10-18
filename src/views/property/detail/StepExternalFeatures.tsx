@@ -1,5 +1,4 @@
 // React Imports
-import type { ChangeEvent } from 'react';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -13,6 +12,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider';
+import { useForm } from '@/components/context/FormContext';
 
 
 type Props = {
@@ -21,51 +21,17 @@ type Props = {
     handlePrev: () => void
     steps: { title: string; subtitle: string }[]
     id: string
-    propertyData: any;
 }
 
-const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, propertyData }: Props) => {
+const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id }: Props) => {
 
-    const { setGlobalType } = useProvider();
-
-    const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
-        if (typeof prop === 'string') {
-            setGlobalType(prop)
-
-        } else {
-            setGlobalType((prop.target as HTMLInputElement).value)
-
-        }
-    }
-
-    const propertyTranslations: { [key: string]: string } = {
-        quantitypaved: "Acceso pavimentado",
-        quantityfire: "Alarma de incendio",
-        quantityrural: "Área rural",
-        quantityurban: "Área urbana",
-        quantityelevator: "Ascensor",
-        quantityshopping: "En centro comercial",
-        quantityinbuilding: "En edificio",
-        quantityshoppingarea: "Zona comercial",
-        quantityresidentialarea: "Zona residencial",
-        quantityemergencystaircase: "Escalera de emergencia",
-        quantitycorner: "Esquinero",
-        quantityoutsidemall: "Fuera de centro comercial",
-        quantitywinch: "Malacate",
-        quantitytruck: "Puerta camión",
-        quantitypedestrian: "Puerta peatonal",
-        quantityshutter: "Puerta persiana",
-        quantityglassdoor: "Puerta vidriera",
-        quantityshut: "Shut de basura",
-        quantityprivalelevator: "Ascensor privado",
-        quantityclosedset: "Conjunto cerrado"
-    };
+    const { formData } = useForm();
 
     return (
 
         <Grid container spacing={12}>
 
-            {propertyData.type == "local" ?
+            {formData.globaltype == "comercio" ?
                 <Grid item xs={12} md={6}>
                     <div className='overflow-x-auto border rounded'>
                         <table className={tableStyles.table}>
@@ -76,7 +42,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.industrialpark}
+                                            {formData.industrial_park
+                                                ? formData.industrial_park.charAt(0).toUpperCase() + formData.industrial_park.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -86,7 +54,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.parkingbay}
+                                            {formData.parking_bay
+                                                ? formData.parking_bay.charAt(0).toUpperCase() + formData.parking_bay.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -96,7 +66,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.communalbathrooms}
+                                            {formData.communal_bathrooms
+                                                ? formData.communal_bathrooms.charAt(0).toUpperCase() + formData.communal_bathrooms.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -106,7 +78,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.publictoilets}
+                                            {formData.public_toilets
+                                                ? formData.public_toilets.charAt(0).toUpperCase() + formData.public_toilets.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -116,7 +90,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.leveldock}
+                                            {formData.level_dock
+                                                ? formData.level_dock.charAt(0).toUpperCase() + formData.level_dock.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -126,7 +102,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.depresseddock}
+                                            {formData.idepressed_dock
+                                                ? formData.idepressed_dock.charAt(0).toUpperCase() + formData.idepressed_dock.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -136,7 +114,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.bridgecrane}
+                                            {formData.bridgecrane
+                                                ? formData.bridgecrane.charAt(0).toUpperCase() + formData.bridgecrane.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -146,7 +126,9 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.digitalaccess}
+                                            {formData.digital_access_in_building
+                                                ? formData.digital_access_in_building.charAt(0).toUpperCase() + formData.digital_access_in_building.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -156,7 +138,7 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.facade.join(', ')}
+                                            {formData.facade}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -176,14 +158,14 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                     <table className={tableStyles.table}>
                         <tbody>
 
-                            {propertyData.type == "local" ?
+                            {formData.globaltype == "local" ?
                                 <tr>
                                     <td>
                                         <Typography color='text.primary'>Unidad</Typography>
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.unit}
+                                            {formData.unit_type}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -194,19 +176,22 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.exposedbrick}
+                                            {formData.exposedbrick
+                                                ? formData.exposedbrick.charAt(0).toUpperCase() + formData.exposedbrick.slice(1)
+                                                : ''}
                                         </Typography>
                                     </td>
                                 </tr>
                             }
-
                             <tr>
                                 <td>
                                     <Typography color='text.primary'>Cuarto útil</Typography>
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.usefulroom}
+                                        {formData.useful_room
+                                            ? formData.useful_room.charAt(0).toUpperCase() + formData.useful_room.slice(1)
+                                            : ''}
                                     </Typography>
                                 </td>
                             </tr>
@@ -216,7 +201,7 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.numberlevels}
+                                        {formData.number_of_levels}
                                     </Typography>
                                 </td>
                             </tr>
@@ -226,7 +211,7 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.onfloor}
+                                        {formData.floor_number}
                                     </Typography>
                                 </td>
                             </tr>
@@ -235,14 +220,14 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     <Typography color='text.primary'>Otras especificaciones</Typography>
                                 </td>
                                 <td>
-                                    <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
+                                    {/* <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
                                         {
-                                            Object.entries(propertyData.otherspecifications)
+                                            Object.entries(formData.otherspecifications)
                                                 .map(([key, value]) => (
                                                     `${propertyTranslations[key] || key}: ${value}`
                                                 )).join(', ')
                                         }
-                                    </Typography>
+                                    </Typography> */}
                                 </td>
                             </tr>
                             <tr>
@@ -251,7 +236,7 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.parking}
+                                        {formData.parking_lot}
                                     </Typography>
                                 </td>
                             </tr>
@@ -261,7 +246,7 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.unit}
+                                        {formData.unit_type}
                                     </Typography>
                                 </td>
                             </tr>
@@ -270,9 +255,17 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     <Typography color='text.primary'>Vigilancia</Typography>
                                 </td>
                                 <td>
-                                    <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.surveillance.join(', ')}
-                                    </Typography>
+                                    {formData.surveillanceExternal?.length ? (
+                                        formData.surveillanceExternal.map((value, index) => (
+                                            <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                {value}
+                                            </Typography>
+                                        ))
+                                    ) : (
+                                        <Typography color="text.primary">No external surveillance information available</Typography>
+                                    )}
+
+
                                 </td>
                             </tr>
                             <tr>
@@ -280,9 +273,17 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                     <Typography color='text.primary'>Zonas comunes</Typography>
                                 </td>
                                 <td>
-                                    <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.commonzones.join(', ')}
-                                    </Typography>
+                                    {formData.commonzones?.length ? (
+                                        formData.commonzones.map((value, index) => (
+                                            <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                {value}
+                                            </Typography>
+                                        ))
+                                    ) : (
+                                        <Typography color="text.primary">No common zone information available</Typography>
+                                    )}
+
+
                                 </td>
                             </tr>
                             <tr>
@@ -291,17 +292,19 @@ const StepExternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.coveredfinishes}
+                                        {formData.floor_load_capacity
+                                            ? formData.floor_load_capacity.charAt(0).toUpperCase() + formData.floor_load_capacity.slice(1)
+                                            : ''}
                                     </Typography>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <Typography color='text.primary'>Cantidad</Typography>
+                                    <Typography color='text.primary'>Cantidad de carga</Typography>
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.specificationsAmount}
+                                        {formData.quantity_load_capacity}
                                     </Typography>
                                 </td>
                             </tr>

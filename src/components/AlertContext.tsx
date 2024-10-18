@@ -28,7 +28,7 @@ export const AlertProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <AlertContext.Provider value={{ message, severity, showMessage }}>
             {children}
-            <Snackbar open={open} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Snackbar open={open} autoHideDuration={4000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={handleClose} severity={severity} sx={{ width: '150%' }}>
                     {message}
                 </Alert>

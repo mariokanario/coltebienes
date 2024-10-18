@@ -40,6 +40,9 @@
       "@assets/*": [
         "./src/assets/*"
       ],
+      "app/*": [
+        "./src/app/*"
+      ],
       "@components/*": [
         "./src/components/*"
       ],

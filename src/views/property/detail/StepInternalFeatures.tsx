@@ -13,6 +13,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider';
+import { useForm } from '@/components/context/FormContext';
 
 
 type Props = {
@@ -21,27 +22,16 @@ type Props = {
     handlePrev: () => void
     steps: { title: string; subtitle: string }[]
     id: string
-    propertyData: any;
 }
 
-const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, propertyData }: Props) => {
+const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id }: Props) => {
 
     const { setGlobalType } = useProvider();
-
-    const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
-        if (typeof prop === 'string') {
-            setGlobalType(prop)
-
-        } else {
-            setGlobalType((prop.target as HTMLInputElement).value)
-
-        }
-    }
-
+    const { formData } = useForm()
     return (
 
         <Grid container spacing={12}>
-            {propertyData.type == "vivienda" ?
+            {formData.globaltype == "vivienda" ?
                 <>
                     <Grid item xs={12} md={6}>
                         <div className='overflow-x-auto border rounded'>
@@ -52,9 +42,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Acabados cubierta</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.coveredfinishes.join(', ')}
-                                            </Typography>
+                                            {formData.coveredfinishes?.length ? (
+                                                formData.coveredfinishes.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No covered finishes available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -63,7 +60,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.propertystatus.join(', ')}
+                                                {formData.propertystatus}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -73,7 +70,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.roomsnum}
+                                                {formData.number_of_rooms}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -83,7 +80,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.bathroomnum}
+                                                {formData.number_of_bathrooms}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -93,7 +90,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.garagenum}
+                                                {formData.number_of_parking_spaces}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -103,17 +100,19 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.closet}
+                                                {formData.closet
+                                                    ? formData.closet.charAt(0).toUpperCase() + formData.closet.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <Typography color='text.primary'>Cantidad</Typography>
+                                            <Typography color='text.primary'>Cantidad de closets</Typography>
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.closetcount}
+                                                {formData.closetcount}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -123,17 +122,19 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.linencloset}
+                                                {formData.linencloset
+                                                    ? formData.linencloset.charAt(0).toUpperCase() + formData.linencloset.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <Typography color='text.primary'>Cantidad</Typography>
+                                            <Typography color='text.primary'>Cantidad de closets de lino</Typography>
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.linenclosetcount}
+                                                {formData.linenclosetcount}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -143,17 +144,19 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.dressingroom}
+                                                {formData.dressingroom
+                                                    ? formData.dressingroom.charAt(0).toUpperCase() + formData.dressingroom.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <Typography color='text.primary'>Cantidad</Typography>
+                                            <Typography color='text.primary'>Cantidad de vestiers</Typography>
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.dressingroomcount}
+                                                {formData.dressingroomcount}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -163,7 +166,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.bathtub}
+                                                {formData.bathtub
+                                                    ? formData.bathtub.charAt(0).toUpperCase() + formData.bathtub.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -173,7 +178,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.jacuzzi}
+                                                {formData.jacuzzi
+                                                    ? formData.jacuzzi.charAt(0).toUpperCase() + formData.jacuzzi.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -183,7 +190,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.chimney}
+                                                {formData.chimney
+                                                    ? formData.chimney.charAt(0).toUpperCase() + formData.chimney.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -201,9 +210,15 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Cocina</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.kitchen.join(', ')}
-                                            </Typography>
+                                            {formData.type_kitchen?.length ? (
+                                                formData.type_kitchen.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No kitchen types available</Typography>
+                                            )}
                                         </td>
                                     </tr>
                                     <tr>
@@ -211,9 +226,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Pisos</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.floors.join(', ')}
-                                            </Typography>
+                                            {formData.type_floor?.length ? (
+                                                formData.type_floor.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No floor types available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -222,7 +244,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.dining}
+                                                {formData.dining
+                                                    ? formData.dining.charAt(0).toUpperCase() + formData.dining.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -232,7 +256,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.diningroom}
+                                                {formData.diningroom
+                                                    ? formData.diningroom.charAt(0).toUpperCase() + formData.diningroom.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -242,7 +268,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.lounge}
+                                                {formData.lounge
+                                                    ? formData.lounge.charAt(0).toUpperCase() + formData.lounge.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -252,7 +280,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.deck}
+                                                {formData.deck
+                                                    ? formData.deck.charAt(0).toUpperCase() + formData.deck.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -262,7 +292,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.balcony}
+                                                {formData.has_a_balcony
+                                                    ? formData.has_a_balcony.charAt(0).toUpperCase() + formData.has_a_balcony.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -272,7 +304,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.terrace}
+                                                {formData.has_a_terrace
+                                                    ? formData.has_a_terrace.charAt(0).toUpperCase() + formData.has_a_terrace.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -282,7 +316,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.hall}
+                                                {formData.hall
+                                                    ? formData.hall.charAt(0).toUpperCase() + formData.hall.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -292,7 +328,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.clotheszone}
+                                                {formData.clotheszone
+                                                    ? formData.clotheszone.charAt(0).toUpperCase() + formData.clotheszone.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -302,7 +340,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.yard}
+                                                {formData.yard
+                                                    ? formData.yard.charAt(0).toUpperCase() + formData.yard.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -312,7 +352,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.duplex}
+                                                {formData.duplex
+                                                    ? formData.duplex.charAt(0).toUpperCase() + formData.duplex.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -322,7 +364,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.loft}
+                                                {formData.loft
+                                                    ? formData.loft.charAt(0).toUpperCase() + formData.loft.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -332,7 +376,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.penthouse}
+                                                {formData.penthouse
+                                                    ? formData.penthouse.charAt(0).toUpperCase() + formData.penthouse.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -342,7 +388,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.securitydoor}
+                                                {formData.securitydoor
+                                                    ? formData.securitydoor.charAt(0).toUpperCase() + formData.securitydoor.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -363,9 +411,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Acabados cubierta</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.coveredfinishes}
-                                            </Typography>
+                                            {formData.coveredfinishes?.length ? (
+                                                formData.coveredfinishes.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No covered finishes available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -374,7 +429,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.heightmeters}
+                                                {formData.height}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -384,7 +439,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.depthmeters}
+                                                {formData.depth}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -394,7 +449,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.frontmeters}
+                                                {formData.front}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -403,9 +458,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Cocina</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.kitchen.join(', ')}
-                                            </Typography>
+                                            {formData.type_kitchen?.length ? (
+                                                formData.type_kitchen.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No kitchen types available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -414,7 +476,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.propertystatus.join(', ')}
+                                                {formData.propertystatus}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -423,9 +485,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Energía</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.energy.join(', ')}
-                                            </Typography>
+                                            {formData.electric_connection?.length ? (
+                                                formData.electric_connection.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No electric connections available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -433,9 +502,17 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Otras especificaciones</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.others}
-                                            </Typography>
+                                            {formData.others?.length ? (
+                                                formData.others.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No additional information available</Typography>
+                                            )}
+
+
                                         </td>
                                     </tr>
                                 </tbody>
@@ -453,7 +530,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.winery}
+                                                {formData.winery}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -462,9 +539,17 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Pisos</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.floors.join(', ')}
-                                            </Typography>
+                                            {formData.type_floor?.length ? (
+                                                formData.type_floor.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No flooring information available</Typography>
+                                            )}
+
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -473,7 +558,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.balcony}
+                                                {formData.has_a_balcony
+                                                    ? formData.has_a_balcony.charAt(0).toUpperCase() + formData.has_a_balcony.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -483,7 +570,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.terrace}
+                                                {formData.has_a_terrace
+                                                    ? formData.has_a_terrace.charAt(0).toUpperCase() + formData.has_a_terrace.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -493,7 +582,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.airconditioning}
+                                                {formData.has_air_conditioner
+                                                    ? formData.has_air_conditioner.charAt(0).toUpperCase() + formData.has_air_conditioner.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -503,7 +594,9 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.centralair}
+                                                {formData.has_central_air
+                                                    ? formData.has_central_air.charAt(0).toUpperCase() + formData.has_central_air.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -512,9 +605,16 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                             <Typography color='text.primary'>Vigilancia</Typography>
                                         </td>
                                         <td>
-                                            <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.surveillance.join(', ')}
-                                            </Typography>
+                                            {formData.surveillance?.length ? (
+                                                formData.surveillance.map((value, index) => (
+                                                    <Typography key={index} color="text.primary" sx={{ fontWeight: 'bold', display: 'block' }}>
+                                                        {value}
+                                                    </Typography>
+                                                ))
+                                            ) : (
+                                                <Typography color="text.primary">No surveillance information available</Typography>
+                                            )}
+
                                         </td>
                                     </tr>
                                     <tr>
@@ -523,7 +623,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.bathroomnum}
+                                                {formData.number_of_bathrooms}
                                             </Typography>
                                         </td>
                                     </tr>
@@ -533,7 +633,7 @@ const StepInternalFeatures = ({ activeStep, handleNext, handlePrev, steps, id, p
                                         </td>
                                         <td>
                                             <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                                {propertyData.garagenum}
+                                                {formData.number_of_parking_spaces}
                                             </Typography>
                                         </td>
                                     </tr>

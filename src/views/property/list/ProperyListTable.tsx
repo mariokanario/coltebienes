@@ -7,14 +7,13 @@ import Link from 'next/link';
 import * as yup from 'yup';
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, FormLabel } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, FormLabel, Radio, RadioGroup, Switch } from '@mui/material';
 
 // MUI Imports
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import TablePagination from '@mui/material/TablePagination';
 import type { TextFieldProps } from '@mui/material/TextField';
@@ -40,7 +39,6 @@ import type { RankingInfo } from '@tanstack/match-sorter-utils';
 
 // Type Imports
 import type { ThemeColor } from '@core/types';
-import type { PropertiesType } from '@/types/apps/propertyTypes';
 
 // Component Imports
 import TableFilters from './TableFilters';
@@ -57,10 +55,13 @@ import deleteRow from '@/app/api/captaciones/delete';
 import Cookies from 'js-cookie';
 import { useAlert } from '@/components/AlertContext';
 import list from '@/app/api/captaciones/list'
-import { initialFormData } from '@/components/context/FormContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Grid } from '@mui/material';
 import { useFormik } from 'formik';
 import changeStatus from '@/app/api/captaciones/changeStatus';
+import storePhotos from '@/app/api/captaciones/storePhotos';
+import getPortals from '@/app/api/captaciones/getPortals';
+import publishPortal from '@/app/api/captaciones/publishProperty';
+import unPublishPortal from '@/app/api/captaciones/unPublishPropery';
 
 
 
@@ -125,12 +126,6 @@ const DebouncedInput = ({
   return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
-
-const userStatusObj: UserStatusType = {
-  publicado: 'success',
-  inactivo: 'warning'
-}
-
 interface PropertyListTableProps {
   tableData?: formDataInterface[]
   isHouse: boolean
@@ -138,36 +133,119 @@ interface PropertyListTableProps {
 
 interface PropertySubmitHouseProps {
   observations_house?: string
+  base64Images?: string[]
+}
+
+export interface RequestBodyPropertyPortal {
+  id_portals?: number[];
+  property_data_id?: number;
+  type_management?: string;
 }
 
 // Column Definitions
 const columnHelper = createColumnHelper<PropertiesTypeWithAction>()
 
 const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
-
-
-
   // States
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
   const [rowId, setRowId] = useState(0)
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [formDataList, setFormDataList] = useState<formDataInterface[]>([])
   const [base64Images, setBase64Images] = useState<string[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]); // Estado para almacenar archivos seleccionados
-
-
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [data, setData] = useState(...[tableData])
+  const [row, setRow] = useState<formDataInterface>()
+  const [open, setOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('')
   const router = useRouter()
   const { showMessage } = useAlert()
+  const [portals, setPortals] = useState<any[]>([]);
+  const [selectedPortals, setSelectedPortals] = useState<number[]>([])
+
+  useEffect(() => {
+    getAllPortals()
+  }, [])
+
+  const getAllPortals = async () => {
+    try {
+      const response = await getPortals();
+      if (response?.data && Array.isArray(response.data.data)) {
+        setPortals(response?.data.data);
+      } else {
+        console.error("La respuesta no contiene un array válido.");
+        setPortals([]);
+      }
+    } catch (error) {
+      console.error('Error al obtener portales:', error);
+      setPortals([]);
+    }
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(event.target.value);
+    if (selectedPortals.includes(value)) {
+      setSelectedPortals(selectedPortals.filter(portal => portal !== value));
+    } else {
+      setSelectedPortals([...selectedPortals, value]);
+    }
+  };
+
+
+  const handleSave = async () => {
+    try {
+      const body: RequestBodyPropertyPortal = {
+        id_portals: selectedPortals,
+        property_data_id: row?.id,
+        type_management: row?.charge,
+      };
+
+      const response = await publishPortal(body);
+
+      if (response?.data.status) {
+        showMessage(response.data.message, "success");
+        handleClose();
+        setSelectedPortals([]);
+      } else {
+        response?.data.infoPublicado?.forEach((value: any) => {
+          showMessage(`${response.data.message}: ${value} ya se encuentra publicada`, "info");
+        });
+      }
+      console.log(response);
+    } catch (error) {
+      console.error('Error al guardar:', error);
+      showMessage('Ocurrió un error al guardar. Intente nuevamente.', 'error');
+      Cookies.remove("auth_token")
+      router.push("/login")
+    }
+  };
+
+
+  const handleOpen = (rowData: any) => {
+    if (rowData?.authorizes_publishing === "no") {
+      showMessage("No estás autorizado por el usuario para publicar esta propiedad", "error")
+    } else {
+      setRow(rowData)
+      setOpen(true)
+    }
+  };
+  const handleClose = () => setOpen(false);
+
+  const unPublishPropertyFun = async (id: any) => {
+    try {
+      const response = await unPublishPortal(id)
+      if (response) {
+        refreshData(response.data.message)
+      } else {
+        showMessage("Error a, intentar despublicar", "error")
+      }
+    } catch (error) {
+
+    }
+  }
 
   async function handleDeleteRow(id: number | undefined) {
     try {
       const response = await deleteRow(id)
-      console.log(response)
       if (response.status === 200) {
         refreshData(response.data.message)
       } else if (response.status === 404) {
@@ -189,6 +267,7 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
 
   async function refreshData(message: string) {
     try {
+      setData([])
       const responseList = await list(isHouse === true ? 1 : 0)
       setData(responseList.data)
       showMessage(message, "success")
@@ -206,8 +285,6 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
     }
 
   }
-
-
 
   const columns = useMemo<ColumnDef<PropertiesTypeWithAction, any>[]>(
     () => [
@@ -278,6 +355,18 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
           </Typography>
         )
       }),
+      ...(isHouse
+        ? [
+          columnHelper.accessor('publication_status', {
+            header: 'Publicado',
+            cell: ({ row }) => (
+              <Typography className='capitalize' color='text.primary'>
+                {row.original.publication_status}
+              </Typography>
+            )
+          })
+        ]
+        : []),
       columnHelper.accessor('collector_name', {
         header: 'Asesor',
         cell: ({ row }) => (
@@ -291,7 +380,7 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
         cell: ({ row }) => (
           <div className='flex items-center'>
             <IconButton>
-              <Link href={`detail/${row.original.id}`}>
+              <Link href={`/properties/detail/${row.original.id}`}>
                 <i className='tabler-eye-plus text-[22px] text-textSecondary' />
               </Link>
             </IconButton>
@@ -307,6 +396,16 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
                   text: 'Pasar a propiedad',
                   icon: 'tabler-home-move text-[22px]',
                   menuItemProps: { className: 'flex items-center gap-2 text-textSecondary', disabled: isHouse ? true : false, onClick: () => handleOpenModalHouse(row.original.id) }
+                },
+                {
+                  text: 'Publicar',
+                  icon: 'tabler-briefcase text-[22px]',
+                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary', disabled: !isHouse ? true : false, onClick: () => handleOpen(row.original) }
+                },
+                {
+                  text: 'Despubilcar',
+                  icon: 'tabler-trash text-[22px]',
+                  menuItemProps: { className: 'flex items-center gap-2 text-textSecondary', disabled: !isHouse ? true : false, onClick: () => unPublishPropertyFun(row.original.id) }
                 },
                 {
                   text: 'Eliminar',
@@ -357,14 +456,16 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
 
   const formik = useFormik({
     initialValues: {
-      observations_house: ""
+      observations_house: "",
+      selectedFiles: []
     },
     validationSchema: yup.object({
       observations_house: yup
         .string()
         .required("Escriba otras características")
-        .min(5, "Debe de tener mínimo 5 letras"),
+        .min(5, "Debe de tener mínimo 5 letras")
     }),
+
     onSubmit: (values) => {
       handleSubmitHouse(values)
     },
@@ -392,8 +493,6 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
       };
 
       reader.readAsDataURL(file)
-
-      console.log(file)
     });
   }, []);
 
@@ -401,29 +500,43 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif']
+      'image/*': ['.jpeg', '.jpg', '.png']
     },
   });
 
+  const cleanForm = function () {
+    setSelectedFiles([])
+    setBase64Images([])
+    formik.values.observations_house = ''
+  }
+
   const handleSubmitHouse = async (values: PropertySubmitHouseProps) => {
     try {
-      const response = await changeStatus(rowId, values)
-      console.log(base64Images)
-      if (response.status === 200) {
-        refreshData("Se ha refrescado la tabla correctamente")
-        showMessage(response.data.message, "success")
+      const [responseStatus, responsePhotos] = await Promise.all([
+        changeStatus(rowId, values),
+        storePhotos(base64Images, rowId),
+      ]);
+
+      if (responseStatus.data.status && responsePhotos.data.status) {
+        showMessage("Cambio de captación a vivienda correctamente.", "success");
+        refreshData("Datos actualizados correctamente.");
+        cleanForm();
+      }
+    } catch (error: any) {
+      const status = error.response?.status;
+      if (status === 500) {
+        showMessage("Error, vuelve a iniciar sesión", "error");
       } else {
-        showMessage(response.data.message, "error")
+        showMessage("Ocurrió un error al obtener los datos.", "error");
       }
 
-    } catch (error: any) {
-      showMessage(error, "error")
-
+      Cookies.remove("auth_token");
+      router.push("/login");
     } finally {
-      setConfirmOpen(false)
-
+      setConfirmOpen(false);
     }
-  }
+  };
+
 
   return (
     <>
@@ -484,12 +597,24 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
                       'Arrastra y suelta imágenes de la propiedad o haz clic para subir'}
                 </Typography>
               </Box>
+              {formik.touched.selectedFiles && formik.errors.selectedFiles ? (
+                <Typography color="error" variant="body2">
+                  {formik.errors.selectedFiles}
+                </Typography>
+              ) : null}
             </Grid>
 
           </DialogContent>
           <DialogActions>
             <Button onClick={() => {
+              setSelectedFiles([])
+              setBase64Images([])
+            }} color="error">
+              Eliminar fotos
+            </Button>
+            <Button onClick={() => {
               setConfirmOpen(false)
+              formik.values.observations_house = ''
             }} color="primary">
               Cancelar
             </Button>
@@ -501,6 +626,38 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
           </DialogActions>
         </Dialog>
       </form>
+      <Dialog open={open} onClose={handleClose} fullWidth>
+        <DialogTitle>Seleccionar Portal</DialogTitle>
+        <DialogContent>
+          <Box display="flex" flexDirection="column" gap={2}>
+            {portals.length > 0 ? (
+              portals.map((portal) => (
+                <FormControlLabel
+                  key={portal.id}
+                  control={
+                    <Checkbox
+                      checked={selectedPortals.includes(portal.id)}
+                      onChange={handleCheckboxChange}
+                      value={portal.id.toString()}
+                    />
+                  }
+                  label={portal.name}
+                />
+              ))
+            ) : (
+              <p>No hay portales disponibles</p>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} color="primary" disabled={selectedPortals.length === 0}>
+            Guardar
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Card>
         <CardHeader title='Filtros' className='pbe-4' />
         <TableFilters setData={setData} tableData={tableData} />

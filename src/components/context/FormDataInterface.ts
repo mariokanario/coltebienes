@@ -6,6 +6,7 @@ export interface formDataInterface {
     cellphone?: string
     owner_identification?: string
     owner_email?: string
+    type_contact?: string[]
     authorizes_publishing?: string
     department?: string
     city?: string
@@ -89,8 +90,8 @@ export interface formDataInterface {
     landmarks?: string
     observations?: string
     collector_name?: string
-    type_contact?: string
     collection_medium?: string
     collection_date?: string
     closetcount?: string
+    publication_status?: string
 }

@@ -13,6 +13,7 @@ import tableStyles from '@core/styles/table.module.css'
 
 // Component Imports
 import { useProvider } from '@/components/context/Provider';
+import { useForm } from '@/components/context/FormContext';
 
 
 type Props = {
@@ -21,31 +22,17 @@ type Props = {
     handlePrev: () => void
     steps: { title: string; subtitle: string }[]
     id: string
-    propertyData: any;
 }
 
 
 
-const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, propertyData }: Props) => {
+const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id }: Props) => {
 
     const { setGlobalType } = useProvider();
-
-    const handleOptionChange = (prop: string | ChangeEvent<HTMLInputElement>) => {
-        if (typeof prop === 'string') {
-            setGlobalType(prop)
-
-        } else {
-            setGlobalType((prop.target as HTMLInputElement).value)
-
-        }
-    }
+    const { formData } = useForm();
 
     return (
-
-
-
         <Grid container spacing={12}>
-
             <Grid item xs={12} md={6}>
                 <div className='overflow-x-auto border rounded'>
                     <table className={tableStyles.table}>
@@ -56,7 +43,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.department}
+                                        {formData.department}
                                     </Typography>
                                 </td>
                             </tr>
@@ -66,7 +53,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.city}
+                                        {formData.city}
                                     </Typography>
                                 </td>
                             </tr>
@@ -76,7 +63,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.neighborhood}
+                                        {formData.neighborhood}
                                     </Typography>
                                 </td>
                             </tr>
@@ -86,7 +73,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.coownershipname}
+                                        {formData.coownershipname}
                                     </Typography>
                                 </td>
                             </tr>
@@ -96,7 +83,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.propertytype}
+                                        {formData.property_type}
                                     </Typography>
                                 </td>
                             </tr>
@@ -106,7 +93,17 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.charge}
+                                        {formData.charge}
+                                    </Typography>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <Typography color='text.primary'>Destinacion</Typography>
+                                </td>
+                                <td>
+                                    <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
+                                        {formData.destination_property}
                                     </Typography>
                                 </td>
                             </tr>
@@ -116,19 +113,19 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.canyon}
+                                        {formData.canyon}
                                     </Typography>
                                 </td>
                             </tr>
 
-                            {propertyData.type == "vivienda" ?
+                            {formData.globaltype == "vivienda" ?
                                 <tr>
                                     <td>
                                         <Typography color='text.primary'>Destinación</Typography>
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.destination}
+                                            {formData.destination_property}
                                         </Typography>
                                     </td>
                                 </tr>
@@ -150,7 +147,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.salevalue}
+                                        {formData.sale_value}
                                     </Typography>
                                 </td>
                             </tr>
@@ -160,18 +157,21 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.adminvalue}
+                                        {formData.administration_value}
                                     </Typography>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <Typography color='text.primary'>Incluida</Typography>
+                                    <Typography color='text.primary'>Aministración incluida</Typography>
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.adminincluded}
+                                        {formData.include_administration
+                                            ? formData.include_administration.charAt(0).toUpperCase() + formData.include_administration.slice(1)
+                                            : ''}
                                     </Typography>
+
                                 </td>
                             </tr>
                             <tr>
@@ -180,7 +180,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.builtarea}
+                                        {formData.built_area}
                                     </Typography>
                                 </td>
                             </tr>
@@ -190,7 +190,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.privatearea}
+                                        {formData.private_area}
                                     </Typography>
                                 </td>
                             </tr>
@@ -200,7 +200,7 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.yearconstruction}
+                                        {formData.year_of_construction}
                                     </Typography>
                                 </td>
                             </tr>
@@ -210,18 +210,18 @@ const StepCollectionData = ({ activeStep, handleNext, handlePrev, steps, id, pro
                                 </td>
                                 <td>
                                     <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                        {propertyData.addressbuild}
+                                        {formData.address}
                                     </Typography>
                                 </td>
                             </tr>
-                            {propertyData.type == "vivienda" ?
+                            {formData.globaltype == "vivienda" ?
                                 <tr>
                                     <td>
                                         <Typography color='text.primary'>Estrato</Typography>
                                     </td>
                                     <td>
                                         <Typography color='text.primary' sx={{ fontWeight: 'bold' }}>
-                                            {propertyData.stratum}
+                                            {formData.stratum}
                                         </Typography>
                                     </td>
                                 </tr>

@@ -1,6 +1,12 @@
 {
   "comercio": {
     "Datos": {
+      "Tipo de contacto": [
+        "Whatsapp",
+        "Llamada telefónica",
+        "E-mail",
+        "Mensaje de texto"
+      ],
       "Ciudad": "",
       "Barrio": "",
       "Dirección": "",
@@ -174,6 +180,12 @@
   },
   "vivienda": {
     "Datos": {
+      "Tipo de contacto": [
+        "Whatsapp",
+        "Llamada telefónica",
+        "E-mail",
+        "Mensaje de texto"
+      ],
       "Ciudad": "",
       "Barrio": "",
       "Dirección": "",

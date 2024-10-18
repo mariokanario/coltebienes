@@ -117,9 +117,10 @@ export const initialFormData: formDataInterface = {
     collector_name: "",
     collection_medium: "",
     collection_date: "",
-    type_contact: "",
+    type_contact: [],
     closetcount: "",
-    status_complete: false
+    status_complete: false,
+    publication_status: ""
 }
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
