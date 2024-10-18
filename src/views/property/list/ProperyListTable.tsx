@@ -207,7 +207,7 @@ const PropertyListTable = ({ tableData, isHouse }: PropertyListTableProps) => {
         setSelectedPortals([]);
       } else {
         response?.data.infoPublicado?.forEach((value: any) => {
-          showMessage(`${response.data.message}: ${value} ya se encuentra publicada`, "info");
+          showMessage(`${response.data.message}`, "info");
         });
       }
       console.log(response);
